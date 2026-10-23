@@ -1,0 +1,3304 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>DeutschFlash</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#06071a;--navy:#0b0d28;--card:#0f1133;--border:#1e2150;--borderL:#2a2d5e;
+  --blue:#4361ee;--cyan:#4cc9f0;--gold:#f8c94c;--green:#2dd4a0;--red:#f25c7a;
+  --purple:#7c5cfc;--text:#e8eaf6;--sub:#8890c4;--muted:#4a4f80;
+  --font:'Nunito',sans-serif;--display:'Playfair Display',serif;
+}
+body.light-theme{
+  --bg:#eef0f9;--navy:#ffffff;--card:#ffffff;--border:#e1e3f5;--borderL:#cfd2ea;
+  --blue:#3651d4;--cyan:#0891b2;--gold:#b8860b;--green:#0d9488;--red:#e11d48;
+  --purple:#6d4bf0;--text:#191c38;--sub:#565a86;--muted:#9598c0;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden;}
+input,select,textarea,button{font-family:var(--font);}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:#2a2d5e;border-radius:4px;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)}}
+@keyframes waveAnim{0%,100%{transform:scaleY(0.4)}50%{transform:scaleY(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes slideL{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:translateX(0)}}
+@keyframes reorderWiggle{0%,100%{transform:scale(1.045) rotate(-1.4deg)}50%{transform:scale(1.045) rotate(1.4deg)}}
+
+.page{display:none;min-height:100vh;flex-direction:column;}
+.page.show{display:flex;}
+
+/* SPLASH */
+#pgSplash{background:#3a3af4;align-items:center;justify-content:center;position:fixed;inset:0;z-index:999;}
+.splash-logo{display:flex;flex-direction:column;align-items:center;gap:18px;animation:popIn 0.8s cubic-bezier(0.34,1.56,0.64,1);}
+.wave{display:flex;gap:5px;margin-top:40px;}
+.wave span{width:4px;height:22px;background:rgba(255,255,255,0.55);border-radius:4px;animation:waveAnim 0.8s ease infinite;}
+.wave span:nth-child(2){animation-delay:.1s}.wave span:nth-child(3){animation-delay:.2s}
+.wave span:nth-child(4){animation-delay:.3s}.wave span:nth-child(5){animation-delay:.4s}
+
+/* TOPBAR */
+.topbar{background:var(--navy);border-bottom:1px solid var(--border);padding:13px 16px 10px;position:sticky;top:0;z-index:50;}
+.tb-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
+.searchbar{background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:10px 13px;display:flex;align-items:center;gap:9px;}
+.searchbar:focus-within{border-color:var(--blue);}
+.sb-inp{background:none;border:none;outline:none;color:var(--text);font-size:14px;flex:1;}
+.sb-inp::placeholder{color:var(--muted);}
+.sb-clear{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0;display:none;}
+#searchDrop{position:fixed;top:115px;left:0;right:0;bottom:0;background:var(--bg);z-index:9999;overflow-y:auto;display:none;}
+.sr-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:12px;}
+.sr-item:active{background:var(--card);}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:1px solid var(--border);display:flex;z-index:48;padding:8px 0 18px;}
+.bnav-btn{flex:1;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;}
+.bnav-ico{font-size:21px;transition:transform .2s;}
+.bnav-lbl{font-size:10px;font-weight:700;color:var(--muted);}
+.bnav-btn.on .bnav-lbl{color:var(--cyan);}
+.bnav-btn.on .bnav-ico{transform:scale(1.15);}
+.bnav-dot{width:18px;height:3px;border-radius:99px;background:var(--cyan);display:none;}
+.bnav-btn.on .bnav-dot{display:block;}
+
+/* TABS */
+.tab-content{display:none;padding:0 15px 100px;}
+.tab-content.on{display:block;animation:fadeIn .3s ease;}
+.sec{font-size:13px;font-weight:800;color:var(--sub);letter-spacing:.8px;margin-bottom:11px;padding-top:17px;}
+
+/* BUTTONS */
+.btn{padding:10px 17px;border-radius:11px;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;transition:opacity .18s;}
+.btn:active{opacity:.8;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-gold{background:transparent;color:var(--gold);border:1.5px solid var(--gold)!important;}
+.btn-green{background:var(--green);color:#0a1f18;}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--sub);border:1.5px solid var(--borderL)!important;}
+.btn-full{width:100%;}
+.btn-sm{padding:8px 13px;font-size:12px;}
+
+/* DECK CARD */
+.deck-card{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:17px;margin-bottom:11px;animation:fadeUp .35s ease both;}
+.deck-card:active{background:#141640;}
+.d-row{display:flex;align-items:center;gap:13px;margin-bottom:13px;}
+.d-ebox{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0;}
+.d-acts{display:flex;gap:8px;}
+
+/* FORM */
+.form-g{margin-bottom:12px;}
+.form-lbl{font-size:12px;color:var(--sub);margin-bottom:6px;display:block;}
+.form-inp{width:100%;background:var(--navy);border:1.5px solid var(--borderL);border-radius:12px;padding:12px 14px;color:var(--text);font-size:14px;outline:none;transition:border-color .2s;}
+.form-inp:focus{border-color:var(--blue);}
+.form-sel{width:100%;background:var(--navy);border:1.5px solid var(--borderL);border-radius:12px;padding:12px 14px;color:var(--text);font-size:14px;outline:none;}
+.form-row{display:flex;gap:10px;}
+.form-row>div{flex:1;}
+.msg{border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:11px;}
+.msg-ok{background:#2dd4a015;border:1px solid #2dd4a040;color:var(--text);}
+.msg-err{background:#f25c7a15;border:1px solid #f25c7a40;color:var(--text);}
+
+/* INNER PAGE */
+.inner-page-bar{background:var(--navy);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:40;}
+.back-btn{background:none;border:none;color:var(--sub);cursor:pointer;font-size:24px;line-height:1;padding:0 4px;}
+.ipb-title{font-weight:800;font-size:15px;color:var(--text);flex:1;}
+
+/* MODE ROW */
+.mode-row{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;margin-bottom:10px;animation:fadeUp .35s ease both;}
+.mode-row:active{background:#141640;}
+
+/* FLIP CARD */
+.flip-card{width:100%;max-width:460px;aspect-ratio:3/2;cursor:pointer;perspective:1000px;}
+.flip-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.23,1,.32,1);}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg);}
+.flip-face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+.flip-front{background:linear-gradient(145deg,#0f1240,#0b0e35);border:1.5px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;box-shadow:0 8px 32px #00000060;}
+.flip-back{background:linear-gradient(145deg,#0d1f35,#081828);border:1.5px solid #4cc9f040;transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:space-between;padding:19px;}
+.flip-ger{font-size:28px;font-weight:900;color:var(--text);font-family:var(--display);text-align:center;line-height:1.2;}
+.meanings-row{display:flex;gap:11px;}
+.mn-box{flex:1;border-radius:12px;padding:10px 12px;}
+.mn-word{font-size:17px;font-weight:800;color:var(--text);}
+.sentence-box{border-radius:10px;padding:10px 13px;border-left:3px solid var(--cyan);background:#ffffff05;}
+.flash-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px;}
+.flash-nav{display:flex;align-items:center;gap:14px;margin-top:20px;width:100%;max-width:460px;justify-content:space-between;}
+.prog-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;width:100%;max-width:460px;margin-bottom:14px;}
+.prog-fill{height:100%;border-radius:99px;transition:width .4s;}
+
+/* LEARN */
+.learn-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;margin:0 16px 12px;animation:slideL .3s ease;}
+.learn-inp{width:100%;background:var(--navy);border:2px solid var(--borderL);border-radius:14px;padding:14px 16px;color:var(--text);font-size:17px;outline:none;margin-bottom:12px;transition:border-color .2s;}
+.learn-inp.ok{border-color:var(--green)!important;background:#2dd4a010;}
+.learn-inp.ng{border-color:var(--red)!important;background:#f25c7a10;}
+.learn-fb{border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:12px;display:none;}
+.learn-fb.ok{background:#2dd4a015;border:1px solid #2dd4a040;color:var(--green);display:block;}
+.learn-fb.ng{background:#f25c7a15;border:1px solid #f25c7a40;color:var(--red);display:block;}
+
+/* QUIZ */
+.qcard{background:linear-gradient(145deg,#0f1240,#0b0e35);border:1.5px solid var(--border);border-radius:19px;padding:26px 19px;margin:14px 16px 17px;text-align:center;}
+.q-opt{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:14px 17px;color:var(--text);font-size:15px;font-weight:700;cursor:pointer;text-align:left;display:flex;align-items:center;gap:11px;margin-bottom:9px;transition:all .18s;font-family:var(--font);}
+.q-opt:disabled{cursor:default;}
+.q-opt.ok{background:#2dd4a018;border-color:var(--green);color:var(--green);}
+.q-opt.ng{background:#f25c7a18;border-color:var(--red);color:var(--red);}
+.opt-l{width:28px;height:28px;border-radius:8px;background:#ffffff08;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+
+/* MATCH */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 16px 90px;}
+.match-tile{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;min-height:68px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--text);animation:popIn .3s ease both;}
+.match-tile.sel{background:#4361ee20;border-color:var(--blue);color:var(--blue);}
+.match-tile.matched{background:#2dd4a018;border-color:var(--green);color:var(--green);cursor:default;opacity:.7;}
+.match-tile.wrong{animation:shake .3s ease;}
+
+/* RESULT */
+.result-ring{position:relative;width:130px;height:130px;margin:16px auto;}
+.result-ring svg{transform:rotate(-90deg);}
+.ring-mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ans-row{border-radius:12px;padding:11px 15px;margin-bottom:8px;display:flex;align-items:center;gap:11px;}
+.ans-ok{background:#2dd4a012;border:1px solid #2dd4a030;}
+.ans-ng{background:#f25c7a12;border:1px solid #f25c7a30;}
+
+/* MODAL */
+#modalOverlay{display:none;position:fixed;inset:0;background:#000000bb;z-index:200;align-items:flex-end;justify-content:center;}
+#modalOverlay.open{display:flex;}
+.modal-sheet{background:var(--navy);border-radius:22px 22px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding:19px;animation:fadeUp .3s ease;}
+.modal-handle{width:38px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
+.chip{display:inline-flex;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;}
+.rday{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:10px 4px;font-size:10px;font-weight:800;color:var(--muted);cursor:pointer;font-family:var(--font);text-align:center;display:flex;align-items:center;justify-content:center;line-height:1.2;transition:all .18s;}
+.rday.on{background:linear-gradient(135deg,#4361ee30,#7c5cfc22);border-color:#5a7aff;color:#a0b4ff;box-shadow:0 2px 10px #4361ee22;}
+#pdfPreviewContent{font-family:Arial,sans-serif;padding:20px;color:#000;}
+#pdfPreviewContent h1{color:#4361ee;border-bottom:3px solid #4361ee;padding-bottom:8px;font-size:22px;margin:0 0 12px;}
+#pdfPreviewContent h2{color:#333;margin-top:24px;font-size:16px;border-left:4px solid #4361ee;padding-left:10px;}
+#pdfPreviewContent table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12px;}
+#pdfPreviewContent th{background:#4361ee;color:#fff;padding:8px 10px;text-align:left;}
+#pdfPreviewContent td{padding:7px 10px;border-bottom:1px solid #eee;vertical-align:top;}
+#pdfPreviewContent tr:nth-child(even) td{background:#f8f9ff;}
+#pdfPreviewContent .de{font-weight:bold;color:#1a2a6e;}
+#pdfPreviewContent .bn{color:#1a6e3a;font-weight:bold;}
+#pdfPreviewContent .sent-bn{display:block;color:#1a6e3a;font-style:normal;margin-top:3px;}
+
+/* SENTENCES (Create mode + Library mode) */
+.seg-wrap{display:flex;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px;margin-top:15px;}
+.seg{flex:1;background:none;border:none;border-radius:11px;padding:10px 6px;font-size:13px;font-weight:800;color:var(--sub);cursor:pointer;font-family:var(--font);}
+.seg.on{background:linear-gradient(135deg,#4361ee,#7c5cfc);color:#fff;}
+.sp-card{background:var(--card);border:1px solid var(--border);border-radius:19px;padding:19px;margin-top:17px;}
+.sp-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 12px 12px 14px;margin-bottom:9px;display:flex;gap:10px;align-items:flex-start;animation:fadeUp .25s ease both;}
+.sp-item.editing{border-color:var(--gold);}
+.sp-num{width:24px;height:24px;border-radius:8px;background:#4361ee22;color:var(--cyan);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sp-de{font-size:14px;font-weight:800;color:var(--text);word-break:break-word;}
+.sp-bn{font-size:13px;color:var(--green);margin-top:3px;word-break:break-word;}
+.sp-ib{background:#ffffff0a;border:1.5px solid var(--borderL);border-radius:9px;width:32px;height:32px;font-size:14px;cursor:pointer;color:var(--sub);flex-shrink:0;}
+.sl-sent{padding:9px 2px;border-top:1px solid var(--border);}
+.sl-de{font-size:14px;font-weight:800;color:var(--text);word-break:break-word;}
+.sl-bn{font-size:13px;color:var(--green);margin-top:2px;word-break:break-word;}
+/* Sentence PDF: German line, Bengali line right below it */
+.sp-pdf{font-family:'Noto Sans Bengali','Nunito',Arial,sans-serif;color:#000;}
+#pdfPreviewContent .sp-pdf h2{font-size:26px;line-height:1.3;margin:26px 0 8px;}
+.sp-pdf-sub{font-size:12px;color:#666;margin:-4px 0 14px;}
+.sp-row{padding:10px 14px;margin:0 0 9px;border:1.5px dotted #aab4d8;border-left:5px solid #4361ee;border-radius:9px;page-break-inside:avoid;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.sp-row-de{font-size:15px;font-weight:bold;color:#1a2a6e;line-height:1.5;}
+.sp-row-bn{font-size:14px;color:#000;line-height:1.6;margin-top:2px;}
+@media print{
+  body *{visibility:hidden;}
+  #pdfPreviewContent,#pdfPreviewContent *{visibility:visible;}
+  #pdfPreviewContent{position:absolute;left:0;top:0;width:100%;padding:20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="pgSplash" class="page show">
+  <div class="splash-logo">
+    <div style="width:110px;height:110px;background:rgba(255,255,255,0.15);border-radius:28px;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+      <div style="position:absolute;width:66px;height:50px;background:#fff;border-radius:9px;transform:rotate(-12deg) translate(-3px,4px);box-shadow:0 3px 10px rgba(0,0,0,0.15);"></div>
+      <div style="position:relative;width:66px;height:50px;background:#fff;border-radius:9px;transform:rotate(6deg);box-shadow:0 4px 12px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+        <div style="width:40px;height:27px;border-radius:3px;overflow:hidden;">
+          <div style="height:9px;background:#000;"></div>
+          <div style="height:9px;background:#DD0000;"></div>
+          <div style="height:9px;background:#FFCE00;"></div>
+        </div>
+        <div style="position:absolute;bottom:3px;right:5px;color:#4361ee;font-size:12px;font-weight:900;">⚡</div>
+      </div>
+    </div>
+    <div style="font-size:30px;font-weight:900;color:#fff;font-family:var(--display);">DeutschFlash</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:3px;">GERMAN LEARNING APP</div>
+    <div class="wave"><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="pgApp" class="page">
+  <div class="topbar">
+    <div class="tb-row">
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="width:34px;height:34px;background:#4361ee;border-radius:9px;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;">
+          <div style="position:absolute;width:18px;height:13px;background:#fff;border-radius:3px;transform:rotate(-10deg) translate(-2px,2px);"></div>
+          <div style="position:relative;width:18px;height:13px;background:#fff;border-radius:3px;transform:rotate(5deg);overflow:hidden;">
+            <div style="height:4px;background:#000;"></div>
+            <div style="height:5px;background:#DD0000;"></div>
+            <div style="height:4px;background:#FFCE00;"></div>
+          </div>
+        </div>
+        <span style="font-weight:900;font-size:18px;font-family:var(--display);"><span style="color:var(--text);">Deutsch</span><span style="color:var(--cyan);">Flash</span></span>
+      </div>
+      <button onclick="openProfile()" id="avatarBtn" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;border:none;cursor:pointer;">শ</button>
+    </div>
+    <div class="searchbar">
+      <span style="color:var(--muted);font-size:15px;">🔍</span>
+      <input class="sb-inp" id="sbInp" placeholder="শব্দ খুঁজুন... Wasser, rot" oninput="doSearch(this.value)" autocomplete="off"/>
+      <button class="sb-clear" id="sbClear" onclick="clearSearch()">✕</button>
+    </div>
+  </div>
+  <div id="searchDrop"></div>
+
+  <div id="mainContent" style="flex:1;overflow-y:auto;">
+    <!-- HOME -->
+    <div class="tab-content on" id="tabHome">
+      <!-- Reminder Banner -->
+      <div id="reminderBanner" style="background:linear-gradient(135deg,#1a0a50,#0e0c40);border:1.5px solid #7c5cfc55;border-radius:20px;padding:18px;margin:17px 0 14px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:#7c5cfc18;border-radius:50%;"></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="width:44px;height:44px;background:linear-gradient(135deg,#7c5cfc,#4361ee);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔔</div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:900;color:#fff;" id="reminderTitle">আজকের Practice বাকি!</div>
+            <div style="font-size:12px;color:#a78bfa;" id="reminderSub">প্রতিদিন অল্প করে শিখলেই হবে</div>
+          </div>
+          <button onclick="dismissReminder()" style="background:none;border:none;color:#a78bfa;cursor:pointer;font-size:18px;padding:0;">✕</button>
+        </div>
+        <div style="display:flex;gap:5px;margin-bottom:12px;" id="streakDots"></div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="switchTab('mycard')" style="background:linear-gradient(135deg,#7c5cfc,#4361ee);border:none;border-radius:11px;padding:10px 16px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;flex:1;">⚡ Practice করো</button>
+          <button onclick="openReminderModal()" style="background:#ffffff12;border:1px solid #7c5cfc44;border-radius:11px;padding:10px 14px;color:#a78bfa;font-size:13px;font-weight:700;cursor:pointer;">⏰ Reminder</button>
+        </div>
+      </div>
+      <div id="difficultReviewCard" style="display:none;background:linear-gradient(135deg,#f8c94c18,#f8c94c08);border:1px solid #f8c94c40;border-radius:16px;padding:16px;margin-bottom:18px;align-items:center;gap:12px;">
+        <div style="font-size:28px;">⭐</div>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:800;color:var(--text);" id="difficultReviewCount"></div>
+          <div style="font-size:12px;color:var(--sub);">আজকে review করে ফেলো</div>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="startAllDifficultTest()">Review</button>
+      </div>
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 10px;text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:var(--cyan);" id="statStreak">0</div>
+          <div style="font-size:11px;color:var(--sub);">🔥 Streak</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 10px;text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:var(--green);" id="statToday">0</div>
+          <div style="font-size:11px;color:var(--sub);">আজকের কার্ড</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 10px;text-align:center;">
+          <div style="font-size:22px;font-weight:900;color:var(--gold);" id="statDeck">0</div>
+          <div style="font-size:11px;color:var(--sub);">মোট Deck</div>
+        </div>
+      </div>
+      <!-- Article Guide -->
+      <div class="sec">📖 Article গাইড</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:20px;">
+        <div style="background:#4361ee15;border:1px solid #4361ee30;border-radius:13px;padding:13px 9px;text-align:center;"><div style="font-size:19px;font-weight:900;font-family:var(--display);color:#4361ee;">der</div><div style="font-size:11px;font-weight:700;margin-top:3px;">পুংলিঙ্গ</div><div style="font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;">der Mann</div></div>
+        <div style="background:#f25c7a15;border:1px solid #f25c7a30;border-radius:13px;padding:13px 9px;text-align:center;"><div style="font-size:19px;font-weight:900;font-family:var(--display);color:#f25c7a;">die</div><div style="font-size:11px;font-weight:700;margin-top:3px;">স্ত্রীলিঙ্গ</div><div style="font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;">die Frau</div></div>
+        <div style="background:#2dd4a015;border:1px solid #2dd4a030;border-radius:13px;padding:13px 9px;text-align:center;"><div style="font-size:19px;font-weight:900;font-family:var(--display);color:#2dd4a0;">das</div><div style="font-size:11px;font-weight:700;margin-top:3px;">নপুংসক</div><div style="font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;">das Kind</div></div>
+      </div>
+      <div class="sec">সাম্প্রতিক Decks</div>
+      <div id="homeDecks"></div>
+    </div>
+
+    <!-- MY CARD -->
+    <div class="tab-content" id="tabMycard">
+      <div id="mycardList" style="padding-top:4px;"></div>
+    </div>
+
+    <!-- CREATE -->
+    <div class="tab-content" id="tabCreate">
+      <div class="seg-wrap">
+        <button class="seg on" id="crSegCard" onclick="setCreateMode('card')">✍️ Card</button>
+        <button class="seg" id="crSegSent" onclick="setCreateMode('sent')">💬 Sentence</button>
+      </div>
+
+      <!-- CARD -->
+      <div id="crCard">
+      <!-- MANUAL ADD -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:19px;padding:19px;margin-top:12px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <span style="font-size:24px;">✍️</span>
+          <div><div style="font-weight:800;font-size:15px;color:var(--text);">নতুন কার্ড যোগ করো</div><div style="font-size:12px;color:var(--sub);">নিজে vocabulary যোগ করুন</div></div>
+        </div>
+        <div class="form-g">
+          <label class="form-lbl">Deck বেছে নাও</label>
+          <button type="button" class="form-sel" id="manDeckBtn" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;" onclick="openPicker({mode:'deck', startFolderId:currentFolderId, title:'📂 Deck বেছে নাও', onPickDeck:function(id){ manPickedDeckId=id; updateManDeckBtn(); }})">
+            <span id="manDeckBtnLabel" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">-- Deck বেছে নাও --</span><span style="color:var(--muted);flex-shrink:0;">📁 ›</span>
+          </button>
+        </div>
+        <div class="form-g">
+          <label class="form-lbl">🇩🇪 German শব্দ *</label>
+          <input class="form-inp" id="manGer" placeholder="যেমন: der Hund"/>
+        </div>
+        <div class="form-row form-g">
+          <div><label class="form-lbl">🇧🇩 বাংলা *</label><input class="form-inp" id="manBn" placeholder="বাংলা অর্থ..."/></div>
+          <div><label class="form-lbl">🇬🇧 English</label><input class="form-inp" id="manEn" placeholder="English..."/></div>
+        </div>
+        <div class="form-g"><label class="form-lbl">🇩🇪 উদাহরণ বাক্য</label><input class="form-inp" id="manSent" placeholder="German sentence..."/></div>
+        <div class="form-g"><label class="form-lbl">🇧🇩 বাক্যের বাংলা অর্থ</label><input class="form-inp" id="manSentBn" placeholder="বাংলায় অর্থ..."/></div>
+        <div id="manMsg"></div>
+        <button class="btn btn-green btn-full" onclick="addCard()">➕ কার্ড যোগ করো</button>
+        <button class="btn btn-ghost btn-full" style="margin-top:9px;" onclick="openBulkAdd()">📋 একসাথে অনেক Card Add করো</button>
+      </div>
+      </div>
+
+      <!-- SENTENCE -->
+      <div id="crSent" style="display:none;">
+        <div class="sp-card" style="margin-top:12px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <span style="font-size:24px;">💬</span>
+            <div><div style="font-weight:800;font-size:15px;color:var(--text);">বাক্য তৈরি করো</div><div style="font-size:12px;color:var(--sub);">File বেছে বাক্য যোগ করো — নিজে নিজেই Library-তে Save হবে</div></div>
+          </div>
+          <div class="form-g">
+            <label class="form-lbl">File বেছে নাও</label>
+            <button type="button" class="form-sel" id="spFileBtn" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;" onclick="spPickFile()">
+              <span id="spFileLabel" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">-- File বেছে নাও --</span><span style="color:var(--muted);flex-shrink:0;">📁 ›</span>
+            </button>
+          </div>
+          <div class="form-g">
+            <label class="form-lbl">🇩🇪 German বাক্য *</label>
+            <input class="form-inp" id="spDe" lang="de" placeholder="যেমন: Mein Hund ist sauber." onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('spBn').focus();}" autocomplete="off"/>
+          </div>
+          <div class="form-g">
+            <label class="form-lbl">🇧🇩 বাংলা বাক্য *</label>
+            <input class="form-inp" id="spBn" lang="bn" placeholder="যেমন: কুকুরটি পরিষ্কার।" onkeydown="if(event.key==='Enter'){event.preventDefault();spAdd();}" autocomplete="off"/>
+          </div>
+          <div id="spMsg"></div>
+          <button class="btn btn-green btn-full" id="spAddBtn" onclick="spAdd()">➕ বাক্য যোগ করো</button>
+          <button class="btn btn-ghost btn-full" id="spCancelEditBtn" style="margin-top:9px;display:none;" onclick="spCancelEdit()">✕ Edit বাতিল করো</button>
+          <button class="btn btn-ghost btn-full" style="margin-top:9px;" onclick="spOpenBulk()">📋 একসাথে অনেক বাক্য Add করো</button>
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- LIBRARY -->
+    <div class="tab-content" id="tabLibrary">
+      <div class="seg-wrap">
+        <button class="seg on" id="libSegCards" onclick="setLibMode('cards')">🗂️ Cards</button>
+        <button class="seg" id="libSegSent" onclick="setLibMode('sent')">💬 Sentences</button>
+      </div>
+
+      <!-- CARDS LIBRARY (decks + folders) -->
+      <div id="libCards">
+        <div id="libSwipeZone">
+          <div id="libBreadcrumb" style="padding-top:17px;min-height:20px;"></div>
+          <div id="libSwipeHint" style="text-align:center;font-size:11px;color:var(--muted);margin:-4px 0 9px;"></div>
+          <div style="display:flex;gap:8px;margin:0 0 13px;">
+            <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="openFolderCreate()">📁+ Folder</button>
+            <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="openDeckCreateHere()">🗂️+ Deck</button>
+            <button class="btn btn-blue btn-sm" onclick="exportAllPDF()">📄 PDF</button>
+          </div>
+        </div>
+        <div id="libReorderHint" style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:9px;"></div>
+        <div id="libDecks"></div>
+      </div>
+
+      <!-- SENTENCE LIBRARY (sentences only — no flashcards) -->
+      <div id="libSent" style="display:none;">
+        <div id="slBreadcrumb" style="padding-top:17px;min-height:20px;"></div>
+        <div style="display:flex;gap:8px;margin:12px 0 13px;">
+          <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="slFolderForm()">📁+ Folder</button>
+          <button class="btn btn-green btn-sm" style="flex:1;" onclick="slNewFile()">📄+ File</button>
+          <button class="btn btn-blue btn-sm" onclick="slExportFolderPDF()">📄 PDF</button>
+        </div>
+        <div id="slList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bnav">
+    <button class="bnav-btn on" id="bn-home" onclick="switchTab('home')"><span class="bnav-ico">🏠</span><span class="bnav-lbl">Home</span><div class="bnav-dot"></div></button>
+    <button class="bnav-btn" id="bn-mycard" onclick="switchTab('mycard')"><span class="bnav-ico">🗂️</span><span class="bnav-lbl">My Card</span><div class="bnav-dot"></div></button>
+    <button class="bnav-btn" id="bn-create" onclick="switchTab('create')"><span class="bnav-ico">➕</span><span class="bnav-lbl">Create</span><div class="bnav-dot"></div></button>
+    <button class="bnav-btn" id="bn-library" onclick="switchTab('library')"><span class="bnav-ico">📂</span><span class="bnav-lbl">Library</span><div class="bnav-dot"></div></button>
+  </div>
+</div>
+
+<!-- DECK PAGE -->
+<div id="pgDeck" class="page">
+  <div class="inner-page-bar">
+    <button class="back-btn" onclick="showPage('pgApp')">←</button>
+    <span class="ipb-title" id="deckTitle">Deck</span>
+  </div>
+  <div style="padding:14px 16px 8px;display:flex;align-items:center;gap:12px;">
+    <div id="deckAvatar" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;"></div>
+    <div>
+      <div style="font-weight:900;font-size:16px;color:var(--text);" id="deckNameBig"></div>
+      <div style="font-size:13px;color:var(--sub);" id="deckTermCount"></div>
+    </div>
+  </div>
+  <div style="padding:0 16px 80px;" id="modeList"></div>
+</div>
+
+<!-- FLASHCARD -->
+<div id="pgFlash" class="page">
+  <div class="inner-page-bar"><button class="back-btn" onclick="backToDeck()">←</button><span class="ipb-title">📖 Flashcards</span><span style="font-size:13px;color:var(--sub);" id="flashCounter"></span></div>
+  <div class="flash-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="flashProg" style="background:var(--blue);"></div></div>
+    <div class="flip-card" id="flipCard" onclick="flipCard()">
+      <div class="flip-inner"><div class="flip-face flip-front" id="flipFront"></div><div class="flip-face flip-back" id="flipBack"></div></div>
+    </div>
+    <div class="flash-nav">
+      <button class="btn btn-ghost btn-sm" id="flashPrev" onclick="flashNav(-1)">← আগে</button>
+      <span style="font-size:13px;color:var(--sub);" id="flashIdx"></span>
+      <button class="btn btn-ghost btn-sm" id="flashNext" onclick="flashNav(1)">পরে →</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEARN -->
+<div id="pgLearn" class="page">
+  <div class="inner-page-bar"><button class="back-btn" onclick="backToDeck()">←</button><span class="ipb-title">🔄 Learn</span><span style="font-size:13px;color:var(--sub);" id="learnCounter"></span></div>
+  <div style="padding:14px 0 0;">
+    <div style="padding:0 16px 10px;"><div class="prog-bar"><div class="prog-fill" id="learnProg" style="background:var(--cyan);"></div></div></div>
+    <div class="learn-card">
+      <div style="font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:10px;">বাংলায় অনুবাদ করো</div>
+      <div style="font-size:26px;font-weight:900;color:var(--text);font-family:var(--display);margin-bottom:8px;" id="learnWord"></div>
+      <div style="font-size:13px;color:var(--sub);font-style:italic;" id="learnSent"></div>
+    </div>
+    <div style="padding:0 16px 80px;">
+      <input class="learn-inp" id="learnInp" placeholder="বাংলা অর্থ লিখুন..." onkeydown="if(event.key==='Enter')checkLearn()"/>
+      <div class="learn-fb" id="learnFb"></div>
+      <div style="display:flex;gap:9px;">
+        <button class="btn btn-blue" style="flex:1;" onclick="checkLearn()" id="learnCheckBtn">✓ চেক করো</button>
+        <button class="btn btn-ghost" style="flex:1;display:none;" onclick="learnNext()" id="learnNextBtn">পরে →</button>
+      </div>
+      <button class="btn btn-ghost btn-full" style="margin-top:9px;font-size:12px;" onclick="learnNext()">এড়িয়ে যাও →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TEST -->
+<div id="pgTest" class="page">
+  <div class="inner-page-bar"><button class="back-btn" onclick="backFromTest()">←</button><span class="ipb-title">📝 Test</span><span style="font-size:13px;color:var(--gold);font-weight:700;" id="testScore">স্কোর: 0</span></div>
+  <div style="padding:14px 16px 0;"><div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span style="font-size:13px;color:var(--sub);" id="testProgress"></span></div><div class="prog-bar"><div class="prog-fill" id="testProg" style="background:var(--blue);"></div></div></div>
+  <div style="flex:1;overflow-y:auto;padding-bottom:30px;" id="testContent"></div>
+</div>
+
+<!-- RESULT -->
+<div id="pgResult" class="page">
+  <div class="inner-page-bar"><button class="back-btn" onclick="backFromTest()">←</button><span class="ipb-title">ফলাফল</span></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 16px 80px;" id="resultContent"></div>
+</div>
+
+<!-- PDF PREVIEW -->
+<div id="pgPdfPreview" class="page">
+  <div class="inner-page-bar"><button class="back-btn" onclick="showPage('pgApp')">←</button><span class="ipb-title">📄 PDF Preview</span></div>
+  <div style="padding:12px 16px;background:var(--navy);border-bottom:1px solid var(--border);"><button class="btn btn-blue btn-full" onclick="printPdfPreview()">🖨️ Save / Print করো</button></div>
+  <div style="flex:1;overflow-y:auto;background:#fff;"><div id="pdfPreviewContent"></div></div>
+</div>
+
+
+<!-- MATCH -->
+<div id="pgMatch" class="page">
+  <div class="inner-page-bar"><button class="back-btn" onclick="backToDeck()">←</button><span class="ipb-title">🎯 Match</span><span style="font-size:13px;color:var(--gold);font-weight:700;" id="matchTimer">⏱ 0s</span></div>
+  <div style="padding:10px 16px 0;">
+    <div style="font-size:13px;color:var(--sub);margin-bottom:10px;">German ও বাংলা জোড়া মেলাও!</div>
+    <div class="prog-bar"><div class="prog-fill" id="matchProg" style="background:var(--gold);"></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 16px 0;">
+    <div style="text-align:center;font-size:11px;font-weight:800;color:var(--sub);letter-spacing:.5px;">🇩🇪 German</div>
+    <div style="text-align:center;font-size:11px;font-weight:800;color:var(--sub);letter-spacing:.5px;">🇧🇩 বাংলা</div>
+  </div>
+  <div class="match-grid" id="matchGrid"></div>
+  <div style="padding:0 16px 20px;display:none;" id="matchDoneMsg">
+    <div style="text-align:center;font-size:18px;font-weight:800;color:var(--green);margin-bottom:14px;">🎉 সব মিলেছে! সময়: <span id="matchTime"></span></div>
+    <button class="btn btn-blue btn-full" onclick="startMatch()">🔄 আবার খেলো</button>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div id="pgProfile" class="page">
+  <div class="inner-page-bar"><button class="back-btn" onclick="showPage('pgApp')">←</button><span class="ipb-title">প্রোফাইল 👤</span></div>
+  <div style="flex:1;overflow-y:auto;padding:0 16px 80px;">
+    <div style="text-align:center;padding:28px 0 20px;">
+      <div id="profileAvatar" style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#fff;margin:0 auto 12px;">শ</div>
+      <div id="profileName" style="font-size:20px;font-weight:900;color:var(--text);">শিক্ষার্থী</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:800;color:var(--sub);margin-bottom:14px;">📊 পরিসংখ্যান</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div style="background:#4361ee15;border:1px solid #4361ee30;border-radius:14px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:900;color:var(--blue);" id="ps1">0</div><div style="font-size:11px;color:var(--sub);">Deck</div></div>
+        <div style="background:#2dd4a015;border:1px solid #2dd4a030;border-radius:14px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:900;color:var(--green);" id="ps2">0</div><div style="font-size:11px;color:var(--sub);">কার্ড</div></div>
+        <div style="background:#f8c94c15;border:1px solid #f8c94c30;border-radius:14px;padding:14px;text-align:center;"><div style="font-size:22px;font-weight:900;color:var(--gold);" id="ps3">0</div><div style="font-size:11px;color:var(--sub);">🔥 Streak</div></div>
+      </div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:800;color:var(--sub);margin-bottom:14px;">✏️ তথ্য</div>
+      <div class="form-g"><label style="font-size:12px;color:var(--sub);margin-bottom:6px;display:block;">নাম</label><input class="form-inp" id="profName" placeholder="নাম..."/></div>
+      <div class="form-g">
+        <label style="font-size:12px;color:var(--sub);margin-bottom:6px;display:block;">জার্মান লেভেল</label>
+        <select class="form-sel" id="profLevel">
+          <option value="">বেছে নিন</option>
+          <option value="A1">A1 – Beginner</option>
+          <option value="A2">A2 – Elementary</option>
+          <option value="B1">B1 – Intermediate</option>
+          <option value="B2">B2 – Upper Intermediate</option>
+          <option value="C1">C1 – Advanced</option>
+        </select>
+      </div>
+      <div id="profMsg"></div>
+      <button class="btn btn-blue btn-full" onclick="saveProfileData()">💾 সংরক্ষণ করো</button>
+    </div>
+    <button id="themeToggleBtn" onclick="toggleTheme()" class="btn btn-ghost btn-full" style="margin-bottom:14px;padding:15px;font-size:14px;">🌙 Dark Mode</button>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:800;color:var(--sub);margin-bottom:12px;">💾 Backup</div>
+      <div style="font-size:12px;color:var(--sub);margin-bottom:14px;line-height:1.5;">Phone change করলে বা cache clear হলে সব card হারিয়ে যাবে। Backup file রাখলে যেকোনো সময় ফিরিয়ে আনতে পারবে।</div>
+      <div style="display:flex;gap:9px;">
+        <button class="btn btn-blue" style="flex:1;" onclick="exportBackup()">⬇️ Export</button>
+        <button class="btn btn-ghost" style="flex:1;" onclick="triggerImport()">⬆️ Import</button>
+      </div>
+      <input type="file" id="importFileInp" accept="application/json,.json" style="display:none;" onchange="importBackup(event)"/>
+    </div>
+    <button onclick="clearAllData()" style="width:100%;background:#f25c7a18;border:1.5px solid #f25c7a44;color:var(--red);padding:15px;border-radius:14px;font-size:15px;font-weight:800;cursor:pointer;">🗑️ সব Data মুছুন</button>
+  </div>
+</div>
+
+<!-- REMINDER MODAL - Redesigned -->
+<div id="reminderModal" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:300;align-items:flex-end;justify-content:center;">
+  <div style="background:var(--navy);border-radius:28px 28px 0 0;width:100%;animation:fadeUp .35s cubic-bezier(0.22,1,0.36,1);max-height:92vh;overflow:hidden;display:flex;flex-direction:column;">
+
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#1a0a50 0%,#0d1040 50%,#0a0c2e 100%);padding:20px 22px 22px;position:relative;overflow:hidden;flex-shrink:0;">
+      <div style="position:absolute;top:-35px;right:-25px;width:130px;height:130px;background:#7c5cfc18;border-radius:50%;pointer-events:none;"></div>
+      <div style="position:absolute;bottom:-25px;left:-15px;width:90px;height:90px;background:#4361ee14;border-radius:50%;pointer-events:none;"></div>
+      <div style="width:40px;height:4px;background:rgba(255,255,255,0.18);border-radius:99px;margin:0 auto 20px;"></div>
+      <div style="display:flex;align-items:center;gap:14px;position:relative;">
+        <div style="width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#7c5cfc,#4361ee);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 24px #7c5cfc55;flex-shrink:0;">🔔</div>
+        <div>
+          <div style="font-size:18px;font-weight:900;color:#fff;letter-spacing:-0.3px;">Daily Reminder</div>
+          <div style="font-size:12px;color:#a78bfa;margin-top:3px;">প্রতিদিনের practice মিস করবে না</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:22px;overflow-y:auto;">
+
+      <!-- Time Picker -->
+      <div style="margin-bottom:22px;">
+        <div style="font-size:11px;font-weight:800;color:var(--sub);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;">⏰  সময়</div>
+        <div style="background:linear-gradient(135deg,#0f1133,#0b0d28);border:2px solid #4361ee55;border-radius:16px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+          <input type="time" id="rTime" value="08:00"
+            style="width:100%;background:transparent;border:none;color:#fff;font-size:36px;font-weight:900;outline:none;text-align:center;padding:16px 12px;letter-spacing:4px;font-family:var(--font);cursor:pointer;"/>
+        </div>
+      </div>
+
+      <!-- Day Selector -->
+      <div style="margin-bottom:26px;">
+        <div style="font-size:11px;font-weight:800;color:var(--sub);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px;">📅  দিন</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;" id="rDays">
+          <button class="rday on" data-d="0">রবি</button>
+          <button class="rday on" data-d="1">সোম</button>
+          <button class="rday on" data-d="2">মঙ্গল</button>
+          <button class="rday on" data-d="3">বুধ</button>
+          <button class="rday on" data-d="4">বৃহ</button>
+          <button class="rday on" data-d="5">শুক্র</button>
+          <button class="rday on" data-d="6">শনি</button>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div style="display:flex;gap:10px;">
+        <button onclick="document.getElementById('reminderModal').style.display='none'"
+          style="flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--borderL);border-radius:14px;padding:15px;color:var(--sub);font-size:14px;font-weight:800;cursor:pointer;font-family:var(--font);">বাতিল</button>
+        <button onclick="saveReminder()"
+          style="flex:2;background:linear-gradient(135deg,#7c5cfc,#4361ee);border:none;border-radius:14px;padding:15px;color:#fff;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px #4361ee44;font-family:var(--font);">✅ Reminder সেট করো</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE DECK MODAL -->
+<div id="deleteDeckModal" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:500;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:var(--navy);border:1.5px solid #f25c7a30;border-radius:26px;width:100%;max-width:360px;padding:32px 24px 26px;animation:popIn .32s cubic-bezier(0.34,1.56,0.64,1);position:relative;overflow:hidden;">
+    <!-- bg glow -->
+    <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:160px;height:160px;background:#f25c7a14;border-radius:50%;filter:blur(30px);pointer-events:none;"></div>
+    <!-- icon -->
+    <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#f25c7a28,#c0392b18);border:1.5px solid #f25c7a44;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 20px;position:relative;">🗑️</div>
+    <!-- title -->
+    <div style="text-align:center;margin-bottom:10px;">
+      <div style="font-size:19px;font-weight:900;color:var(--text);">Deck মুছবেন?</div>
+    </div>
+    <!-- description -->
+    <div style="text-align:center;margin-bottom:26px;background:#f25c7a0c;border:1px solid #f25c7a22;border-radius:12px;padding:13px 16px;">
+      <div style="font-size:15px;font-weight:800;color:var(--gold);margin-bottom:6px;" id="deleteDeckName"></div>
+      <div style="font-size:13px;color:var(--sub);line-height:1.5;">এই Deck-এর সব কার্ড মুছে যাবে।<br/>এই কাজ আর পূর্বাবস্থায় ফেরানো যাবে না।</div>
+    </div>
+    <!-- buttons -->
+    <div style="display:flex;gap:10px;">
+      <button onclick="document.getElementById('deleteDeckModal').style.display='none'"
+        style="flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--borderL);border-radius:13px;padding:14px;color:var(--sub);font-size:14px;font-weight:800;cursor:pointer;font-family:var(--font);">বাতিল</button>
+      <button onclick="confirmDeleteDeck()"
+        style="flex:1;background:linear-gradient(135deg,#f25c7a,#c0392b);border:none;border-radius:13px;padding:14px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 4px 18px #f25c7a44;font-family:var(--font);">🗑️ মুছুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- WARN MODAL (reusable, themeable) -->
+<div id="warnModal" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:520;align-items:center;justify-content:center;padding:24px;">
+  <div id="warnCard" style="background:var(--navy);border:1.5px solid var(--borderL);border-radius:26px;width:100%;max-width:360px;padding:32px 24px 26px;animation:popIn .32s cubic-bezier(0.34,1.56,0.64,1);position:relative;overflow:hidden;">
+    <div id="warnGlow" style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:160px;height:160px;border-radius:50%;filter:blur(30px);pointer-events:none;"></div>
+    <div id="warnIconBox" style="width:72px;height:72px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 20px;position:relative;"><span id="warnIcon"></span></div>
+    <div style="text-align:center;margin-bottom:10px;"><div id="warnTitle" style="font-size:19px;font-weight:900;color:var(--text);"></div></div>
+    <div id="warnDescBox" style="text-align:center;margin-bottom:26px;border-radius:12px;padding:13px 16px;">
+      <div id="warnHighlight" style="font-size:15px;font-weight:800;color:var(--gold);margin-bottom:6px;"></div>
+      <div id="warnMsg" style="font-size:13px;color:var(--sub);line-height:1.5;"></div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button id="warnCancelBtn" onclick="closeWarn()" style="flex:1;background:rgba(255,255,255,.06);border:1.5px solid var(--borderL);border-radius:13px;padding:14px;color:var(--sub);font-size:14px;font-weight:800;cursor:pointer;font-family:var(--font);">বাতিল</button>
+      <button id="warnOkBtn" onclick="warnOk()" style="flex:1;border:none;border-radius:13px;padding:14px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;font-family:var(--font);">নিশ্চিত করো</button>
+    </div>
+  </div>
+</div>
+
+<!-- CARD MODAL -->
+<div id="modalOverlay"><div class="modal-sheet"><div class="modal-handle"></div><div id="modalBody"></div></div></div>
+
+<!-- FOLDER/DECK PICKER (stacks above the generic modal so whatever's open underneath is preserved) -->
+<div id="pickerOverlay" style="display:none;position:fixed;inset:0;background:#000000cc;z-index:260;align-items:flex-end;justify-content:center;">
+  <div class="modal-sheet"><div class="modal-handle"></div><div id="pickerBody"></div></div>
+</div>
+
+<script>
+'use strict';
+
+// ════════════════════════════════
+// DATA
+// ════════════════════════════════
+var DDECKS = [
+  {id:1,name:'Alltag',emoji:'🌅',color:'#4361ee',cards:[
+    {id:1,german:'das Wasser',bengali:'পানি',english:'Water',sentence:'Ich trinke Wasser.',sentenceBn:'আমি পানি পান করি।'},
+    {id:2,german:'der Freund',bengali:'বন্ধু',english:'Friend',sentence:'Er ist mein Freund.',sentenceBn:'সে আমার বন্ধু।'},
+    {id:3,german:'die Arbeit',bengali:'কাজ',english:'Work',sentence:'Die Arbeit beginnt.',sentenceBn:'কাজ শুরু হয়।'},
+    {id:4,german:'das Buch',bengali:'বই',english:'Book',sentence:'Das Buch ist gut.',sentenceBn:'বইটি ভালো।'},
+    {id:5,german:'die Schule',bengali:'স্কুল',english:'School',sentence:'Ich gehe zur Schule.',sentenceBn:'আমি স্কুলে যাই।'}
+  ]},
+  {id:2,name:'Farben',emoji:'🎨',color:'#f25c7a',cards:[
+    {id:1,german:'rot',bengali:'লাল',english:'Red',sentence:'Das Auto ist rot.',sentenceBn:'গাড়িটা লাল।'},
+    {id:2,german:'blau',bengali:'নীল',english:'Blue',sentence:'Der Himmel ist blau.',sentenceBn:'আকাশ নীল।'},
+    {id:3,german:'grün',bengali:'সবুজ',english:'Green',sentence:'Das Gras ist grün.',sentenceBn:'ঘাস সবুজ।'},
+    {id:4,german:'gelb',bengali:'হলুদ',english:'Yellow',sentence:'Die Sonne ist gelb.',sentenceBn:'সূর্য হলুদ।'},
+    {id:5,german:'schwarz',bengali:'কালো',english:'Black',sentence:'Die Nacht ist schwarz.',sentenceBn:'রাত কালো।'}
+  ]}
+];
+
+function loadLS(k,def){try{var d=localStorage.getItem(k);return d?JSON.parse(d):def;}catch(e){return def;}}
+function saveLS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+var decks = loadLS('df_decks', JSON.parse(JSON.stringify(DDECKS)));
+var folders = loadLS('df_folders', []);
+var practice = loadLS('df_prac', {streak:0,lastDate:'',todayCount:0,streakDate:''});
+var profile = loadLS('df_prof', {name:'শিক্ষার্থী',level:''});
+var reminder = loadLS('df_rem', {time:'08:00',days:[0,1,2,3,4,5,6]});
+
+var activeDeckId = null;
+var deleteDeckTargetId = null;
+var flashIdx = 0;
+var learnIdx = 0;
+var learnSeq = [];
+var learnChecked = false;
+var testState = {};
+var matchState = {};
+var matchTimer = null;
+var deckEditSel = {emoji:null, color:null, folderId:null};
+var DECK_EMOJIS = ['📘','📗','📙','📕','📔','📓','🗂️','🎯','🔤','🎓','🌟','🔥','⭐','🍀','🎨','✈️','🍕','⚽','🎵','☕'];
+var DECK_COLORS = ['#4361ee','#f25c7a','#2dd4a0','#f8c94c','#a78bfa','#4cc9f0','#fb923c','#f472b6'];
+
+// Folders (deck organization)
+var currentFolderId = null;
+var folderEditSel = {emoji:null, color:null, parentId:null};
+var folderCreateParent = null;
+var manPickedDeckId = null;
+var bulkPickedDeckId = null;
+var bulkSavedText = '';
+var FOLDER_EMOJIS = ['📚','📁','📖','🗂️','🎯','🔤','🎓','⭐','🌟','🍀'];
+
+// One-time scaffold: A1 – Netzwerk neu with 12 chapters × 6 category decks,
+// matching the folder model the user asked for. Runs once ever (tracked by
+// df_a1_seeded), so a later manual delete of the folder is respected.
+function seedA1Scaffold(){
+  if(loadLS('df_a1_seeded', false)) return;
+  var BOOK_ID = 700001;
+  var newFolders = [{id:BOOK_ID, name:'A1 – Netzwerk neu', parentId:null, emoji:'📚', color:'#4361ee'}];
+  var newDecks = [];
+  var CATS = [
+    {name:'Nomen', emoji:'📘', color:'#4361ee'},
+    {name:'Verben', emoji:'🏃', color:'#2dd4a0'},
+    {name:'Adjektive', emoji:'🎨', color:'#a78bfa'},
+    {name:'Präpositionen', emoji:'🔗', color:'#fb923c'},
+    {name:'Andere Wörter', emoji:'🔤', color:'#4cc9f0'},
+    {name:'Redemittel', emoji:'💬', color:'#f472b6'}
+  ];
+  for(var k=1;k<=12;k++){
+    var chapId = BOOK_ID+k;
+    newFolders.push({id:chapId, name:'Kapitel '+k, parentId:BOOK_ID, emoji:'📖', color:'#7c5cfc'});
+    CATS.forEach(function(cat, ci){
+      newDecks.push({id:710000+((k-1)*6+ci)+1, name:cat.name, emoji:cat.emoji, color:cat.color, cards:[], folderId:chapId});
+    });
+  }
+  folders = folders.concat(newFolders);
+  decks = decks.concat(newDecks);
+  saveLS('df_folders', folders);
+  saveLS('df_decks', decks);
+  saveLS('df_a1_seeded', true);
+}
+seedA1Scaffold();
+
+// ════════════════════════════════
+// INIT
+// ════════════════════════════════
+if(loadLS('df_theme','dark')==='light') document.body.classList.add('light-theme');
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    initPractice();
+    renderHome();
+    renderLibrary();
+    populateDeckSel();
+    var av = document.getElementById('avatarBtn');
+    if(av) av.textContent = (profile.name||'শ').charAt(0);
+    var tb = document.getElementById('themeToggleBtn');
+    if(tb) tb.textContent = document.body.classList.contains('light-theme') ? '☀️ Light Mode' : '🌙 Dark Mode';
+    showPage('pgApp');
+  }, 2500);
+});
+
+// ════════════════════════════════
+// PAGES
+// ════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('show');});
+  document.getElementById(id).classList.add('show');
+  window.scrollTo(0,0);
+}
+
+// ════════════════════════════════
+// TABS
+// ════════════════════════════════
+function switchTab(t) {
+  ['home','mycard','create','library'].forEach(function(x){
+    var te = document.getElementById('tab'+x.charAt(0).toUpperCase()+x.slice(1));
+    if(te) te.classList.toggle('on', x===t);
+    var nb = document.getElementById('bn-'+x);
+    if(nb) nb.classList.toggle('on', x===t);
+  });
+  if(t==='library'){ if(typeof libMode!=='undefined' && libMode==='sent') slRender(); else renderLibrary(); }
+  if(t==='mycard') renderMyCard();
+  if(t==='create' && typeof createMode!=='undefined' && createMode==='sent') renderSentences();
+}
+
+// ════════════════════════════════
+// SEARCH
+// ════════════════════════════════
+function doSearch(q) {
+  var drop = document.getElementById('searchDrop');
+  var clr = document.getElementById('sbClear');
+  var mc = document.getElementById('mainContent');
+  q = (q||'').trim().toLowerCase();
+  clr.style.display = q ? 'block' : 'none';
+  if(!q){ drop.style.display='none'; if(mc) mc.style.display=''; return; }
+  if(mc) mc.style.display = 'none';
+  var res = [];
+  decks.forEach(function(dk){
+    dk.cards.forEach(function(c){
+      if(c.german.toLowerCase().indexOf(q)>=0 || c.bengali.toLowerCase().indexOf(q)>=0 || c.english.toLowerCase().indexOf(q)>=0)
+        res.push({card:c, deck:dk});
+    });
+  });
+  if(!res.length){
+    drop.innerHTML = '<div style="padding:40px 20px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;">🔍</div><div style="font-size:16px;font-weight:700;color:var(--text);">"'+q+'" পাওয়া যায়নি</div></div>';
+    drop.style.display = 'block'; return;
+  }
+  var html = '<div style="padding:10px 16px 4px;font-size:12px;color:var(--muted);font-weight:700;">'+res.length+' ফলাফল</div>';
+  res.slice(0,50).forEach(function(r){
+    var art = r.card.german.split(' ')[0];
+    var ha = (art==='der'||art==='die'||art==='das');
+    var col = ha ? (art==='der'?'#4361ee':art==='die'?'#f25c7a':'#2dd4a0') : '#f8c94c';
+    html += '<div class="sr-item" onclick="openCardModal('+r.deck.id+','+r.card.id+')">';
+    html += '<div style="width:38px;height:38px;border-radius:11px;background:'+col+'18;border:1px solid '+col+'33;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:'+col+';flex-shrink:0;">'+(ha?art[0].toUpperCase():'📝')+'</div>';
+    html += '<div style="flex:1;"><div style="font-size:15px;font-weight:800;color:var(--text);">'+r.card.german+'</div>';
+    html += '<div style="font-size:12px;color:var(--sub);">'+r.card.bengali+' · '+r.card.english+'</div>';
+    var loc = r.deck.folderId ? ' · '+folderPath(r.deck.folderId).map(function(f){return esc(f.name);}).join(' › ') : '';
+    html += '<div style="font-size:11px;color:var(--muted);">'+r.deck.emoji+' '+r.deck.name+loc+'</div></div></div>';
+  });
+  drop.innerHTML = html;
+  drop.style.display = 'block';
+}
+
+function clearSearch() {
+  document.getElementById('sbInp').value = '';
+  document.getElementById('searchDrop').style.display = 'none';
+  document.getElementById('sbClear').style.display = 'none';
+  var mc = document.getElementById('mainContent');
+  if(mc) mc.style.display = '';
+}
+
+document.addEventListener('click', function(e){
+  if(!e.target.closest('#searchDrop') && !e.target.closest('.searchbar')){
+    var d = document.getElementById('searchDrop');
+    if(d && d.style.display !== 'none'){
+      clearSearch();
+    }
+  }
+});
+
+// ════════════════════════════════
+// CARD MODAL
+// ════════════════════════════════
+function openCardModal(did, cid) {
+  clearSearch();
+  var dk = decks.find(function(d){return d.id===did;});
+  var card = dk && dk.cards.find(function(c){return c.id===cid;});
+  if(!card) return;
+  var art = card.german.split(' ')[0];
+  var ha = (art==='der'||art==='die'||art==='das');
+  var col = ha ? (art==='der'?'#4361ee':art==='die'?'#f25c7a':'#2dd4a0') : '#f8c94c';
+  var h = '<div style="text-align:center;margin-bottom:18px;">';
+  if(ha) h += '<div class="chip" style="background:'+col+'20;border:1px solid '+col+'44;color:'+col+';margin-bottom:10px;font-size:13px;padding:5px 14px;">'+art+'</div>';
+  if(card.difficult) h += '<div class="chip" style="background:#f8c94c20;border:1px solid #f8c94c44;color:var(--gold);margin-bottom:10px;margin-left:6px;font-size:13px;padding:5px 14px;">⭐ কঠিন</div>';
+  h += '<div style="font-size:28px;font-weight:900;color:var(--text);font-family:var(--display);">'+card.german+'</div></div>';
+  h += '<div style="display:flex;gap:11px;margin-bottom:13px;">';
+  h += '<div style="flex:1;background:#4361ee15;border:1px solid #4361ee30;border-radius:13px;padding:13px;"><div style="font-size:10px;color:var(--blue);margin-bottom:5px;">🇧🇩 BENGALI</div><div style="font-size:18px;font-weight:800;color:var(--text);">'+card.bengali+'</div></div>';
+  h += '<div style="flex:1;background:#f8c94c12;border:1px solid #f8c94c30;border-radius:13px;padding:13px;"><div style="font-size:10px;color:var(--gold);margin-bottom:5px;">🇬🇧 ENGLISH</div><div style="font-size:18px;font-weight:800;color:var(--text);">'+card.english+'</div></div></div>';
+  h += '<div style="background:#ffffff05;border-left:3px solid var(--cyan);border-radius:10px;padding:12px 14px;margin-bottom:18px;">';
+  h += '<div style="font-size:13px;color:var(--text);font-style:italic;margin-bottom:5px;">🇩🇪 '+card.sentence+'</div>';
+  h += '<div style="font-size:12px;color:var(--sub);">🇧🇩 '+card.sentenceBn+'</div></div>';
+  h += '<button class="btn btn-green btn-full" style="margin-bottom:9px;" onclick="editCardMode('+dk.id+','+card.id+')">✏️ Edit করো</button>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-blue" style="flex:1;" onclick="closeModal();openDeck('+dk.id+')">📖 Deck দেখো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ বন্ধ</button></div>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+document.getElementById('modalOverlay').addEventListener('click', function(e){ if(e.target===e.currentTarget) closeModal(); });
+
+function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function editCardMode(did, cid) {
+  var dk = decks.find(function(d){return d.id===did;});
+  var card = dk && dk.cards.find(function(c){return c.id===cid;});
+  if(!card) return;
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">✏️ কার্ড Edit করো</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">🇩🇪 German শব্দ *</label><input class="form-inp" id="editGer" value="'+esc(card.german)+'"/></div>';
+  h += '<div class="form-row form-g">';
+  h += '<div><label class="form-lbl">🇧🇩 বাংলা *</label><input class="form-inp" id="editBn" value="'+esc(card.bengali)+'"/></div>';
+  h += '<div><label class="form-lbl">🇬🇧 English</label><input class="form-inp" id="editEn" value="'+esc(card.english)+'"/></div>';
+  h += '</div>';
+  h += '<div class="form-g"><label class="form-lbl">🇩🇪 উদাহরণ বাক্য</label><input class="form-inp" id="editSent" value="'+esc(card.sentence)+'"/></div>';
+  h += '<div class="form-g"><label class="form-lbl">🇧🇩 বাক্যের বাংলা অর্থ</label><input class="form-inp" id="editSentBn" value="'+esc(card.sentenceBn)+'"/></div>';
+  h += '<label style="display:flex;align-items:center;gap:9px;margin-bottom:16px;cursor:pointer;">';
+  h += '<input type="checkbox" id="editDiff" '+(card.difficult?'checked':'')+' style="width:18px;height:18px;accent-color:var(--gold);"/>';
+  h += '<span style="font-size:13px;color:var(--text);font-weight:700;">⭐ কঠিন card হিসেবে mark করো</span></label>';
+  h += '<div id="editMsg"></div>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="saveCardEdit('+dk.id+','+card.id+')">💾 Save করো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="openCardModal('+dk.id+','+card.id+')">✕ Cancel</button>';
+  h += '</div>';
+  h += '<button class="btn" style="width:100%;margin-top:9px;background:#f25c7a14;border:1.5px solid #f25c7a3a;color:var(--red);" onclick="deleteCardConfirm('+dk.id+','+card.id+')">🗑️ এই Card Delete করো</button>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function saveCardEdit(did, cid) {
+  var dk = decks.find(function(d){return d.id===did;});
+  var card = dk && dk.cards.find(function(c){return c.id===cid;});
+  if(!card) return;
+  var ger = document.getElementById('editGer').value.trim();
+  var bn = document.getElementById('editBn').value.trim();
+  if(!ger||!bn){ showMsg('editMsg','❗ জার্মান ও বাংলা আবশ্যক।','err'); return; }
+  card.german = ger;
+  card.bengali = bn;
+  card.english = document.getElementById('editEn').value.trim();
+  card.sentence = document.getElementById('editSent').value.trim();
+  card.sentenceBn = document.getElementById('editSentBn').value.trim();
+  card.difficult = document.getElementById('editDiff').checked;
+  saveLS('df_decks', decks);
+  openCardModal(dk.id, card.id);
+  showToast('✅ কার্ড আপডেট হয়েছে');
+}
+
+function deleteCardConfirm(did, cid) {
+  var dk = decks.find(function(d){return d.id===did;});
+  var card = dk && dk.cards.find(function(c){return c.id===cid;});
+  if(!card) return;
+  showWarn({icon:'🗑️', title:'Card Delete করবেন?', highlight:card.german, message:'এই কাজ আর পূর্বাবস্থায় ফেরানো যাবে না। পরে চাইলে Undo করা যাবে।', okText:'🗑️ Delete করো', theme:'danger', onConfirm:function(){
+    var idx = dk.cards.indexOf(card);
+    dk.cards = dk.cards.filter(function(c){return c.id!==cid;});
+    saveLS('df_decks', decks);
+    renderHome(); renderLibrary(); populateDeckSel();
+    closeModal();
+    showToast('🗑️ Card মুছে ফেলা হয়েছে', 'Undo', function(){
+      dk.cards.splice(Math.min(idx,dk.cards.length), 0, card);
+      saveLS('df_decks', decks);
+      renderHome(); renderLibrary(); populateDeckSel();
+      showToast('✅ ফিরিয়ে আনা হয়েছে');
+    });
+  }});
+}
+
+// ════════════════════════════════
+// FOLDERS
+// ════════════════════════════════
+function getFolder(id){ return folders.find(function(f){return f.id===id;}); }
+function childFolders(parentId){ return folders.filter(function(f){return (f.parentId||null)===(parentId||null);}).sort(function(a,b){return (a.order||0)-(b.order||0);}); }
+function decksInFolder(folderId){ return decks.filter(function(d){return (d.folderId||null)===(folderId||null);}); }
+function folderPath(id){
+  var path=[], f=getFolder(id);
+  while(f){ path.unshift(f); f = f.parentId ? getFolder(f.parentId) : null; }
+  return path;
+}
+function directCounts(folderId){
+  return { folders: childFolders(folderId).length, decks: decksInFolder(folderId).length };
+}
+function collectFolderIds(id){
+  var ids=[id];
+  childFolders(id).forEach(function(c){ ids = ids.concat(collectFolderIds(c.id)); });
+  return ids;
+}
+function cascadeCounts(folderId){
+  var ids = collectFolderIds(folderId);
+  var affected = decks.filter(function(d){ return ids.indexOf(d.folderId||null)>=0; });
+  var cardCount = affected.reduce(function(s,d){return s+d.cards.length;},0);
+  return { folderIds:ids, subfolders: ids.length-1, decks: affected.length, cards: cardCount, deckObjs: affected };
+}
+function folderLocLabel(parentId){
+  if(!parentId) return '📂 Library (Root)';
+  var f = getFolder(parentId);
+  return f ? f.emoji+' '+esc(f.name) : '📂 Library (Root)';
+}
+function openFolder(id){ currentFolderId = id||null; renderLibrary(); }
+
+function folderCardHTML(f, delay) {
+  var c = directCounts(f.id);
+  var sub = c.folders+' Folder · '+c.decks+' Deck';
+  var h = '<div class="deck-card" data-rtype="folder" data-rid="'+f.id+'" style="animation-delay:'+delay+'s;position:relative;padding-right:96px;" onclick="openFolder('+f.id+')">';
+  h += '<button onclick="event.stopPropagation();editFolderMode('+f.id+')" style="position:absolute;top:14px;right:56px;background:#ffffff0a;border:1.5px solid var(--borderL);border-radius:10px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--sub);z-index:2;">✏️</button>';
+  h += '<button onclick="event.stopPropagation();deleteFolder('+f.id+')" style="position:absolute;top:14px;right:14px;background:#f25c7a14;border:1.5px solid #f25c7a3a;border-radius:10px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--red);z-index:2;">🗑️</button>';
+  h += '<div class="d-row" style="margin-bottom:0;"><div class="d-ebox" style="background:'+(f.color||'#7c5cfc')+'20;border:1px solid '+(f.color||'#7c5cfc')+'40;">'+f.emoji+'</div>';
+  h += '<div><div style="font-weight:800;font-size:15px;color:var(--text);">'+esc(f.name)+'</div><div style="font-size:12px;color:var(--sub);">'+sub+'</div></div></div>';
+  h += '</div>';
+  return h;
+}
+
+function openFolderCreate(){
+  folderCreateParent = currentFolderId;
+  folderEditSel = {emoji:'📁', color:'#7c5cfc'};
+  var loc = currentFolderId ? folderPath(currentFolderId).map(function(f){return f.emoji+' '+esc(f.name);}).join(' › ') : '📂 Library (Root)';
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">📁 নতুন Folder</div>';
+  h += '<div style="font-size:12px;color:var(--sub);margin-top:6px;">এখানে তৈরি হবে: '+loc+'</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">Folder-এর নাম *</label><input class="form-inp" id="newFolderNm" placeholder="যেমন: Kapitel 1"/></div>';
+  h += '<div class="form-g"><label class="form-lbl">Emoji বেছে নাও</label><div style="display:flex;flex-wrap:wrap;gap:8px;">';
+  FOLDER_EMOJIS.forEach(function(em){
+    var on = em===folderEditSel.emoji;
+    h += '<button type="button" class="folder-emoji-pick" data-emoji="'+em+'" style="width:40px;height:40px;border-radius:11px;font-size:19px;cursor:pointer;background:'+(on?'#7c5cfc33':'#ffffff08')+';border:1.5px solid '+(on?'#7c5cfc':'var(--borderL)')+';">'+em+'</button>';
+  });
+  h += '</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">Color বেছে নাও</label><div style="display:flex;flex-wrap:wrap;gap:10px;">';
+  DECK_COLORS.forEach(function(col){
+    var on = col===folderEditSel.color;
+    h += '<button type="button" class="folder-color-pick" data-color="'+col+'" style="width:32px;height:32px;border-radius:50%;cursor:pointer;background:'+col+';border:2.5px solid '+(on?'#fff':'transparent')+';box-shadow:0 0 0 1.5px '+col+';"></button>';
+  });
+  h += '</div></div>';
+  h += '<div id="newFolderMsg"></div>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="saveFolderCreate()">💾 তৈরি করো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ বাতিল</button>';
+  h += '</div>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+  attachFolderPickHandlers();
+}
+function attachFolderPickHandlers(){
+  document.querySelectorAll('.folder-emoji-pick').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      folderEditSel.emoji = btn.getAttribute('data-emoji');
+      document.querySelectorAll('.folder-emoji-pick').forEach(function(b){ b.style.background='#ffffff08'; b.style.borderColor='var(--borderL)'; });
+      btn.style.background='#7c5cfc33'; btn.style.borderColor='#7c5cfc';
+    });
+  });
+  document.querySelectorAll('.folder-color-pick').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      folderEditSel.color = btn.getAttribute('data-color');
+      document.querySelectorAll('.folder-color-pick').forEach(function(b){ b.style.borderColor='transparent'; });
+      btn.style.borderColor='#fff';
+    });
+  });
+}
+function saveFolderCreate(){
+  var nm = document.getElementById('newFolderNm').value.trim();
+  if(!nm){ showMsg('newFolderMsg','❗ Folder-এর নাম দিন।','err'); return; }
+  var f = {id:Date.now(), name:nm, parentId:folderCreateParent||null, emoji:folderEditSel.emoji||'📁', color:folderEditSel.color||'#7c5cfc', order:Date.now()};
+  folders.push(f);
+  saveLS('df_folders', folders);
+  closeModal();
+  renderLibrary();
+  showToast('✅ Folder তৈরি হয়েছে');
+}
+
+function editFolderMode(id){
+  var f = getFolder(id);
+  if(!f) return;
+  folderEditSel = {emoji:f.emoji, color:f.color, parentId:f.parentId||null};
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">✏️ Folder Edit করো</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">Folder-এর নাম *</label><input class="form-inp" id="editFolderNm" value="'+esc(f.name)+'"/></div>';
+  h += '<div class="form-g"><label class="form-lbl">Emoji বেছে নাও</label><div style="display:flex;flex-wrap:wrap;gap:8px;">';
+  FOLDER_EMOJIS.forEach(function(em){
+    var on = em===f.emoji;
+    h += '<button type="button" class="folder-emoji-pick" data-emoji="'+em+'" style="width:40px;height:40px;border-radius:11px;font-size:19px;cursor:pointer;background:'+(on?'#7c5cfc33':'#ffffff08')+';border:1.5px solid '+(on?'#7c5cfc':'var(--borderL)')+';">'+em+'</button>';
+  });
+  h += '</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">Color বেছে নাও</label><div style="display:flex;flex-wrap:wrap;gap:10px;">';
+  DECK_COLORS.forEach(function(col){
+    var on = col===f.color;
+    h += '<button type="button" class="folder-color-pick" data-color="'+col+'" style="width:32px;height:32px;border-radius:50%;cursor:pointer;background:'+col+';border:2.5px solid '+(on?'#fff':'transparent')+';box-shadow:0 0 0 1.5px '+col+';"></button>';
+  });
+  h += '</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">Location (কোন Folder-এর ভিতরে)</label>';
+  h += '<button type="button" class="btn btn-ghost btn-full" id="folderMoveBtn" style="justify-content:space-between;" onclick="openPicker({mode:\'folder\', startFolderId:'+(f.parentId||'null')+', excludeIds:collectFolderIds('+f.id+'), title:\'📂 কোথায় রাখবে?\', onPickFolder:function(id){ folderEditSel.parentId=id; var b=document.getElementById(\'folderMoveBtn\'); if(b) b.innerHTML=folderLocLabel(id)+\' <span>পরিবর্তন করো ›</span>\'; }})">'+folderLocLabel(f.parentId)+' <span>পরিবর্তন করো ›</span></button></div>';
+  h += '<div id="editFolderMsg"></div>';
+  h += '<button class="btn btn-ghost btn-full" style="margin-bottom:9px;" onclick="duplicateFolder('+f.id+')">🧬 Folder Duplicate করো ('+cascadeCounts(f.id).decks+' deck সহ)</button>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="saveFolderEdit('+f.id+')">💾 Save করো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ Cancel</button>';
+  h += '</div>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+  attachFolderPickHandlers();
+}
+function saveFolderEdit(id){
+  var f = getFolder(id);
+  if(!f) return;
+  var nm = document.getElementById('editFolderNm').value.trim();
+  if(!nm){ showMsg('editFolderMsg','❗ Folder-এর নাম আবশ্যক।','err'); return; }
+  f.name = nm;
+  f.emoji = folderEditSel.emoji || f.emoji;
+  f.color = folderEditSel.color || f.color;
+  f.parentId = folderEditSel.parentId||null;
+  saveLS('df_folders', folders);
+  closeModal();
+  renderLibrary();
+  populateDeckSel();
+  showToast('✅ Folder আপডেট হয়েছে');
+}
+function duplicateFolder(id) {
+  var src = getFolder(id);
+  if(!src) return;
+  var newFolders = [], newDecks = [], base = Date.now(), counter = 0;
+  function nextId(){ counter++; return base+counter; }
+  function cloneFolder(oldFolder, newParentId, isRoot){
+    var newId = nextId();
+    newFolders.push({id:newId, name:isRoot?(oldFolder.name+' (Copy)'):oldFolder.name, parentId:newParentId, emoji:oldFolder.emoji, color:oldFolder.color, order:newId});
+    decksInFolder(oldFolder.id).forEach(function(dk){
+      var dId = nextId();
+      newDecks.push({
+        id: dId, name:dk.name, emoji:dk.emoji, color:dk.color, folderId:newId, order:dId,
+        cards: dk.cards.map(function(c){ return {id:nextId(), german:c.german, bengali:c.bengali, english:c.english, sentence:c.sentence, sentenceBn:c.sentenceBn, difficult:c.difficult||false}; })
+      });
+    });
+    childFolders(oldFolder.id).forEach(function(sub){ cloneFolder(sub, newId, false); });
+  }
+  cloneFolder(src, src.parentId||null, true);
+  folders = folders.concat(newFolders);
+  decks = decks.concat(newDecks);
+  saveLS('df_folders', folders);
+  saveLS('df_decks', decks);
+  closeModal();
+  renderHome(); renderLibrary(); populateDeckSel();
+  showToast('✅ "'+newFolders[0].name+'" নামে duplicate হয়েছে ('+newFolders.length+' folder, '+newDecks.length+' deck)');
+}
+
+function deleteFolder(id) {
+  var f = getFolder(id);
+  if(!f) return;
+  var c = cascadeCounts(id);
+  if(c.subfolders===0 && c.decks===0){
+    showWarn({icon:'🗑️', title:'Folder Delete করবেন?', highlight:f.emoji+' '+f.name, message:'এই folder খালি। এই কাজ আর পূর্বাবস্থায় ফেরানো যাবে না।', okText:'🗑️ Delete করো', theme:'danger', onConfirm:function(){ doDeleteFolder(id); }});
+  } else {
+    showWarn({icon:'⚠️', title:'সাবধান! সব মুছে যাবে', highlight:f.emoji+' '+f.name, message:'এর ভিতরে '+c.subfolders+'টি Folder ও '+c.decks+'টি Deck ('+c.cards+'টি কার্ড) আছে। Delete করলে ভিতরের সবকিছু একসাথে মুছে যাবে।', okText:'🗑️ সব Delete করো', theme:'danger', onConfirm:function(){ doDeleteFolder(id); }});
+  }
+}
+function doDeleteFolder(id) {
+  closeModal();
+  var target = getFolder(id);
+  if(!target) return;
+  var parentOfDeleted = target.parentId||null;
+  var c = cascadeCounts(id);
+  var removedFolders = folders.filter(function(f){ return c.folderIds.indexOf(f.id)>=0; });
+  var removedDecks = c.deckObjs;
+  folders = folders.filter(function(f){ return c.folderIds.indexOf(f.id)<0; });
+  decks = decks.filter(function(d){ return c.folderIds.indexOf(d.folderId||null)<0; });
+  saveLS('df_folders', folders);
+  saveLS('df_decks', decks);
+  if(currentFolderId!==null && c.folderIds.indexOf(currentFolderId)>=0) currentFolderId = parentOfDeleted;
+  renderHome(); renderLibrary(); populateDeckSel();
+  showToast('🗑️ Folder মুছে ফেলা হয়েছে', 'Undo', function(){
+    folders = folders.concat(removedFolders);
+    decks = decks.concat(removedDecks);
+    saveLS('df_folders', folders);
+    saveLS('df_decks', decks);
+    renderHome(); renderLibrary(); populateDeckSel();
+    showToast('✅ ফিরিয়ে আনা হয়েছে');
+  });
+}
+
+function openDeckCreateHere(){
+  openPicker({mode:'deck', startFolderId:currentFolderId, title:'📂 Deck বেছে নাও', onPickDeck:function(id){ manPickedDeckId=id; updateManDeckBtn(); switchTab('create'); }});
+  pkCreateDeckHere();
+}
+
+// ════════════════════════════════
+// FOLDER / DECK PICKER (stacked overlay)
+// ════════════════════════════════
+var fp = { mode:null, folderId:null, excludeIds:[], onPickDeck:null, onPickFolder:null, title:'' };
+function openPicker(opts){
+  fp = { mode:opts.mode, folderId:opts.startFolderId||null, excludeIds:opts.excludeIds||[], onPickDeck:opts.onPickDeck||null, onPickFolder:opts.onPickFolder||null, title:opts.title||'' };
+  if(fp.excludeIds.indexOf(fp.folderId)>=0) fp.folderId = null;
+  renderPicker();
+  document.getElementById('pickerOverlay').style.display='flex';
+}
+function closePicker(){ document.getElementById('pickerOverlay').style.display='none'; }
+function pkNav(id){ fp.folderId=id; renderPicker(); }
+function renderPicker(){
+  var path = fp.folderId ? folderPath(fp.folderId) : [];
+  var h = '<div style="text-align:center;margin-bottom:14px;"><div style="font-size:17px;font-weight:900;color:var(--text);">'+fp.title+'</div></div>';
+  h += '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:12px;margin-bottom:14px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:9px 12px;">';
+  h += '<span style="color:'+(fp.folderId?'var(--cyan)':'var(--text)')+';font-weight:800;cursor:pointer;" onclick="pkNav(null)">📂 Root</span>';
+  path.forEach(function(f,i){
+    h += '<span style="color:var(--muted);">›</span>';
+    h += '<span style="color:'+(i===path.length-1?'var(--text)':'var(--cyan)')+';font-weight:800;cursor:pointer;" onclick="pkNav('+f.id+')">'+f.emoji+' '+esc(f.name)+'</span>';
+  });
+  h += '</div>';
+  var subs = childFolders(fp.folderId).filter(function(f){ return fp.excludeIds.indexOf(f.id)<0; });
+  var dks = fp.mode==='deck' ? decksInFolder(fp.folderId) : [];
+  if(subs.length){
+    h += '<div style="max-height:250px;overflow-y:auto;margin-bottom:12px;">';
+    subs.forEach(function(f){
+      var dc = directCounts(f.id);
+      h += '<div onclick="pkNav('+f.id+')" style="display:flex;align-items:center;gap:11px;padding:12px 13px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:7px;cursor:pointer;">';
+      h += '<div style="width:38px;height:38px;border-radius:10px;background:'+(f.color||'#7c5cfc')+'22;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">'+f.emoji+'</div>';
+      h += '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(f.name)+'</div><div style="font-size:11px;color:var(--sub);">'+dc.folders+' Folder · '+dc.decks+' Deck</div></div>';
+      h += '<div style="color:var(--muted);flex-shrink:0;">›</div></div>';
+    });
+    h += '</div>';
+  }
+  if(fp.mode==='deck' && dks.length){
+    h += '<div style="max-height:220px;overflow-y:auto;margin-bottom:12px;">';
+    dks.forEach(function(dk){
+      h += '<div onclick="pkPickDeck('+dk.id+')" style="display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--navy);border:1px solid var(--border);border-radius:12px;margin-bottom:7px;cursor:pointer;">';
+      h += '<div style="width:34px;height:34px;border-radius:9px;background:'+dk.color+'22;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">'+dk.emoji+'</div>';
+      h += '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(dk.name)+'</div><div style="font-size:11px;color:var(--sub);">'+dk.cards.length+' কার্ড</div></div>';
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+  if(!subs.length && !dks.length) h += '<div style="text-align:center;padding:18px;color:var(--muted);font-size:13px;">এই folder খালি।</div>';
+  if(fp.mode==='deck') h += '<button type="button" class="btn btn-ghost btn-full" style="margin-bottom:9px;" onclick="pkCreateDeckHere()">➕ এখানে নতুন Deck তৈরি করো</button>';
+  else if(fp.mode==='folder') h += '<button type="button" class="btn btn-blue btn-full" style="margin-bottom:9px;" onclick="pkPickFolder()">✅ এই Folder বেছে নাও</button>';
+  h += '<button class="btn btn-ghost btn-full" onclick="closePicker()">✕ বাতিল</button>';
+  document.getElementById('pickerBody').innerHTML = h;
+}
+function pkPickDeck(id){ closePicker(); if(fp.onPickDeck) fp.onPickDeck(id); }
+function pkPickFolder(){ var id=fp.folderId; closePicker(); if(fp.onPickFolder) fp.onPickFolder(id); }
+function pkCreateDeckHere(){
+  var loc = fp.folderId ? folderPath(fp.folderId).map(function(f){return f.emoji+' '+esc(f.name);}).join(' › ') : '📂 Root';
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:17px;font-weight:900;color:var(--text);">➕ নতুন Deck</div>';
+  h += '<div style="font-size:12px;color:var(--sub);margin-top:6px;">এখানে তৈরি হবে: '+loc+'</div></div>';
+  h += '<div class="form-g"><input class="form-inp" id="pkNewDeckNm" placeholder="Deck-এর নাম... (যেমন: Nomen)"/></div>';
+  h += '<div id="pkNewDeckMsg"></div>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="pkSubmitCreateDeck()">💾 তৈরি করো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="renderPicker()">← ফিরে যাও</button>';
+  h += '</div>';
+  document.getElementById('pickerBody').innerHTML = h;
+  setTimeout(function(){ var el=document.getElementById('pkNewDeckNm'); if(el) el.focus(); }, 60);
+}
+function pkSubmitCreateDeck(){
+  var nm = document.getElementById('pkNewDeckNm').value.trim();
+  if(!nm){ showMsg('pkNewDeckMsg','❗ নাম দিন।','err'); return; }
+  var d = {id:Date.now(), name:nm, emoji:'📘', color:'#4361ee', cards:[], folderId:fp.folderId||null, order:Date.now()};
+  decks.unshift(d);
+  saveLS('df_decks', decks);
+  closePicker();
+  renderHome(); renderLibrary();
+  if(fp.onPickDeck) fp.onPickDeck(d.id);
+}
+
+// ════════════════════════════════
+// RENDER
+// ════════════════════════════════
+function acol(a){ return a==='der'?'#4361ee':a==='die'?'#f25c7a':a==='das'?'#2dd4a0':'#f8c94c'; }
+
+function deckHTML(dk, delay, exp) {
+  var h = '<div class="deck-card" data-rtype="deck" data-rid="'+dk.id+'" style="animation-delay:'+delay+'s;position:relative;'+(exp?'padding-right:96px;':'')+'" onclick="openDeck('+dk.id+')">';
+  if(exp) h += '<button onclick="event.stopPropagation();exportDeckPDF('+dk.id+')" style="position:absolute;top:14px;right:56px;background:#ffffff0a;border:1.5px solid var(--borderL);border-radius:10px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--sub);z-index:2;">📄</button>';
+  if(exp) h += '<button onclick="event.stopPropagation();shareDeckAsTxt('+dk.id+')" style="position:absolute;top:14px;right:14px;background:#ffffff0a;border:1.5px solid var(--borderL);border-radius:10px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--sub);z-index:2;">📤</button>';
+  h += '<div class="d-row"><div class="d-ebox" style="background:'+dk.color+'20;border:1px solid '+dk.color+'40;">'+dk.emoji+'</div>';
+  h += '<div><div style="font-weight:800;font-size:15px;color:var(--text);">'+(dk.pinned?'📌 ':'')+dk.name+'</div><div style="font-size:12px;color:var(--sub);">'+dk.cards.length+' কার্ড</div></div></div>';
+  h += '<div class="d-acts">';
+  h += '<button class="btn btn-blue btn-sm" style="flex:1;" onclick="event.stopPropagation();openDeck('+dk.id+')">📖 পড়ো</button>';
+  h += '<button class="btn btn-gold btn-sm" style="flex:1;" onclick="event.stopPropagation();activeDeckId='+dk.id+';startMode(\'test\')">🧠 Test</button>';
+  if(exp) h += '<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();toggleDeckPin('+dk.id+')" style="padding:8px 10px;'+(dk.pinned?'background:#f8c94c22;border-color:#f8c94c66;color:var(--gold);':'')+'">📌</button>';
+  if(exp) h += '<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editDeckMode('+dk.id+')" style="padding:8px 10px;">✏️</button>';
+  if(exp) h += '<button class="btn btn-sm" onclick="event.stopPropagation();deleteDeck('+dk.id+')" style="padding:8px 11px;background:#f25c7a18;border:1.5px solid #f25c7a44;color:var(--red);">🗑️</button>';
+  h += '</div></div>';
+  return h;
+}
+function sortedDecks() {
+  return decks.slice().sort(function(a,b){
+    var p = (b.pinned?1:0)-(a.pinned?1:0);
+    if(p!==0) return p;
+    return (a.order||0)-(b.order||0);
+  });
+}
+function toggleDeckPin(id) {
+  var dk = decks.find(function(d){return d.id===id;});
+  if(!dk) return;
+  dk.pinned = !dk.pinned;
+  saveLS('df_decks', decks);
+  renderHome(); renderLibrary();
+}
+
+function renderHome() {
+  var el = document.getElementById('homeDecks');
+  if(!el) return;
+  var h = '';
+  sortedDecks().filter(function(d){return d.cards.length>0;}).slice(0,3).forEach(function(dk,i){ h += deckHTML(dk, i*0.06, false); });
+  el.innerHTML = h;
+  updateStats();
+}
+
+function renderLibrary() {
+  var bc = document.getElementById('libBreadcrumb');
+  var el = document.getElementById('libDecks');
+  if(!el) return;
+  var path = currentFolderId ? folderPath(currentFolderId) : [];
+  if(bc){
+    var bh = '<div style="display:flex;align-items:center;gap:6px;">';
+    if(currentFolderId){
+      var upParentId = getFolder(currentFolderId) ? (getFolder(currentFolderId).parentId||null) : null;
+      bh += '<button onclick="openFolder('+(upParentId||'null')+')" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:22px;line-height:1;padding:0 2px 0 0;flex-shrink:0;">←</button>';
+    }
+    bh += '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:13px;">';
+    bh += '<span style="color:'+(currentFolderId?'var(--cyan)':'var(--text)')+';font-weight:800;cursor:pointer;" onclick="openFolder(null)">📂 Library</span>';
+    path.forEach(function(f,i){
+      var last = i===path.length-1;
+      bh += '<span style="color:var(--muted);">›</span>';
+      bh += '<span style="color:'+(last?'var(--text)':'var(--cyan)')+';font-weight:800;cursor:pointer;" onclick="openFolder('+f.id+')">'+f.emoji+' '+esc(f.name)+'</span>';
+    });
+    bh += '</div></div>';
+    bc.innerHTML = bh;
+  }
+  var hintEl = document.getElementById('libSwipeHint');
+  if(hintEl){
+    var sibs = folderSiblings();
+    if(currentFolderId && sibs.length>1){
+      var pos = sibs.findIndex(function(f){return f.id===currentFolderId;});
+      hintEl.innerHTML = '⬆️⬇️ swipe করে পাশের folder-এ যাও ('+(pos+1)+'/'+sibs.length+')';
+    } else {
+      hintEl.innerHTML = '';
+    }
+  }
+  var subs = childFolders(currentFolderId);
+  var dks = sortedDecks().filter(function(d){ return (d.folderId||null)===(currentFolderId||null); });
+  var reorderHintEl = document.getElementById('libReorderHint');
+  if(reorderHintEl) reorderHintEl.innerHTML = (subs.length>1 || dks.length>1) ? '✋ চেপে ধরে উপরে-নিচে টেনে সাজাতে পারো' : '';
+  var h = '';
+  subs.forEach(function(f,i){ h += folderCardHTML(f, i*0.04); });
+  dks.forEach(function(dk,i){ h += deckHTML(dk, i*0.04, true); });
+  if(!subs.length && !dks.length){
+    h = '<div style="text-align:center;padding:50px 20px;color:var(--muted);"><div style="font-size:40px;margin-bottom:12px;">📭</div><div style="font-size:14px;">এই folder-এ কিছু নেই।<br>নতুন Folder বা Deck যোগ করো।</div></div>';
+  }
+  el.innerHTML = h;
+}
+
+// Folder swipe (up/down) — moves between sibling folders (same parent as
+// the folder you're currently viewing), without interfering with the
+// normal scroll of the deck/subfolder list below the header.
+function folderSiblings() {
+  if(!currentFolderId) return [];
+  var cur = getFolder(currentFolderId);
+  if(!cur) return [];
+  return childFolders(cur.parentId||null);
+}
+function folderSiblingNav(dir) {
+  var sibs = folderSiblings();
+  if(sibs.length<2) return;
+  var idx = sibs.findIndex(function(f){return f.id===currentFolderId;});
+  if(idx<0) return;
+  var newIdx = idx+dir;
+  if(newIdx<0 || newIdx>=sibs.length) return;
+  openFolder(sibs[newIdx].id);
+}
+var _libTouch = {x:0, y:0, t:0};
+function libTouchStart(e) {
+  var t = e.touches[0];
+  _libTouch.x = t.clientX; _libTouch.y = t.clientY; _libTouch.t = Date.now();
+}
+function libTouchEnd(e) {
+  var t = e.changedTouches[0];
+  var dx = t.clientX - _libTouch.x, dy = t.clientY - _libTouch.y;
+  var dt = Date.now() - _libTouch.t;
+  if(Math.abs(dy)>50 && Math.abs(dy)>Math.abs(dx)*1.5 && dt<600){
+    folderSiblingNav(dy<0 ? 1 : -1);
+  }
+}
+
+// ════════════════════════════════
+// LIBRARY REORDER — press & hold a folder/deck card, then drag up/down
+// ════════════════════════════════
+var RG = {holdTimer:null, dragging:false, moved:false, type:null, id:null, el:null,
+          startX:0, startY:0, lastDy:0, items:[], startIndex:0, currentIndex:0,
+          dragHeight:0, gap:0};
+var _reorderSuppressClick = false;
+
+function libDecksTouchStart(e) {
+  if(e.touches.length!==1) return;
+  var card = e.target.closest ? e.target.closest('[data-rid]') : null;
+  if(!card) return;
+  var t = e.touches[0];
+  RG.startX = t.clientX; RG.startY = t.clientY; RG.moved = false; RG.dragging = false;
+  RG.el = card;
+  RG.type = card.getAttribute('data-rtype');
+  RG.id = Number(card.getAttribute('data-rid'));
+  clearTimeout(RG.holdTimer);
+  RG.holdTimer = setTimeout(function(){ if(!RG.moved) beginReorderDrag(); }, 450);
+}
+function libDecksTouchMove(e) {
+  if(!RG.el) return;
+  var t = e.touches[0];
+  if(!RG.dragging){
+    if(Math.abs(t.clientX-RG.startX)>10 || Math.abs(t.clientY-RG.startY)>10){
+      RG.moved = true;
+      clearTimeout(RG.holdTimer);
+    }
+    return;
+  }
+  e.preventDefault();
+  RG.lastDy = t.clientY - RG.startY;
+  updateDragPosition();
+}
+function libDecksTouchEnd(e) {
+  clearTimeout(RG.holdTimer);
+  if(RG.dragging){
+    e.preventDefault();
+    finishReorderDrag();
+    _reorderSuppressClick = true;
+    setTimeout(function(){ _reorderSuppressClick=false; }, 300);
+  }
+  RG.el=null; RG.dragging=false; RG.moved=false;
+}
+function beginReorderDrag(){
+  RG.dragging = true;
+  RG.lastDy = 0;
+  var container = document.getElementById('libDecks');
+  var cards = Array.prototype.slice.call(container.querySelectorAll('[data-rtype="'+RG.type+'"]'));
+  RG.items = cards.map(function(c){
+    var r = c.getBoundingClientRect();
+    return {id:Number(c.getAttribute('data-rid')), el:c, top:r.top, height:r.height};
+  });
+  RG.startIndex = RG.items.findIndex(function(it){return it.id===RG.id;});
+  if(RG.startIndex<0){ RG.dragging=false; return; }
+  RG.currentIndex = RG.startIndex;
+  RG.dragHeight = RG.items[RG.startIndex].height;
+  RG.gap = RG.items.length>1 ? Math.max(0, RG.items[1].top-(RG.items[0].top+RG.items[0].height)) : 11;
+  // Smooth "pickup": ease into the lifted look, then switch to instant
+  // 1:1 finger tracking for the rest of the drag (no lag while moving).
+  RG.el.style.position = 'relative';
+  RG.el.style.zIndex = '80';
+  RG.el.style.touchAction = 'none';
+  RG.el.style.transition = 'transform 0.16s cubic-bezier(0.2,0.7,0.3,1), box-shadow 0.16s ease';
+  RG.el.style.boxShadow = '0 14px 32px #000000d9';
+  RG.el.style.transform = 'translateY(0px) scale(1.045)';
+  if(navigator.vibrate){ try{ navigator.vibrate(12); }catch(ignored){} }
+  clearTimeout(RG._liftTimer);
+  RG._liftTimer = setTimeout(function(){
+    if(RG.dragging && RG.el){
+      RG.el.style.transition = 'none';
+      RG.el.style.animation = 'reorderWiggle 0.18s ease-in-out infinite';
+    }
+  }, 160);
+}
+function updateDragPosition(){
+  if(!RG.dragging) return;
+  if(RG.el.style.animation) RG.el.style.animation = 'none'; // real movement started — hand transform control back to JS tracking
+  RG.el.style.transform = 'translateY('+RG.lastDy+'px) scale(1.045)';
+  var draggedCenter = RG.items[RG.startIndex].top + RG.lastDy + RG.dragHeight/2;
+  var others = RG.items.filter(function(it){ return it.id!==RG.id; });
+  var newIndex = 0;
+  others.forEach(function(it){ if(draggedCenter > it.top+it.height/2) newIndex++; });
+  if(newIndex !== RG.currentIndex){
+    var step = RG.dragHeight+RG.gap;
+    others.forEach(function(it, idx){
+      var shift = 0;
+      if(RG.currentIndex<newIndex){ if(idx>=RG.currentIndex && idx<newIndex) shift=-step; }
+      else if(RG.currentIndex>newIndex){ if(idx>=newIndex && idx<RG.currentIndex) shift=step; }
+      it.el.style.transition = 'transform 0.15s ease';
+      it.el.style.transform = shift ? 'translateY('+shift+'px)' : '';
+    });
+    RG.currentIndex = newIndex;
+  }
+}
+function finishReorderDrag(){
+  clearTimeout(RG._liftTimer);
+  var items=RG.items, type=RG.type, startIndex=RG.startIndex, currentIndex=RG.currentIndex, el=RG.el;
+  var step = RG.dragHeight+RG.gap;
+  var targetDy = (currentIndex-startIndex)*step;
+  RG.dragging = false;
+  // Bouncy "settle": ease the dragged card the rest of the way into its
+  // final slot (with a slight overshoot) instead of snapping instantly,
+  // then commit the reorder once the animation has visually finished.
+  if(el){
+    el.style.animation = 'none';
+    el.style.transition = 'transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease';
+    el.style.transform = 'translateY('+targetDy+'px) scale(1)';
+    el.style.boxShadow = 'none';
+  }
+  setTimeout(function(){
+    items.forEach(function(it){ if(it.el){ it.el.style.transform=''; it.el.style.transition=''; } });
+    if(el){ el.style.position=''; el.style.zIndex=''; el.style.boxShadow=''; el.style.touchAction=''; el.style.transition=''; el.style.animation=''; }
+    if(currentIndex!==startIndex){
+      var seq = items.map(function(it){return it.id;});
+      var mv = seq.splice(startIndex,1)[0];
+      seq.splice(currentIndex,0,mv);
+      var arr = type==='folder' ? folders : decks;
+      seq.forEach(function(id, idx){
+        var obj = arr.find(function(o){return o.id===id;});
+        if(obj) obj.order = idx;
+      });
+      if(type==='folder') saveLS('df_folders', folders); else saveLS('df_decks', decks);
+      renderLibrary();
+      if(type==='deck') renderHome();
+      if(navigator.vibrate){ try{ navigator.vibrate(8); }catch(ignored){} }
+    }
+  }, 230);
+}
+
+function renderMyCard() {
+  var el = document.getElementById('mycardList');
+  if(!el) return;
+  var modes = [
+    {id:'flash',ico:'🗂️',bg:'#4361ee25',name:'Flashcards',desc:'কার্ড উল্টিয়ে পড়ো'},
+    {id:'learn',ico:'🔄',bg:'#4cc9f025',name:'Learn',desc:'লিখে মনে রাখো'},
+    {id:'test', ico:'📝',bg:'#f8c94c20',name:'Test',desc:'MCQ পরীক্ষা দাও'},
+    {id:'reverse',ico:'🔀',bg:'#7c5cfc20',name:'উল্টো Test',desc:'বাংলা দেখে German বলো'},
+    {id:'listen',ico:'🎧',bg:'#f25c7a20',name:'Listening Test',desc:'শুনে অর্থ বলো'},
+    {id:'match',ico:'🎯',bg:'#2dd4a020',name:'Match',desc:'জোড়া মেলাও'},
+    {id:'difficult',ico:'⭐',bg:'#f8c94c20',name:'শুধু কঠিন Card',desc:'শুধু "কঠিন" mark করা card practice করো'}
+  ];
+  var withCards = sortedDecks().filter(function(d){return d.cards.length>0;});
+  var h = '';
+  withCards.forEach(function(dk, di){
+    h += '<div style="margin-bottom:16px;padding-top:'+(di===0?'12px':'0')+'">';
+    h += '<div style="font-size:12px;font-weight:800;color:var(--sub);margin-bottom:8px;">'+dk.emoji+' '+dk.name+' <span style="color:var(--muted);">('+dk.cards.length+')</span></div>';
+    h += '<div style="background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;">';
+    modes.forEach(function(m, mi){
+      var brd = mi < modes.length-1 ? 'border-bottom:1px solid var(--border);' : '';
+      var action = m.id==='difficult' ? 'activeDeckId='+dk.id+';startDifficultTest()' : 'activeDeckId='+dk.id+';startMode(\''+m.id+'\')';
+      h += '<div onclick="'+action+'" style="display:flex;align-items:center;gap:14px;padding:15px 18px;'+brd+'cursor:pointer;" onmouseover="this.style.background=\'#141640\'" onmouseout="this.style.background=\'\'">';
+      h += '<div style="width:44px;height:44px;border-radius:12px;background:'+m.bg+';display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">'+m.ico+'</div>';
+      h += '<div style="flex:1;"><div style="font-size:16px;font-weight:800;color:var(--text);">'+m.name+'</div><div style="font-size:12px;color:var(--sub);">'+m.desc+'</div></div>';
+      h += '<div style="font-size:20px;color:var(--muted);">›</div></div>';
+    });
+    h += '</div></div>';
+  });
+  if(!withCards.length){
+    h = '<div style="text-align:center;padding:50px 20px;color:var(--muted);"><div style="font-size:40px;margin-bottom:12px;">📭</div><div style="font-size:14px;">কোনো card নেই এখনো।<br>Create ট্যাব থেকে card যোগ করো।</div></div>';
+  }
+  el.innerHTML = h;
+}
+
+// manDeckBtn (Create tab) and bulkDeckBtn (Bulk Add sheet) show the picked
+// deck; refreshed after anything that can change deck names/existence.
+function updateManDeckBtn(){
+  var el = document.getElementById('manDeckBtnLabel');
+  if(!el) return;
+  if(!manPickedDeckId){ el.textContent = '-- Deck বেছে নাও --'; return; }
+  var dk = decks.find(function(d){return d.id===manPickedDeckId;});
+  if(!dk){ manPickedDeckId=null; el.textContent='-- Deck বেছে নাও --'; return; }
+  var loc = dk.folderId ? folderPath(dk.folderId).map(function(f){return f.name;}).join(' › ') : '';
+  el.innerHTML = dk.emoji+' '+esc(dk.name)+(loc?' <span style="color:var(--muted);font-size:11px;">('+esc(loc)+')</span>':'');
+}
+function updateBulkDeckBtn(){
+  var el = document.getElementById('bulkDeckBtnLabel');
+  if(!el) return;
+  if(!bulkPickedDeckId){ el.textContent = '-- Deck বেছে নাও --'; return; }
+  var dk = decks.find(function(d){return d.id===bulkPickedDeckId;});
+  if(!dk){ bulkPickedDeckId=null; el.textContent='-- Deck বেছে নাও --'; return; }
+  var loc = dk.folderId ? folderPath(dk.folderId).map(function(f){return f.name;}).join(' › ') : '';
+  el.innerHTML = dk.emoji+' '+esc(dk.name)+(loc?' <span style="color:var(--muted);font-size:11px;">('+esc(loc)+')</span>':'');
+}
+function populateDeckSel() {
+  updateManDeckBtn();
+  updateBulkDeckBtn();
+}
+
+// ════════════════════════════════
+// DELETE DECK
+// ════════════════════════════════
+function deleteDeck(id) {
+  var dk = decks.find(function(d){return d.id===id;});
+  if(!dk) return;
+  deleteDeckTargetId = id;
+  document.getElementById('deleteDeckName').textContent = dk.emoji+' '+dk.name;
+  document.getElementById('deleteDeckModal').style.display='flex';
+}
+function confirmDeleteDeck() {
+  var dk = decks.find(function(d){return d.id===deleteDeckTargetId;});
+  var idx = decks.indexOf(dk);
+  decks = decks.filter(function(d){return d.id!==deleteDeckTargetId;});
+  saveLS('df_decks', decks);
+  renderHome(); renderLibrary(); populateDeckSel();
+  document.getElementById('deleteDeckModal').style.display='none';
+  deleteDeckTargetId = null;
+  showPage('pgApp');
+  if(dk) showToast('🗑️ Deck মুছে ফেলা হয়েছে', 'Undo', function(){
+    decks.splice(Math.min(idx,decks.length), 0, dk);
+    saveLS('df_decks', decks);
+    renderHome(); renderLibrary(); populateDeckSel();
+    showToast('✅ ফিরিয়ে আনা হয়েছে');
+  });
+}
+
+// ════════════════════════════════
+// EDIT DECK
+// ════════════════════════════════
+function editDeckMode(id) {
+  var dk = decks.find(function(d){return d.id===id;});
+  if(!dk) return;
+  deckEditSel = {emoji:dk.emoji, color:dk.color, folderId:dk.folderId||null};
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">✏️ Deck Edit করো</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">Deck-এর নাম *</label><input class="form-inp" id="editDeckNm" value="'+esc(dk.name)+'"/></div>';
+  h += '<div class="form-g"><label class="form-lbl">Emoji বেছে নাও</label><div style="display:flex;flex-wrap:wrap;gap:8px;">';
+  DECK_EMOJIS.forEach(function(em){
+    var on = em===dk.emoji;
+    h += '<button type="button" class="emoji-pick" data-emoji="'+em+'" style="width:40px;height:40px;border-radius:11px;font-size:19px;cursor:pointer;background:'+(on?'#4361ee33':'#ffffff08')+';border:1.5px solid '+(on?'#4361ee':'var(--borderL)')+';">'+em+'</button>';
+  });
+  h += '</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">Color বেছে নাও</label><div style="display:flex;flex-wrap:wrap;gap:10px;">';
+  DECK_COLORS.forEach(function(col){
+    var on = col===dk.color;
+    h += '<button type="button" class="color-pick" data-color="'+col+'" style="width:32px;height:32px;border-radius:50%;cursor:pointer;background:'+col+';border:2.5px solid '+(on?'#fff':'transparent')+';box-shadow:0 0 0 1.5px '+col+';"></button>';
+  });
+  h += '</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">Folder</label>';
+  h += '<button type="button" class="btn btn-ghost btn-full" id="deckFolderBtn" style="justify-content:space-between;" onclick="openPicker({mode:\'folder\', startFolderId:(deckEditSel.folderId||null), title:\'📂 কোথায় রাখবে?\', onPickFolder:function(id){ deckEditSel.folderId=id; var b=document.getElementById(\'deckFolderBtn\'); if(b) b.innerHTML=folderLocLabel(id)+\' <span>পরিবর্তন করো ›</span>\'; }})">'+folderLocLabel(dk.folderId)+' <span>পরিবর্তন করো ›</span></button></div>';
+  h += '<div id="editDeckMsg"></div>';
+  h += '<button class="btn btn-ghost btn-full" style="margin-bottom:9px;" onclick="exportDeckText('+dk.id+')">📋 Text হিসেবে Copy করো ('+dk.cards.length+' card)</button>';
+  h += '<button class="btn btn-ghost btn-full" style="margin-bottom:9px;" onclick="duplicateDeck('+dk.id+')">🧬 Deck Duplicate করো ('+dk.cards.length+' card সহ)</button>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="saveDeckEdit('+dk.id+')">💾 Save করো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ Cancel</button>';
+  h += '</div>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.querySelectorAll('.emoji-pick').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      deckEditSel.emoji = btn.getAttribute('data-emoji');
+      document.querySelectorAll('.emoji-pick').forEach(function(b){ b.style.background='#ffffff08'; b.style.borderColor='var(--borderL)'; });
+      btn.style.background='#4361ee33'; btn.style.borderColor='#4361ee';
+    });
+  });
+  document.querySelectorAll('.color-pick').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      deckEditSel.color = btn.getAttribute('data-color');
+      document.querySelectorAll('.color-pick').forEach(function(b){ b.style.borderColor='transparent'; });
+      btn.style.borderColor='#fff';
+    });
+  });
+}
+function saveDeckEdit(id) {
+  var dk = decks.find(function(d){return d.id===id;});
+  if(!dk) return;
+  var nm = document.getElementById('editDeckNm').value.trim();
+  if(!nm){ showMsg('editDeckMsg','❗ Deck-এর নাম আবশ্যক।','err'); return; }
+  dk.name = nm;
+  dk.emoji = deckEditSel.emoji || dk.emoji;
+  dk.color = deckEditSel.color || dk.color;
+  dk.folderId = deckEditSel.folderId||null;
+  saveLS('df_decks', decks);
+  renderHome(); renderLibrary(); populateDeckSel();
+  closeModal();
+  showToast('✅ Deck আপডেট হয়েছে');
+}
+function duplicateDeck(id) {
+  var dk = decks.find(function(d){return d.id===id;});
+  if(!dk) return;
+  var base = Date.now();
+  var copy = {
+    id: base,
+    name: dk.name+' (Copy)',
+    emoji: dk.emoji,
+    color: dk.color,
+    folderId: dk.folderId||null,
+    order: base,
+    cards: dk.cards.map(function(c,i){
+      return {id:base+i+1, german:c.german, bengali:c.bengali, english:c.english, sentence:c.sentence, sentenceBn:c.sentenceBn, difficult:c.difficult||false};
+    })
+  };
+  decks.unshift(copy);
+  saveLS('df_decks', decks);
+  closeModal();
+  renderHome(); renderLibrary(); populateDeckSel();
+  showToast('✅ "'+copy.name+'" নামে duplicate হয়েছে');
+}
+function buildDeckText(dk) {
+  return dk.cards.map(function(c){
+    return [c.german,c.bengali,c.english||'',c.sentence||'',c.sentenceBn||''].join(', ');
+  }).join('\n');
+}
+function exportDeckText(id) {
+  var dk = decks.find(function(d){return d.id===id;});
+  if(!dk || !dk.cards.length){ showToast('❗ এই deck-এ কোনো card নেই'); return; }
+  var text = buildDeckText(dk);
+  var count = dk.cards.length;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      showToast('📋 '+count+'টা card copy হয়েছে');
+    }).catch(function(){ fallbackCopyText(text, count); });
+  } else {
+    fallbackCopyText(text, count);
+  }
+}
+function fallbackCopyText(text, count) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:0;';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); showToast('📋 '+count+'টা card copy হয়েছে'); }
+  catch(e){ showToast('❗ Copy করতে সমস্যা হয়েছে'); }
+  document.body.removeChild(ta);
+}
+function safeFileName(name) {
+  return (name||'deck').replace(/[^a-zA-Z0-9\u0980-\u09FF ]/g,'').trim().replace(/\s+/g,'_') || 'deck';
+}
+function shareDeckAsTxt(id) {
+  var dk = decks.find(function(d){return d.id===id;});
+  if(!dk || !dk.cards.length){ showToast('❗ এই deck-এ কোনো card নেই'); return; }
+  var text = buildDeckText(dk);
+  var filename = safeFileName(dk.name)+'.txt';
+  function downloadFallback(){
+    var blob = new Blob([text], {type:'text/plain'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    showToast('⬇️ '+filename+' download হয়েছে');
+  }
+  var file = null;
+  try { file = new File([text], filename, {type:'text/plain'}); } catch(e){}
+  if(file && navigator.canShare && navigator.canShare({files:[file]})){
+    navigator.share({files:[file], title:dk.name+' - DeutschFlash'}).catch(function(err){
+      if(err && err.name==='AbortError') return; // user closed the share sheet - not a failure
+      downloadFallback();
+    });
+  } else if(navigator.share){
+    navigator.share({title:dk.name+' - DeutschFlash', text:text}).catch(function(err){
+      if(err && err.name==='AbortError') return;
+      downloadFallback();
+    });
+  } else {
+    downloadFallback();
+  }
+}
+
+
+// ════════════════════════════════
+// OPEN DECK
+// ════════════════════════════════
+function openDeck(id) {
+  activeDeckId = id;
+  var dk = decks.find(function(d){return d.id===id;});
+  if(!dk) return;
+  document.getElementById('deckTitle').textContent = dk.emoji+' '+dk.name;
+  document.getElementById('deckNameBig').textContent = dk.name;
+  document.getElementById('deckTermCount').textContent = dk.cards.length+' terms';
+  var av = document.getElementById('deckAvatar');
+  av.textContent = dk.emoji; av.style.background = dk.color+'25'; av.style.border = '1px solid '+dk.color+'44';
+  var modes = [
+    {id:'flash',ico:'🗂️',bg:'#4361ee30',name:'Flashcards',desc:'কার্ড উল্টিয়ে পড়ো'},
+    {id:'learn',ico:'🔄',bg:'#4cc9f030',name:'Learn',desc:'লিখে মনে রাখো'},
+    {id:'test', ico:'📝',bg:'#f8c94c25',name:'Test',desc:'MCQ পরীক্ষা দাও'},
+    {id:'reverse', ico:'🔀',bg:'#7c5cfc25',name:'উল্টো Test',desc:'বাংলা দেখে German বলো'},
+    {id:'listen', ico:'🎧',bg:'#f25c7a25',name:'Listening Test',desc:'শুনে অর্থ বলো'},
+    {id:'match',ico:'🎯',bg:'#2dd4a025',name:'Match',desc:'জোড়া মেলাও'}
+  ];
+  var h = '';
+  modes.forEach(function(m,i){
+    h += '<div class="mode-row" style="animation-delay:'+i*0.05+'s" onclick="startMode(\''+m.id+'\')">';
+    h += '<div style="width:52px;height:52px;border-radius:14px;background:'+m.bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:24px;">'+m.ico+'</div>';
+    h += '<div><div style="font-size:17px;font-weight:800;color:var(--text);">'+m.name+'</div><div style="font-size:12px;color:var(--sub);">'+m.desc+'</div></div>';
+    h += '<div style="font-size:20px;color:var(--muted);margin-left:auto;">›</div></div>';
+  });
+  document.getElementById('modeList').innerHTML = h;
+  showPage('pgDeck');
+}
+
+// Shortcuts like the "My Card" tab jump straight into a mode (Flashcards,
+// Learn, Test, Match...) via activeDeckId without ever calling openDeck(),
+// so pgDeck's title/avatar/mode-list never get filled in. If the "←" button
+// from one of those modes just did showPage('pgDeck'), it would reveal that
+// empty shell — a blank-looking page. Re-running openDeck() here rebuilds
+// pgDeck's content for the right deck first, no matter how the mode was
+// entered, so "back" always lands on a fully populated page.
+function backToDeck() {
+  var dk = decks.find(function(d){return d.id===activeDeckId;});
+  if(dk) openDeck(dk.id); else showPage('pgApp');
+}
+// Test/Result share one back button for several entry points, including
+// "practice every difficult card across all decks", which has no single
+// backing deck — that one should return Home; everything else returns to
+// the deck page (repopulated via backToDeck()).
+function backFromTest() {
+  if(testState && testState.dk && testState.dk.id==='__all_difficult__') showPage('pgApp');
+  else backToDeck();
+}
+function startDifficultTest() {
+  var dk = decks.find(function(d){return d.id===activeDeckId;});
+  if(!dk) return;
+  var diffCards = dk.cards.filter(function(c){return c.difficult;});
+  if(diffCards.length<2){ showWarn({icon:'⭐', title:'যথেষ্ট কঠিন Card নেই', message:'Test করতে কমপক্ষে ২টি "কঠিন" mark করা card দরকার। Flashcard-এর পিছনে ⭐ চেপে card mark করা যায়।', cancelText:null, okText:'বুঝেছি', theme:'info'}); return; }
+  startTest({id:dk.id, name:dk.name, emoji:dk.emoji, color:dk.color, cards:diffCards}, 'normal');
+}
+function startAllDifficultTest() {
+  var allDiff = [];
+  decks.forEach(function(dk){ dk.cards.forEach(function(c){ if(c.difficult) allDiff.push(c); }); });
+  if(allDiff.length<2){ showWarn({icon:'⭐', title:'যথেষ্ট কঠিন Card নেই', message:'কমপক্ষে ২টি "কঠিন" mark করা card দরকার সব deck মিলিয়ে।', cancelText:null, okText:'বুঝেছি', theme:'info'}); return; }
+  startTest({id:'__all_difficult__', name:'সব কঠিন Card', emoji:'⭐', color:'#f8c94c', cards:allDiff}, 'normal');
+}
+
+function startMode(mode) {
+  var dk = decks.find(function(d){return d.id===activeDeckId;});
+  if(!dk||!dk.cards.length){ showWarn({icon:'📭', title:'কোনো Card নেই', message:'এই Deck-এ এখনো কোনো card যোগ করা হয়নি।', cancelText:null, okText:'বুঝেছি', theme:'info'}); return; }
+  if(mode==='flash') startFlash(dk);
+  else if(mode==='learn') startLearn(dk);
+  else if(mode==='test') startTest(dk,'normal');
+  else if(mode==='reverse') startTest(dk,'reverse');
+  else if(mode==='listen') startTest(dk,'listening');
+  else if(mode==='match') startMatch(dk);
+}
+
+// ════════════════════════════════
+// TTS
+// ════════════════════════════════
+function speakWord(btn) {
+  var w = btn.getAttribute('data-word');
+  if(w) speak(w, 'de-DE');
+}
+
+var _ttsVoiceCache = {};
+var _ttsSeq = 0;
+var _ttsVoicesReady = false;
+
+function _voiceScore(v, target) {
+  var lang = (v.lang || '').toLowerCase();
+  var name = (v.name || '').toLowerCase();
+  var t = (target || '').toLowerCase();
+  var base = t.split('-')[0];
+  var score = 0;
+
+  if(lang === t) score += 100;
+  else if(lang.split('-')[0] === base) score += 60;
+  else return -1;
+
+  // Prefer natural/high-quality local voices where available.
+  if(/google|microsoft|natural|premium|enhanced/.test(name)) score += 15;
+  if(/online|network/.test(name)) score += 2;
+
+  // Prefer voices that match the requested locale.
+  if(base === 'de' && /german|deutsch/.test(name)) score += 8;
+  if(base === 'en' && /english/.test(name)) score += 8;
+  if(base === 'bn' && /bengali|bangla/.test(name)) score += 8;
+
+  return score;
+}
+
+function _pickTTSVoice(lang) {
+  var voices = [];
+  try { voices = window.speechSynthesis.getVoices() || []; } catch(e) {}
+  if(!voices.length) return null;
+
+  var best = null, bestScore = -1;
+  voices.forEach(function(v) {
+    var score = _voiceScore(v, lang);
+    if(score > bestScore) {
+      bestScore = score;
+      best = v;
+    }
+  });
+  return best;
+}
+
+function _loadTTSVoices() {
+  try {
+    var voices = window.speechSynthesis.getVoices() || [];
+    if(!voices.length) return false;
+
+    _ttsVoicesReady = true;
+    ['de-DE','bn-BD','en-US'].forEach(function(lang) {
+      _ttsVoiceCache[lang] = _pickTTSVoice(lang);
+    });
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+function _ensureTTSVoices(callback) {
+  if(_loadTTSVoices()) {
+    callback();
+    return;
+  }
+
+  var tries = 0;
+  var timer = setInterval(function() {
+    tries++;
+    if(_loadTTSVoices() || tries >= 12) {
+      clearInterval(timer);
+      callback();
+    }
+  }, 100);
+}
+
+if(window.speechSynthesis && 'onvoiceschanged' in window.speechSynthesis) {
+  window.speechSynthesis.addEventListener('voiceschanged', _loadTTSVoices);
+}
+setTimeout(_loadTTSVoices, 100);
+setTimeout(_loadTTSVoices, 1000);
+setTimeout(_loadTTSVoices, 2000);
+
+function speak(text, lang) {
+  if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+    showToast('❗ এই device/browser-এ Text-to-Speech সাপোর্ট নাই');
+    return;
+  }
+
+  text = String(text || '').trim();
+  if(!text) return;
+
+  var synth = window.speechSynthesis;
+  var targetLang = lang || 'de-DE';
+  var mySeq = ++_ttsSeq;
+
+  // Stop the previous utterance so rapid taps never overlap.
+  try { synth.cancel(); } catch(e) {}
+
+  _ensureTTSVoices(function() {
+    if(mySeq !== _ttsSeq) return;
+
+    var u = new SpeechSynthesisUtterance(text);
+    var voice = _ttsVoiceCache[targetLang] || _pickTTSVoice(targetLang);
+
+    // The requested language is always set first.
+    u.lang = targetLang;
+
+    if(voice) {
+      u.voice = voice;
+      // Use the actual voice locale when the browser provides one.
+      u.lang = voice.lang || targetLang;
+    }
+
+    var base = targetLang.toLowerCase().split('-')[0];
+    u.rate = base === 'de' ? 1.0 : (base === 'bn' ? 0.88 : 0.90);
+    u.pitch = 1;
+    u.volume = 1;
+
+    u.onerror = function(ev) {
+      var err = ev && ev.error;
+      if(err === 'interrupted' || err === 'canceled') return;
+      showToast('❗ Sound সমস্যা: ' + (err || 'unknown'));
+    };
+
+    try {
+      synth.speak(u);
+
+      // Android Chrome/WebView sometimes pauses speech immediately.
+      setTimeout(function() {
+        if(mySeq !== _ttsSeq) return;
+        try {
+          if(synth.paused) synth.resume();
+        } catch(e) {}
+      }, 150);
+
+      // Extra Android/WebView recovery for long utterances.
+      setTimeout(function() {
+        if(mySeq !== _ttsSeq) return;
+        try {
+          if(synth.speaking && synth.paused) synth.resume();
+        } catch(e) {}
+      }, 700);
+    } catch(e) {
+      showToast('❗ Sound চালাতে সমস্যা হয়েছে');
+    }
+  });
+}
+
+// ════════════════════════════════
+// FLASHCARD
+// ════════════════════════════════
+function startFlash(dk) { flashIdx=0; showPage('pgFlash'); renderFlash(dk); }
+
+function renderFlash(dk) {
+  if(!dk) dk = decks.find(function(d){return d.id===activeDeckId;});
+  var c = dk.cards[flashIdx]; var tot = dk.cards.length;
+  document.getElementById('flipCard').classList.remove('flipped');
+  document.getElementById('flashCounter').textContent = (flashIdx+1)+'/'+tot;
+  document.getElementById('flashIdx').textContent = (flashIdx+1)+' / '+tot;
+  document.getElementById('flashProg').style.width = (((flashIdx+1)/tot)*100)+'%';
+  document.getElementById('flashPrev').disabled = flashIdx===0;
+  document.getElementById('flashNext').disabled = flashIdx===tot-1;
+  document.getElementById('flashPrev').style.opacity = flashIdx===0?'0.3':'1';
+  document.getElementById('flashNext').style.opacity = flashIdx===tot-1?'0.3':'1';
+  var art = c.german.split(' ')[0];
+  var ha = (art==='der'||art==='die'||art==='das');
+  var col = ha ? acol(art) : '#f8c94c';
+  var rest = ha ? c.german.slice(art.length+1) : c.german;
+  var front = '<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;position:absolute;top:13px;right:15px;color:var(--muted);">সামনে</div>';
+  if(ha) front += '<div style="position:absolute;top:13px;left:15px;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:700;background:'+col+'22;border:1px solid '+col+'55;color:'+col+';">'+art+'</div>';
+  front += '<div class="flip-ger">'+(ha?'<span style="color:'+col+';">'+art+'</span> '+rest:c.german)+'</div>';
+  front += '<div style="position:absolute;bottom:13px;display:flex;align-items:center;gap:10px;">';
+  front += '<span style="font-size:11px;color:var(--muted);">👆 ট্যাপ করুন</span>';
+  front += '<button id="ttsF" style="background:#4361ee22;border:1.5px solid #4361ee44;border-radius:9px;padding:5px 10px;font-size:13px;cursor:pointer;color:var(--blue);">🔊</button></div>';
+  document.getElementById('flipFront').innerHTML = front;
+  document.getElementById('ttsF').addEventListener('click', function(e){e.stopPropagation();speak(c.german,'de-DE');});
+  // Auto-play German pronunciation when the card appears.
+  setTimeout(function(){ speak(c.german,'de-DE'); }, 180);
+  var back = '<div style="display:flex;align-items:center;justify-content:space-between;">';
+  back += '<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#4cc9f080;">পিছনে</div>';
+  back += '<div style="display:flex;gap:6px;">';
+  back += '<button id="flashDiffBtn" style="background:'+(c.difficult?'#f8c94c22':'#ffffff08')+';border:1.5px solid '+(c.difficult?'#f8c94c66':'var(--borderL)')+';border-radius:9px;padding:4px 9px;font-size:13px;cursor:pointer;color:'+(c.difficult?'var(--gold)':'var(--muted)')+';">'+(c.difficult?'⭐':'☆')+'</button>';
+  back += '<button id="flashEditBtn" style="background:#2dd4a022;border:1.5px solid #2dd4a044;border-radius:9px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;color:var(--green);">✏️ Edit</button>';
+  back += '</div></div>';
+  back += '<div class="meanings-row">';
+  back += '<div class="mn-box" style="background:#4361ee15;border:1px solid #4361ee30;">';
+  back += '<div style="font-size:10px;color:var(--blue);letter-spacing:1px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">🇧🇩 BENGALI <button id="ttsBn" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0;">🔊</button></div>';
+  back += '<div class="mn-word">'+c.bengali+'</div></div>';
+  back += '<div class="mn-box" style="background:#f8c94c12;border:1px solid #f8c94c30;">';
+  back += '<div style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">🇬🇧 ENGLISH <button id="ttsEn" style="background:none;border:none;cursor:pointer;font-size:14px;padding:0;">🔊</button></div>';
+  back += '<div class="mn-word">'+c.english+'</div></div></div>';
+  back += '<div class="sentence-box">';
+  back += '<div class="sent-de" style="font-size:13px;color:var(--text);font-style:italic;margin-bottom:4px;display:flex;justify-content:space-between;gap:8px;"><span>🇩🇪 '+c.sentence+'</span><button id="ttsSe" style="background:none;border:none;cursor:pointer;font-size:14px;flex-shrink:0;padding:0;">🔊</button></div>';
+  back += '<div style="font-size:12px;color:var(--sub);">🇧🇩 '+c.sentenceBn+'</div></div>';
+  document.getElementById('flipBack').innerHTML = back;
+  document.getElementById('ttsBn').addEventListener('click',function(e){e.stopPropagation();speak(c.bengali,'bn-BD');});
+  document.getElementById('ttsEn').addEventListener('click',function(e){e.stopPropagation();speak(c.english,'en-US');});
+  document.getElementById('ttsSe').addEventListener('click',function(e){e.stopPropagation();speak(c.sentence,'de-DE');});
+  document.getElementById('flashEditBtn').addEventListener('click',function(e){e.stopPropagation();editCardMode(dk.id,c.id);});
+  document.getElementById('flashDiffBtn').addEventListener('click',function(e){e.stopPropagation();toggleDifficult(dk.id,c.id,this);});
+  recPrac(1);
+}
+
+function flipCard(){
+  if(_flashTouch.swiped){ _flashTouch.swiped=false; return; }
+  document.getElementById('flipCard').classList.toggle('flipped');
+}
+var _flashTouch = {x:0, y:0, t:0, swiped:false};
+function flashTouchStart(e) {
+  var t = e.touches[0];
+  _flashTouch.x = t.clientX; _flashTouch.y = t.clientY; _flashTouch.t = Date.now();
+  _flashTouch.swiped = false;
+}
+function flashTouchEnd(e) {
+  var t = e.changedTouches[0];
+  var dx = t.clientX - _flashTouch.x, dy = t.clientY - _flashTouch.y;
+  var dt = Date.now() - _flashTouch.t;
+  if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.5 && dt<600){
+    _flashTouch.swiped = true;
+    var dk = decks.find(function(d){return d.id===activeDeckId;});
+    if(dk){
+      if(dx<0 && flashIdx<dk.cards.length-1) flashNav(1);
+      else if(dx>0 && flashIdx>0) flashNav(-1);
+    }
+  }
+}
+document.getElementById('flipCard').addEventListener('touchstart', flashTouchStart, {passive:true});
+document.getElementById('flipCard').addEventListener('touchend', flashTouchEnd);
+document.getElementById('libSwipeZone').addEventListener('touchstart', libTouchStart, {passive:true});
+document.getElementById('libSwipeZone').addEventListener('touchend', libTouchEnd);
+document.getElementById('libDecks').addEventListener('touchstart', libDecksTouchStart, {passive:true});
+document.getElementById('libDecks').addEventListener('touchmove', libDecksTouchMove, {passive:false});
+document.getElementById('libDecks').addEventListener('touchend', libDecksTouchEnd);
+document.getElementById('libDecks').addEventListener('click', function(e){
+  if(_reorderSuppressClick){ e.stopPropagation(); e.preventDefault(); }
+}, true);
+function flashNav(dir) {
+  var dk = decks.find(function(d){return d.id===activeDeckId;});
+  flashIdx = Math.min(Math.max(flashIdx+dir,0), dk.cards.length-1);
+  renderFlash(dk);
+}
+function toggleDifficult(did, cid, btn) {
+  var dk = decks.find(function(d){return d.id===did;});
+  var card = dk && dk.cards.find(function(c){return c.id===cid;});
+  if(!card) return;
+  card.difficult = !card.difficult;
+  saveLS('df_decks', decks);
+  if(btn){
+    btn.style.background = card.difficult?'#f8c94c22':'#ffffff08';
+    btn.style.borderColor = card.difficult?'#f8c94c66':'var(--borderL)';
+    btn.style.color = card.difficult?'var(--gold)':'var(--muted)';
+    btn.textContent = card.difficult?'⭐':'☆';
+  }
+}
+
+// ════════════════════════════════
+// PRACTICE HELPERS
+// ════════════════════════════════
+// Cards marked "কঠিন" (difficult) appear more often in Learn/Test.
+function buildPool(cards){
+  var pool=[];
+  cards.forEach(function(c){ pool.push(c); if(c.difficult) pool.push(c); });
+  return pool.sort(function(){return Math.random()-.5;});
+}
+// Weighted random sample of n unique cards (used by Match, where duplicates aren't possible).
+function weightedSample(cards, n){
+  var pool = buildPool(cards);
+  var seen = {}, result = [];
+  for(var i=0;i<pool.length && result.length<n;i++){
+    if(!seen[pool[i].id]){ seen[pool[i].id]=true; result.push(pool[i]); }
+  }
+  if(result.length<n){
+    cards.forEach(function(c){ if(!seen[c.id] && result.length<n){ seen[c.id]=true; result.push(c); } });
+  }
+  return result;
+}
+
+// ════════════════════════════════
+// LEARN
+// ════════════════════════════════
+function startLearn(dk){ learnIdx=0; learnChecked=false; learnSeq=buildPool(dk.cards); showPage('pgLearn'); renderLearn(dk); }
+function renderLearn(dk) {
+  if(!dk) dk = decks.find(function(d){return d.id===activeDeckId;});
+  var c = learnSeq[learnIdx]; var tot = learnSeq.length;
+  learnChecked = false;
+  document.getElementById('learnCounter').textContent = (learnIdx+1)+'/'+tot;
+  document.getElementById('learnProg').style.width = (((learnIdx+1)/tot)*100)+'%';
+  document.getElementById('learnWord').textContent = c.german;
+  document.getElementById('learnSent').textContent = '"'+c.sentence+'"';
+  var inp = document.getElementById('learnInp');
+  inp.value=''; inp.className='learn-inp'; inp.disabled=false;
+  document.getElementById('learnFb').className='learn-fb'; document.getElementById('learnFb').textContent='';
+  document.getElementById('learnNextBtn').style.display='none';
+  document.getElementById('learnCheckBtn').style.display='flex';
+  setTimeout(function(){inp.focus();},100);
+}
+function checkLearn() {
+  if(learnChecked) return;
+  var c = learnSeq[learnIdx];
+  var ans = document.getElementById('learnInp').value.trim().toLowerCase();
+  var correct = c.bengali.toLowerCase().split(/[\/,]/)[0].trim();
+  var ok = (ans===correct || (c.bengali.toLowerCase().indexOf(ans)>=0 && ans.length>1));
+  learnChecked = true;
+  var inp = document.getElementById('learnInp');
+  inp.className = 'learn-inp '+(ok?'ok':'ng'); inp.disabled = true;
+  var fb = document.getElementById('learnFb');
+  fb.className = 'learn-fb '+(ok?'ok':'ng');
+  fb.textContent = ok ? '✅ সঠিক! "'+c.bengali+'"' : '❌ ভুল! সঠিক: "'+c.bengali+'"';
+  document.getElementById('learnCheckBtn').style.display='none';
+  document.getElementById('learnNextBtn').style.display='flex';
+  if(ok) recPrac(1);
+}
+function learnNext() {
+  var dk = decks.find(function(d){return d.id===activeDeckId;});
+  if(learnIdx < learnSeq.length-1){ learnIdx++; renderLearn(dk); }
+  else { showWarn({icon:'🎉', title:'সব কার্ড শেষ!', message:'এই deck-এর সব card practice করা হয়ে গেছে।', cancelText:null, okText:'দারুণ!', theme:'success', onConfirm:function(){ backToDeck(); }}); }
+}
+
+// ════════════════════════════════
+// TEST
+// ════════════════════════════════
+function getOpts(c, all, field) {
+  field = field || 'bengali';
+  var oth = all.filter(function(x){return x.id!==c.id;}).map(function(x){return x[field];});
+  oth.sort(function(){return Math.random()-.5;}); oth = oth.slice(0,3);
+  return oth.concat([c[field]]).sort(function(){return Math.random()-.5;});
+}
+function startTest(dk, mode) {
+  mode = mode || 'normal';
+  if(dk.cards.length<2){ showWarn({icon:'✖️', title:'যথেষ্ট Card নেই', message:'Test করতে কমপক্ষে ২টি card দরকার।', cancelText:null, okText:'বুঝেছি', theme:'info'}); return; }
+  var seq = buildPool(dk.cards);
+  var field = mode==='reverse' ? 'german' : 'bengali';
+  testState = {dk:dk,mode:mode,idx:0,score:0,answers:[],seq:seq,opts:seq.map(function(c){return getOpts(c,dk.cards,field);})};
+  showPage('pgTest'); renderTestQ();
+}
+function renderTestQ() {
+  var idx=testState.idx; var tot=testState.seq.length; var c=testState.seq[idx];
+  var mode = testState.mode; var field = mode==='reverse' ? 'german' : 'bengali';
+  document.getElementById('testProgress').textContent = 'প্রশ্ন '+(idx+1)+' / '+tot;
+  document.getElementById('testScore').textContent = 'স্কোর: '+testState.score;
+  document.getElementById('testProg').style.width = ((idx/tot)*100)+'%';
+  var opts = testState.opts[idx];
+  var h = '<div class="qcard">';
+  if(mode==='listening'){
+    h += '<div style="font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:14px;">শুনে বাংলা অর্থ বলো</div>';
+    h += '<button id="ttsQ" style="width:84px;height:84px;border-radius:50%;background:#4361ee22;border:2px solid #4361ee55;font-size:34px;cursor:pointer;color:var(--blue);">🔊</button>';
+    h += '<div style="font-size:12px;color:var(--sub);margin-top:10px;font-weight:700;"></div>';
+  } else if(mode==='reverse'){
+    h += '<div style="font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:11px;">German শব্দটা কী?</div>';
+    h += '<div style="font-size:26px;font-weight:900;color:var(--text);font-family:var(--display);">'+c.bengali+'</div>';
+  } else {
+    h += '<div style="font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:11px;">বাংলা অর্থ কী?</div>';
+    h += '<div style="font-size:28px;font-weight:900;color:var(--text);font-family:var(--display);">'+c.german+'</div>';
+    h += '<button id="ttsQ" style="background:#4361ee22;border:1.5px solid #4361ee44;border-radius:9px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--blue);font-weight:700;margin-top:8px;">🔊 শুনুন</button>';
+  }
+  h += '</div>';
+  h += '<div style="padding:0 16px;">';
+  opts.forEach(function(o,i){ h += '<button class="q-opt" id="qo'+i+'"><span class="opt-l">'+['A','B','C','D'][i]+'</span>'+o+'</button>'; });
+  h += '<div id="tNext" style="margin-top:14px;display:none;"><button class="btn btn-blue btn-full" onclick="nextTest()">'+(idx<tot-1?'পরের প্রশ্ন →':'ফলাফল ✅')+'</button></div></div>';
+  document.getElementById('testContent').innerHTML = h;
+  var ttsBtn = document.getElementById('ttsQ');
+  if(ttsBtn) ttsBtn.addEventListener('click', function(){speak(c.german,'de-DE');});
+  // Auto-play German pronunciation for each test question — except in Reverse
+  // Test, where the German word is the answer being tested, so auto-playing
+  // it out loud would give the answer away before the user picks.
+  if(mode!=='reverse'){
+    setTimeout(function(){ speak(c.german,'de-DE'); }, 180);
+  }
+  opts.forEach(function(o,i){
+    document.getElementById('qo'+i).addEventListener('click', (function(opt,bi){
+      return function(){ pickTest(opt,bi,c,opts,field); };
+    })(o,i));
+  });
+}
+function pickTest(chosen, bi, c, opts, field) {
+  field = field || 'bengali';
+  var correct = c[field];
+  var ok = (chosen===correct);
+  if(ok){ testState.score++; recPrac(1); }
+  testState.answers.push({card:c,chosen:chosen,correct:ok,field:field});
+  opts.forEach(function(o,i){
+    var b = document.getElementById('qo'+i); b.disabled=true;
+    if(o===correct) b.classList.add('ok');
+    else if(i===bi&&!ok) b.classList.add('ng');
+  });
+  if(testState.mode==='listening'){
+    var qcard = document.querySelector('.qcard');
+    if(qcard && !document.getElementById('listenReveal')){
+      var rev = document.createElement('div');
+      rev.id = 'listenReveal';
+      rev.style.cssText = 'font-size:22px;font-weight:900;color:var(--text);font-family:var(--display);margin-top:12px;';
+      rev.textContent = c.german;
+      qcard.appendChild(rev);
+    }
+  }
+  document.getElementById('tNext').style.display='block';
+}
+function nextTest() {
+  if(testState.idx < testState.seq.length-1){ testState.idx++; renderTestQ(); }
+  else showResult();
+}
+function showResult() {
+  var sc=testState.score; var tot=testState.seq.length;
+  var pct=Math.round((sc/tot)*100);
+  var col=pct>=80?'#2dd4a0':pct>=50?'#f8c94c':'#f25c7a';
+  var r=50; var c2=2*Math.PI*r;
+  var h = '<div style="text-align:center;margin-bottom:22px;">';
+  h += '<div style="font-size:50px;margin-bottom:10px;">'+(pct>=80?'🏆':pct>=50?'💪':'📖')+'</div>';
+  h += '<div style="font-size:21px;font-weight:900;color:var(--text);">'+(pct>=80?'অসাধারণ!':pct>=50?'ভালো করেছ!':'আরও পড়ো!')+'</div>';
+  h += '<div class="result-ring"><svg width="130" height="130">';
+  h += '<circle cx="65" cy="65" r="'+r+'" fill="none" stroke="var(--border)" stroke-width="9"/>';
+  h += '<circle cx="65" cy="65" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="9" stroke-dasharray="'+c2+'" stroke-dashoffset="'+(c2*(1-pct/100))+'" stroke-linecap="round" style="filter:drop-shadow(0 0 6px '+col+');"/>';
+  h += '</svg><div class="ring-mid"><div style="font-size:26px;font-weight:900;color:'+col+';">'+pct+'%</div><div style="font-size:11px;color:var(--muted);">'+sc+'/'+tot+'</div></div></div></div>';
+  testState.answers.forEach(function(a){
+    h += '<div class="ans-row '+(a.correct?'ans-ok':'ans-ng')+'">';
+    h += '<span style="font-size:17px;">'+(a.correct?'✅':'❌')+'</span>';
+    h += '<div style="flex:1;"><div style="font-weight:700;font-size:14px;color:var(--text);">'+a.card.german+'</div>';
+    h += '<div style="font-size:12px;color:var(--sub);">সঠিক: <span style="color:var(--green);">'+a.card[a.field]+'</span>';
+    if(!a.correct) h += ' · তোমার: <span style="color:var(--red);">'+a.chosen+'</span>';
+    h += '</div></div></div>';
+  });
+  h += '<div style="display:flex;gap:9px;margin-top:16px;">';
+  h += '<button class="btn btn-blue" style="flex:1;" onclick="startTest(testState.dk,testState.mode)">🔄 আবার</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="backFromTest()">← ফিরে যাও</button></div>';
+  document.getElementById('resultContent').innerHTML = h;
+  showPage('pgResult');
+}
+
+// ════════════════════════════════
+// MATCH
+// ════════════════════════════════
+function startMatch(dkArg) {
+  var dk = dkArg || decks.find(function(d){return d.id===activeDeckId;});
+  activeDeckId = dk.id;
+  var sample = weightedSample(dk.cards, Math.min(5, dk.cards.length));
+  matchState = {dk:dk, sample:sample, selected:null, matched:{}, startTime:Date.now()};
+  if(matchTimer) clearInterval(matchTimer);
+  matchTimer = setInterval(function(){
+    var s = Math.floor((Date.now()-matchState.startTime)/1000);
+    document.getElementById('matchTimer').textContent = '⏱ '+s+'s';
+  }, 500);
+  document.getElementById('matchDoneMsg').style.display='none';
+  document.getElementById('matchProg').style.width='0%';
+  // German left, Bengali right — each shuffled independently so rows don't align
+  var deTiles = sample.map(function(c){ return {id:'de_'+c.id, text:c.german, type:'de', cid:c.id}; });
+  var bnTiles = sample.map(function(c){ return {id:'bn_'+c.id, text:c.bengali, type:'bn', cid:c.id}; });
+  deTiles.sort(function(){return Math.random()-.5;});
+  bnTiles.sort(function(){return Math.random()-.5;});
+  // Interleave de/bn so grid col1 = German, col2 = Bengali
+  var tiles = [];
+  for(var i=0;i<deTiles.length;i++){ tiles.push(deTiles[i]); tiles.push(bnTiles[i]); }
+  matchState.tiles = tiles;
+  var h = '';
+  tiles.forEach(function(t,i){ h += '<div class="match-tile" id="mt_'+t.id+'" style="animation-delay:'+i*0.04+'s;" onclick="matchClick(\''+t.id+'\')">'+t.text+'</div>'; });
+  document.getElementById('matchGrid').innerHTML = h;
+  showPage('pgMatch');
+}
+function matchClick(tid) {
+  if(matchState.matched[tid]) return;
+  var tile = matchState.tiles.find(function(t){return t.id===tid;});
+  if(!tile) return;
+  if(!matchState.selected){ matchState.selected=tid; document.getElementById('mt_'+tid).classList.add('sel'); return; }
+  if(matchState.selected===tid){ document.getElementById('mt_'+tid).classList.remove('sel'); matchState.selected=null; return; }
+  var prev = matchState.tiles.find(function(t){return t.id===matchState.selected;});
+  var ok = (prev.cid===tile.cid && prev.type!==tile.type);
+  var sid = matchState.selected;
+  if(ok){
+    [tid,sid].forEach(function(id){
+      matchState.matched[id]=true;
+      var el=document.getElementById('mt_'+id);
+      el.classList.remove('sel'); el.classList.add('matched');
+    });
+    matchState.selected=null;
+    var mc=Object.keys(matchState.matched).length;
+    document.getElementById('matchProg').style.width=(mc/(matchState.sample.length*2)*100)+'%';
+    if(mc===matchState.sample.length*2){
+      clearInterval(matchTimer);
+      var s=Math.floor((Date.now()-matchState.startTime)/1000);
+      document.getElementById('matchTime').textContent=s+'s';
+      document.getElementById('matchDoneMsg').style.display='block';
+      recPrac(3);
+    }
+  } else {
+    [tid,sid].forEach(function(id){ document.getElementById('mt_'+id).classList.add('wrong'); });
+    setTimeout(function(){
+      [tid,sid].forEach(function(id){
+        var el=document.getElementById('mt_'+id);
+        if(el) el.classList.remove('wrong','sel');
+      });
+      matchState.selected=null;
+    }, 500);
+  }
+}
+
+// ════════════════════════════════
+// ADD CARD
+// ════════════════════════════════
+function addCard() {
+  var ger = document.getElementById('manGer').value.trim();
+  var bn = document.getElementById('manBn').value.trim();
+  if(!ger||!bn){ showMsg('manMsg','❗ জার্মান ও বাংলা আবশ্যক।','err'); return; }
+  if(!manPickedDeckId){ showMsg('manMsg','❗ Deck বেছে নিন।','err'); return; }
+  var existingDk = decks.find(function(d){return d.id===manPickedDeckId;});
+  if(!existingDk){ showMsg('manMsg','❗ Deck পাওয়া যায়নি।','err'); return; }
+  if(existingDk.cards.some(function(c){return c.german.trim().toLowerCase()===ger.toLowerCase();})){
+    showWarn({icon:'⚠️', title:'শব্দটা আগে থেকেই আছে', highlight:ger, message:'"'+existingDk.name+'" deck-এ এই শব্দ আগে থেকেই আছে। তাও যোগ করবেন?', okText:'হ্যাঁ, যোগ করো', theme:'warn', onConfirm:function(){ doAddCard(ger,bn); }});
+    return;
+  }
+  doAddCard(ger,bn);
+}
+function doAddCard(ger,bn) {
+  var dk = decks.find(function(d){return d.id===manPickedDeckId;});
+  if(!dk){ showMsg('manMsg','❗ Deck পাওয়া যায়নি।','err'); return; }
+  var nc = {id:Date.now(), german:ger, bengali:bn,
+    english:document.getElementById('manEn').value.trim(),
+    sentence:document.getElementById('manSent').value.trim(),
+    sentenceBn:document.getElementById('manSentBn').value.trim()};
+  dk.cards.push(nc);
+  saveLS('df_decks', decks);
+  ['manGer','manBn','manEn','manSent','manSentBn'].forEach(function(id){ document.getElementById(id).value=''; });
+  renderHome(); renderLibrary(); updateManDeckBtn();
+  showMsg('manMsg','✅ কার্ড যোগ হয়েছে!','ok');
+  setTimeout(function(){ document.getElementById('manMsg').innerHTML=''; }, 2500);
+}
+
+// ════════════════════════════════
+// BULK ADD
+// ════════════════════════════════
+function openBulkAdd() {
+  bulkPickedDeckId = null;
+  bulkSavedText = '';
+  renderBulkAddBody();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function renderBulkAddBody() {
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">📋 একসাথে অনেক Card যোগ করো</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">Deck বেছে নাও</label>';
+  h += '<button type="button" class="form-sel" id="bulkDeckBtn" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;" onclick="bulkSavedText=document.getElementById(\'bulkText\').value;openPicker({mode:\'deck\', startFolderId:currentFolderId, title:\'📂 Deck বেছে নাও\', onPickDeck:function(id){ bulkPickedDeckId=id; renderBulkAddBody(); }})">';
+  h += '<span id="bulkDeckBtnLabel" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">-- Deck বেছে নাও --</span><span style="color:var(--muted);flex-shrink:0;">📁 ›</span></button></div>';
+  h += '<div class="form-g"><label class="form-lbl">প্রতি লাইনে একটা card, কমা (,) দিয়ে আলাদা করো</label>';
+  h += '<div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.5;">German, বাংলা, English, বাক্য, বাক্যের বাংলা<br>শুধু German আর বাংলা লাগবেই, বাকি ঐচ্ছিক</div>';
+  h += '<button type="button" class="btn btn-ghost btn-sm btn-full" style="margin-bottom:9px;" onclick="bulkSavedText=document.getElementById(\'bulkText\').value;triggerBulkFileImport()">📁 File থেকে Import করো (.txt)</button>';
+  h += '<input type="file" id="bulkFileInp" accept=".txt,.csv,text/plain" style="display:none;" onchange="bulkFileSelected(event)"/>';
+  h += '<textarea class="form-inp" id="bulkText" rows="8" style="resize:vertical;font-family:monospace;font-size:13px;line-height:1.6;" placeholder="der Hund, কুকুর, Dog&#10;die Katze, বিড়াল, Cat"></textarea></div>';
+  h += '<div id="bulkMsg"></div>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="submitBulkAdd()">➕ সব যোগ করো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ বাতিল</button>';
+  h += '</div>';
+  document.getElementById('modalBody').innerHTML = h;
+  var ta = document.getElementById('bulkText');
+  if(ta && bulkSavedText) ta.value = bulkSavedText;
+  updateBulkDeckBtn();
+}
+function triggerBulkFileImport() {
+  document.getElementById('bulkFileInp').click();
+}
+function bulkFileSelected(evt) {
+  var file = evt.target.files && evt.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var ta = document.getElementById('bulkText');
+    if(ta){
+      ta.value = ta.value.trim() ? ta.value.replace(/\n+$/,'')+'\n'+e.target.result : e.target.result;
+      showToast('📄 File load হয়েছে, দেখে নিয়ে নিচের বাটনে চাপো');
+    }
+  };
+  reader.readAsText(file);
+  evt.target.value = '';
+}
+function submitBulkAdd() {
+  if(!bulkPickedDeckId){ showMsg('bulkMsg','❗ Deck বেছে নিন।','err'); return; }
+  var targetDk = decks.find(function(d){return d.id===bulkPickedDeckId;});
+  if(!targetDk){ showMsg('bulkMsg','❗ Deck পাওয়া যায়নি।','err'); return; }
+  var raw = document.getElementById('bulkText').value;
+  var lines = raw.split('\n').map(function(l){return l.trim();}).filter(function(l){return l.length>0;});
+  if(!lines.length){ showMsg('bulkMsg','❗ অন্তত একটা লাইন লিখুন।','err'); return; }
+  var existingLower = targetDk.cards.map(function(c){return c.german.trim().toLowerCase();});
+  var newCards = [], skipped = 0, duplicates = 0;
+  lines.forEach(function(line){
+    var parts = line.split(',');
+    if(parts.length>5) parts = parts.slice(0,4).concat(parts.slice(4).join(','));
+    parts = parts.map(function(p){return p.trim();});
+    var ger = parts[0]||'', bn = parts[1]||'';
+    if(!ger||!bn){ skipped++; return; }
+    var gerLower = ger.toLowerCase();
+    if(existingLower.indexOf(gerLower)>=0 || newCards.some(function(c){return c.german.toLowerCase()===gerLower;})){ duplicates++; return; }
+    newCards.push({id:Date.now()+newCards.length, german:ger, bengali:bn, english:parts[2]||'', sentence:parts[3]||'', sentenceBn:parts[4]||''});
+  });
+  if(!newCards.length){ showMsg('bulkMsg','❗ কোনো নতুন card পাওয়া যায়নি। ('+skipped+' invalid, '+duplicates+' duplicate)','err'); return; }
+  newCards.forEach(function(c){ targetDk.cards.push(c); });
+  saveLS('df_decks', decks);
+  renderHome(); renderLibrary(); populateDeckSel();
+  closeModal();
+  var note = [];
+  if(duplicates) note.push(duplicates+'টা duplicate');
+  if(skipped) note.push(skipped+'টা invalid');
+  showToast('✅ '+newCards.length+'টা card যোগ হয়েছে'+(note.length?' ('+note.join(', ')+' বাদ পড়েছে)':''));
+}
+
+// ════════════════════════════════
+// PROFILE
+// ════════════════════════════════
+function openProfile() {
+  document.getElementById('profileAvatar').textContent = (profile.name||'শ').charAt(0);
+  document.getElementById('profileName').textContent = profile.name||'শিক্ষার্থী';
+  document.getElementById('profName').value = profile.name||'';
+  document.getElementById('profLevel').value = profile.level||'';
+  document.getElementById('ps1').textContent = decks.length;
+  document.getElementById('ps2').textContent = decks.reduce(function(s,d){return s+d.cards.length;},0);
+  document.getElementById('ps3').textContent = practice.streak||0;
+  showPage('pgProfile');
+}
+function saveProfileData() {
+  var nm = document.getElementById('profName').value.trim() || 'শিক্ষার্থী';
+  profile.name = nm; profile.level = document.getElementById('profLevel').value;
+  saveLS('df_prof', profile);
+  document.getElementById('avatarBtn').textContent = nm.charAt(0);
+  document.getElementById('profileAvatar').textContent = nm.charAt(0);
+  document.getElementById('profileName').textContent = nm;
+  showMsg('profMsg','✅ সংরক্ষিত!','ok');
+  setTimeout(function(){ document.getElementById('profMsg').innerHTML=''; },2000);
+}
+function toggleTheme() {
+  var light = document.body.classList.toggle('light-theme');
+  saveLS('df_theme', light?'light':'dark');
+  var btn = document.getElementById('themeToggleBtn');
+  if(btn) btn.textContent = light?'☀️ Light Mode':'🌙 Dark Mode';
+}
+function clearAllData() {
+  showWarn({icon:'⚠️', title:'সব Data মুছবেন?', message:'সব deck, folder, card, progress মুছে যাবে। এই কাজ আর ফেরানো যাবে না।', okText:'🗑️ সব মুছো', theme:'danger', onConfirm:function(){
+    localStorage.clear();
+    decks = JSON.parse(JSON.stringify(DDECKS));
+    folders = [];
+    sfolders = []; sfiles = []; slFolderId = null;
+    spDraft = {fileId:null, items:[]}; spEditIdx = -1;
+    practice = {streak:0,lastDate:'',todayCount:0,streakDate:''};
+    profile = {name:'শিক্ষার্থী',level:''};
+    currentFolderId = null;
+    seedA1Scaffold();
+    renderHome(); renderLibrary(); populateDeckSel();
+    showPage('pgApp');
+  }});
+}
+function exportBackup() {
+  var backup = {version:2, exportedAt:new Date().toISOString(), decks:decks, folders:folders, sfolders:sfolders, sfiles:sfiles, practice:practice, profile:profile, reminder:reminder};
+  var blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'deutschflash-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  showToast('⬇️ Backup download হয়েছে');
+}
+function triggerImport() {
+  document.getElementById('importFileInp').click();
+}
+function importBackup(evt) {
+  var file = evt.target.files && evt.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var data;
+    try {
+      data = JSON.parse(e.target.result);
+      if(!data || !Array.isArray(data.decks)) throw new Error('invalid');
+    } catch(err) {
+      showToast('❗ এই file valid backup না');
+      evt.target.value = '';
+      return;
+    }
+    showWarn({icon:'⬆️', title:'Backup Restore করবেন?', message:'বর্তমান সব card/deck/folder মুছে এই backup দিয়ে replace হবে।', okText:'✅ Restore করো', theme:'danger', onConfirm:function(){
+      decks = data.decks;
+      folders = Array.isArray(data.folders) ? data.folders : [];
+      sfolders = Array.isArray(data.sfolders) ? data.sfolders : [];
+      sfiles = Array.isArray(data.sfiles) ? data.sfiles : [];
+      saveSL(); slFolderId = null;
+      if(data.practice) practice = data.practice;
+      if(data.profile) profile = data.profile;
+      if(data.reminder) reminder = data.reminder;
+      saveLS('df_decks', decks);
+      saveLS('df_folders', folders);
+      saveLS('df_prac', practice);
+      saveLS('df_prof', profile);
+      saveLS('df_rem', reminder);
+      currentFolderId = null;
+      renderHome(); renderLibrary(); populateDeckSel();
+      showToast('✅ Backup restore হয়েছে');
+      evt.target.value = '';
+    }, onCancel:function(){ evt.target.value=''; }});
+  };
+  reader.readAsText(file);
+}
+
+// ════════════════════════════════
+// PRACTICE & STREAK
+// ════════════════════════════════
+function initPractice() {
+  var today = new Date().toDateString();
+  if(practice.lastDate !== today){
+    var yd = new Date(); yd.setDate(yd.getDate()-1);
+    if(practice.lastDate !== yd.toDateString()) practice.streak = 0;
+    practice.todayCount = 0;
+    practice.lastDate = today;
+    saveLS('df_prac', practice);
+  }
+  updateStats();
+  renderStreakDots();
+  updateReminderBanner();
+  setInterval(checkNotify, 60000);
+}
+function recPrac(n) {
+  practice.todayCount = (practice.todayCount||0) + (n||1);
+  var today = new Date().toDateString();
+  if(practice.todayCount>=5 && practice.streakDate!==today){
+    practice.streak = (practice.streak||0)+1;
+    practice.streakDate = today;
+  }
+  saveLS('df_prac', practice);
+  updateStats();
+  updateReminderBanner();
+}
+function updateStats() {
+  var s=document.getElementById('statStreak'); if(s) s.textContent=practice.streak||0;
+  var t=document.getElementById('statToday'); if(t) t.textContent=practice.todayCount||0;
+  var d=document.getElementById('statDeck'); if(d) d.textContent=decks.length;
+  var diffCount = 0;
+  decks.forEach(function(dk){ dk.cards.forEach(function(c){ if(c.difficult) diffCount++; }); });
+  var card = document.getElementById('difficultReviewCard');
+  if(card){
+    if(diffCount>0){
+      card.style.display='flex';
+      document.getElementById('difficultReviewCount').textContent = diffCount+'টা "কঠিন" card বাকি';
+    } else {
+      card.style.display='none';
+    }
+  }
+}
+function renderStreakDots() {
+  var el = document.getElementById('streakDots'); if(!el) return;
+  var days=['র','সো','ম','বু','বৃ','শু','শ'];
+  var today = new Date().getDay();
+  var h='';
+  for(var i=0;i<7;i++){
+    var act=i<=today;
+    var col=act?'#7c5cfc':'#ffffff18';
+    h+='<div style="flex:1;text-align:center;">';
+    h+='<div style="height:4px;background:'+col+';border-radius:99px;margin-bottom:4px;"></div>';
+    h+='<div style="font-size:10px;color:'+(act?'#a78bfa':'var(--muted)')+';">'+days[i]+'</div></div>';
+  }
+  el.innerHTML=h;
+}
+function updateReminderBanner() {
+  var t=document.getElementById('reminderTitle');
+  var s=document.getElementById('reminderSub');
+  var done=practice.todayCount||0;
+  if(done>=5){
+    if(t) t.textContent='আজকের Practice সম্পন্ন! 🎉';
+    if(s) s.textContent=(practice.streak||0)+' দিনের streak চলছে!';
+  } else {
+    if(t) t.textContent='আজকের Practice বাকি! ⚡';
+    if(s) s.textContent='আর '+(5-done)+'টি কার্ড দেখলেই লক্ষ্য পূরণ!';
+  }
+}
+function dismissReminder(){ document.getElementById('reminderBanner').style.display='none'; }
+
+// ════════════════════════════════
+// REMINDER
+// ════════════════════════════════
+function openReminderModal(){
+  document.getElementById('rTime').value = reminder.time||'08:00';
+  var btns=document.querySelectorAll('.rday');
+  btns.forEach(function(b){
+    var d=parseInt(b.getAttribute('data-d'));
+    b.classList.toggle('on', reminder.days.indexOf(d)>=0);
+    b.onclick=function(){this.classList.toggle('on');};
+  });
+  document.getElementById('reminderModal').style.display='flex';
+}
+function saveReminder(){
+  var time=document.getElementById('rTime').value;
+  var days=[];
+  document.querySelectorAll('.rday').forEach(function(b){ if(b.classList.contains('on')) days.push(parseInt(b.getAttribute('data-d'))); });
+  reminder={time:time,days:days};
+  saveLS('df_rem',reminder);
+  document.getElementById('reminderModal').style.display='none';
+  if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
+  showToast('🔔 Reminder সেট: '+time);
+}
+function showToast(msg, actionText, actionFn) {
+  var t = document.getElementById('dfToast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'dfToast';
+    t.style.cssText = 'position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:#1e2150;border:1.5px solid var(--borderL);border-radius:14px;padding:11px 14px 11px 20px;font-size:14px;font-weight:700;color:var(--text);z-index:999;white-space:nowrap;box-shadow:0 4px 20px #00000055;font-family:var(--font);display:flex;align-items:center;gap:12px;';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = '<span>'+msg+'</span>';
+  if(actionText && actionFn){
+    var ab = document.createElement('button');
+    ab.textContent = actionText;
+    ab.style.cssText = 'background:var(--blue);border:none;border-radius:9px;padding:7px 13px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;font-family:var(--font);';
+    ab.addEventListener('click', function(){ clearTimeout(t._tmr); t.style.display='none'; actionFn(); });
+    t.appendChild(ab);
+  }
+  t.style.animation = 'fadeUp .3s ease';
+  t.style.display = 'flex';
+  clearTimeout(t._tmr);
+  t._tmr = setTimeout(function(){ t.style.display='none'; }, actionText?4500:2800);
+}
+function checkNotify(){
+  var now=new Date();
+  var p=(reminder.time||'08:00').split(':');
+  if(reminder.days.indexOf(now.getDay())>=0 && now.getHours()===parseInt(p[0]) && now.getMinutes()===parseInt(p[1]) && practice.todayCount<5){
+    if('Notification' in window && Notification.permission==='granted'){
+      new Notification('DeutschFlash 🇩🇪',{body:'আজকের German practice বাকি!'});
+    }
+  }
+}
+
+// ════════════════════════════════
+// PDF EXPORT
+// ════════════════════════════════
+function buildPDF(tDecks){
+  var h='<h1>DeutschFlash Vocabulary</h1>';
+  tDecks.forEach(function(dk){
+    h+='<h2>'+dk.emoji+' '+dk.name+'</h2>';
+    h+='<table><thead><tr><th>#</th><th>German</th><th>Bengali</th><th>English</th><th>Sentence</th></tr></thead><tbody>';
+    dk.cards.forEach(function(c,i){
+      h+='<tr><td style="color:#aaa;">'+(i+1)+'</td>';
+      h+='<td class="de">'+c.german+'</td>';
+      h+='<td class="bn">'+c.bengali+'</td>';
+      h+='<td>'+c.english+'</td>';
+      h+='<td style="font-style:italic;color:#555;">'+c.sentence+(c.sentenceBn?'<span class="sent-bn">'+c.sentenceBn+'</span>':'')+'</td></tr>';
+    });
+    h+='</tbody></table>';
+  });
+  return h;
+}
+function openPDF(html){
+  document.getElementById('pdfPreviewContent').innerHTML = html;
+  showPage('pgPdfPreview');
+}
+function printPdfPreview(){
+  // Top-level window.print() combined with @media print CSS that isolates
+  // #pdfPreviewContent — far more reliable across mobile browsers than
+  // calling print() on an iframe's contentWindow.
+  window.print();
+}
+function exportAllPDF(){
+  openPDF(buildPDF(decks.filter(function(d){return d.cards.length>0;})));
+}
+function exportDeckPDF(id){
+  var dk=decks.find(function(d){return d.id===id;});
+  if(!dk) return;
+  openPDF(buildPDF([dk]));
+}
+
+
+// ════════════════════════════════
+// SENTENCE LIBRARY — sentence-only (folders + files, no flashcards)
+// Created from the Create tab ("Sentence" mode), browsed in the Library tab ("Sentences" mode)
+// ════════════════════════════════
+var sfolders = loadLS('df_sfolders', []);
+var sfiles = loadLS('df_sfiles', []);
+if(!Array.isArray(sfolders)) sfolders = [];
+if(!Array.isArray(sfiles)) sfiles = [];
+var slFolderId = null;
+var slOpen = {};
+var libMode = loadLS('df_libmode', 'cards');
+if(libMode!=='sent') libMode = 'cards';
+var createMode = 'card';
+var slFolderEditId = null, slFolderParent = null, slFolderEmoji = '📁';
+
+function saveSL(){ saveLS('df_sfolders', sfolders); saveLS('df_sfiles', sfiles); }
+
+// Older versions kept sentence files inside each deck (deck.sentenceFiles).
+// Move them into the standalone sentence library (one folder per deck).
+function migrateSentenceFiles(){
+  var changed = false, base = Date.now(), n = 0;
+  decks.forEach(function(dk){
+    if(dk.sentenceFiles && dk.sentenceFiles.length){
+      var fid = base + (n++);
+      sfolders.push({id:fid, name:dk.name, parentId:null, emoji:dk.emoji||'📁', order:fid});
+      dk.sentenceFiles.forEach(function(f){
+        sfiles.push({id:f.id, name:f.name, folderId:fid, items:f.items||[], updated:f.updated||Date.now()});
+      });
+      changed = true;
+    }
+    if('sentenceFiles' in dk){ delete dk.sentenceFiles; changed = true; }
+  });
+  if(changed){ saveSL(); saveLS('df_decks', decks); }
+}
+migrateSentenceFiles();
+
+function sGetFolder(id){ return id ? (sfolders.find(function(f){return f.id===id;}) || null) : null; }
+function sChildFolders(pid){ return sfolders.filter(function(f){return (f.parentId||null)===(pid||null);}).sort(function(a,b){return (a.order||a.id)-(b.order||b.id);}); }
+function sFilesIn(fid){ return sfiles.filter(function(f){return (f.folderId||null)===(fid||null);}).sort(function(a,b){return a.id-b.id;}); }
+function sFileOf(fid){ return fid ? (sfiles.find(function(f){return f.id===fid;}) || null) : null; }
+function sFolderPath(id){
+  var p=[], f=sGetFolder(id);
+  while(f){ p.unshift(f); f = f.parentId ? sGetFolder(f.parentId) : null; }
+  return p;
+}
+function sCollectIds(id){
+  var ids=[id];
+  sChildFolders(id).forEach(function(c){ ids = ids.concat(sCollectIds(c.id)); });
+  return ids;
+}
+function sLocLabel(id){
+  if(!id || !sGetFolder(id)) return '📂 Sentence Library';
+  return sFolderPath(id).map(function(f){return f.emoji+' '+esc(f.name);}).join(' › ');
+}
+function sPathText(id){
+  return sFolderPath(id).map(function(f){return f.name;}).join(' › ');
+}
+
+// ── Mode switches ──
+function setLibMode(m){
+  libMode = (m==='sent') ? 'sent' : 'cards';
+  saveLS('df_libmode', libMode);
+  document.getElementById('libCards').style.display = libMode==='cards' ? '' : 'none';
+  document.getElementById('libSent').style.display = libMode==='sent' ? '' : 'none';
+  document.getElementById('libSegCards').classList.toggle('on', libMode==='cards');
+  document.getElementById('libSegSent').classList.toggle('on', libMode==='sent');
+  if(libMode==='sent') slRender(); else renderLibrary();
+}
+function setCreateMode(m){
+  createMode = (m==='sent') ? 'sent' : 'card';
+  document.getElementById('crCard').style.display = createMode==='card' ? '' : 'none';
+  document.getElementById('crSent').style.display = createMode==='sent' ? '' : 'none';
+  document.getElementById('crSegCard').classList.toggle('on', createMode==='card');
+  document.getElementById('crSegSent').classList.toggle('on', createMode==='sent');
+  if(createMode==='sent') renderSentences();
+}
+function openSentenceEditor(){
+  setCreateMode('sent');
+  showPage('pgApp');
+  switchTab('create');
+  window.scrollTo(0,0);
+}
+
+// ── Library: render ──
+function slOpenFolder(id){ slFolderId = id||null; slRender(); }
+function slToggle(id){ slOpen[id] = !slOpen[id]; slRender(); }
+function slRender(){
+  var el = document.getElementById('slList');
+  if(!el) return;
+  if(slFolderId && !sGetFolder(slFolderId)) slFolderId = null;
+  var path = slFolderId ? sFolderPath(slFolderId) : [];
+  var bc = document.getElementById('slBreadcrumb');
+  if(bc){
+    var bh = '<div style="display:flex;align-items:center;gap:6px;">';
+    if(slFolderId){
+      var up = sGetFolder(slFolderId).parentId || null;
+      bh += '<button onclick="slOpenFolder('+(up||'null')+')" style="background:none;border:none;color:var(--text);cursor:pointer;font-size:22px;line-height:1;padding:0 2px 0 0;flex-shrink:0;">←</button>';
+    }
+    bh += '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:13px;">';
+    bh += '<span style="color:'+(slFolderId?'var(--cyan)':'var(--text)')+';font-weight:800;cursor:pointer;" onclick="slOpenFolder(null)">💬 Sentence Library</span>';
+    path.forEach(function(f,i){
+      var last = i===path.length-1;
+      bh += '<span style="color:var(--muted);">›</span>';
+      bh += '<span style="color:'+(last?'var(--text)':'var(--cyan)')+';font-weight:800;cursor:pointer;" onclick="slOpenFolder('+f.id+')">'+f.emoji+' '+esc(f.name)+'</span>';
+    });
+    bh += '</div></div>';
+    bc.innerHTML = bh;
+  }
+  var subs = sChildFolders(slFolderId), files = sFilesIn(slFolderId);
+  var h = '';
+  subs.forEach(function(f,i){
+    var fc = sFilesIn(f.id).length, sc = sChildFolders(f.id).length;
+    h += '<div class="deck-card" style="animation-delay:'+(i*0.04)+'s;position:relative;padding-right:96px;" onclick="slOpenFolder('+f.id+')">';
+    h += '<button onclick="event.stopPropagation();slFolderForm('+f.id+')" style="position:absolute;top:14px;right:56px;background:#ffffff0a;border:1.5px solid var(--borderL);border-radius:10px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--sub);z-index:2;">✏️</button>';
+    h += '<button onclick="event.stopPropagation();slDeleteFolder('+f.id+')" style="position:absolute;top:14px;right:14px;background:#f25c7a14;border:1.5px solid #f25c7a3a;border-radius:10px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--red);z-index:2;">🗑️</button>';
+    h += '<div class="d-row" style="margin-bottom:0;"><div class="d-ebox" style="background:#7c5cfc20;border:1px solid #7c5cfc40;">'+f.emoji+'</div>';
+    h += '<div style="min-width:0;"><div style="font-weight:800;font-size:15px;color:var(--text);">'+esc(f.name)+'</div><div style="font-size:12px;color:var(--sub);">'+sc+' Folder · '+fc+' File</div></div></div></div>';
+  });
+  files.forEach(function(f,i){
+    var open = !!slOpen[f.id];
+    h += '<div class="deck-card" style="animation-delay:'+((subs.length+i)*0.04)+'s;">';
+    h += '<div class="d-row" style="cursor:pointer;" onclick="slToggle('+f.id+')">';
+    h += '<div class="d-ebox" style="background:#4cc9f020;border:1px solid #4cc9f040;">📄</div>';
+    h += '<div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:15px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(f.name)+'</div><div style="font-size:12px;color:var(--sub);">'+f.items.length+' বাক্য</div></div>';
+    h += '<div style="color:var(--muted);font-size:16px;flex-shrink:0;">'+(open?'▲':'▼')+'</div></div>';
+    if(open){
+      h += '<div style="margin:-4px 0 13px;">';
+      if(!f.items.length) h += '<div style="font-size:12px;color:var(--muted);padding:8px 0;">এই File-এ কোনো বাক্য নেই।</div>';
+      f.items.forEach(function(it,si){
+        h += '<div class="sl-sent" style="display:flex;gap:8px;align-items:flex-start;"><div style="flex:1;min-width:0;"><div class="sl-de">'+esc(it.de)+'</div><div class="sl-bn">'+esc(it.bn)+'</div></div>';
+        h += '<button class="sp-ib" onclick="slEditSent('+f.id+','+si+')">✏️</button><button class="sp-ib" style="color:var(--red);border-color:#f25c7a44;" onclick="slDelSent('+f.id+','+si+')">✕</button></div>';
+      });
+      h += '</div>';
+    }
+    h += '<div class="d-acts">';
+    h += '<button class="btn btn-ghost btn-sm" style="flex:1;" onclick="spOpenFile('+f.id+')">✏️ খোলো</button>';
+    h += '<button class="btn btn-blue btn-sm" style="flex:1;" onclick="spPdfFile('+f.id+')">📄 PDF</button>';
+    h += '<button class="btn btn-sm" style="padding:8px 11px;background:#f25c7a18;border:1.5px solid #f25c7a44;color:var(--red);" onclick="slDeleteFile('+f.id+')">🗑️</button>';
+    h += '</div></div>';
+  });
+  if(!subs.length && !files.length){
+    h = '<div style="text-align:center;padding:50px 20px;color:var(--muted);"><div style="font-size:40px;margin-bottom:12px;">📭</div><div style="font-size:14px;">এখানে কিছু নেই।<br>নতুন Folder বা File যোগ করো।</div></div>';
+  }
+  el.innerHTML = h;
+}
+
+// ── Library: folders ──
+function slFolderForm(id){
+  var f = id ? sGetFolder(id) : null;
+  slFolderEditId = f ? f.id : null;
+  slFolderParent = f ? (f.parentId||null) : slFolderId;
+  slFolderEmoji = f ? f.emoji : '📁';
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">'+(f?'✏️ Folder Edit করো':'📁 নতুন Folder')+'</div>';
+  if(!f) h += '<div style="font-size:12px;color:var(--sub);margin-top:6px;">এখানে তৈরি হবে: '+sLocLabel(slFolderParent)+'</div>';
+  h += '</div>';
+  h += '<div class="form-g"><label class="form-lbl">Folder-এর নাম *</label><input class="form-inp" id="slFolderNm" value="'+(f?esc(f.name):'')+'" placeholder="যেমন: Alltag"/></div>';
+  h += '<div class="form-g"><label class="form-lbl">Emoji বেছে নাও</label><div style="display:flex;flex-wrap:wrap;gap:8px;">';
+  FOLDER_EMOJIS.forEach(function(em){
+    var on = em===slFolderEmoji;
+    h += '<button type="button" class="sl-emoji-pick" data-emoji="'+em+'" style="width:40px;height:40px;border-radius:11px;font-size:19px;cursor:pointer;background:'+(on?'#7c5cfc33':'#ffffff08')+';border:1.5px solid '+(on?'#7c5cfc':'var(--borderL)')+';">'+em+'</button>';
+  });
+  h += '</div></div>';
+  h += '<div id="slFolderMsg"></div>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="slFolderSave()">💾 '+(f?'Save করো':'তৈরি করো')+'</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ বাতিল</button>';
+  h += '</div>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.querySelectorAll('.sl-emoji-pick').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      slFolderEmoji = btn.getAttribute('data-emoji');
+      document.querySelectorAll('.sl-emoji-pick').forEach(function(b){ b.style.background='#ffffff08'; b.style.borderColor='var(--borderL)'; });
+      btn.style.background='#7c5cfc33'; btn.style.borderColor='#7c5cfc';
+    });
+  });
+}
+function slFolderSave(){
+  var nm = document.getElementById('slFolderNm').value.trim();
+  if(!nm){ showMsg('slFolderMsg','❗ Folder-এর নাম দিন।','err'); return; }
+  if(slFolderEditId){
+    var f = sGetFolder(slFolderEditId);
+    if(f){ f.name = nm; f.emoji = slFolderEmoji; }
+  } else {
+    var id = Date.now();
+    sfolders.push({id:id, name:nm, parentId:slFolderParent||null, emoji:slFolderEmoji, order:id});
+  }
+  saveSL();
+  closeModal();
+  slRender(); renderSentences();
+  showToast(slFolderEditId ? '✅ Folder আপডেট হয়েছে' : '✅ Folder তৈরি হয়েছে');
+}
+function slDeleteFolder(id){
+  var f = sGetFolder(id);
+  if(!f) return;
+  var ids = sCollectIds(id);
+  var fileCount = sfiles.filter(function(x){return ids.indexOf(x.folderId||null)>=0;}).length;
+  var subCount = ids.length-1;
+  var empty = (subCount===0 && fileCount===0);
+  showWarn({
+    icon: empty?'🗑️':'⚠️',
+    title: empty?'Folder Delete করবেন?':'সাবধান! সব মুছে যাবে',
+    highlight: f.emoji+' '+f.name,
+    message: empty ? 'এই folder খালি।' : 'এর ভিতরে '+subCount+'টি Folder ও '+fileCount+'টি File আছে। Delete করলে ভিতরের সবকিছু একসাথে মুছে যাবে।',
+    okText: empty?'🗑️ Delete করো':'🗑️ সব Delete করো',
+    theme:'danger',
+    onConfirm:function(){
+      var removedFolders = sfolders.filter(function(x){return ids.indexOf(x.id)>=0;});
+      var removedFiles = sfiles.filter(function(x){return ids.indexOf(x.folderId||null)>=0;});
+      sfolders = sfolders.filter(function(x){return ids.indexOf(x.id)<0;});
+      sfiles = sfiles.filter(function(x){return ids.indexOf(x.folderId||null)<0;});
+      if(slFolderId && ids.indexOf(slFolderId)>=0) slFolderId = f.parentId||null;
+      spValidateDraft();
+      saveSL(); spSaveDraft();
+      slRender(); renderSentences();
+      showToast('🗑️ Folder মুছে ফেলা হয়েছে', 'Undo', function(){
+        sfolders = sfolders.concat(removedFolders);
+        sfiles = sfiles.concat(removedFiles);
+        saveSL(); slRender(); renderSentences();
+        showToast('✅ ফিরিয়ে আনা হয়েছে');
+      });
+    }
+  });
+}
+
+// ── Library: files ──
+function slNewFile(){
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">📄 নতুন File</div>';
+  h += '<div style="font-size:12px;color:var(--sub);margin-top:6px;">এখানে তৈরি হবে: '+sLocLabel(slFolderId)+'</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">File-এর নাম *</label><input class="form-inp" id="slFileNm" placeholder="যেমন: Alltag Sätze" onkeydown="if(event.key===\'Enter\'){event.preventDefault();slFileCreate();}"/></div>';
+  h += '<div id="slFileMsg"></div>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="slFileCreate()">💾 তৈরি করো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ বাতিল</button>';
+  h += '</div>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(function(){ var el=document.getElementById('slFileNm'); if(el) el.focus(); }, 60);
+}
+function slFileCreate(){
+  var nm = document.getElementById('slFileNm').value.trim();
+  if(!nm){ showMsg('slFileMsg','❗ File-এর নাম দিন।','err'); return; }
+  var f = {id:Date.now(), name:nm, folderId:slFolderId||null, items:[], updated:Date.now()};
+  sfiles.push(f);
+  saveSL();
+  closeModal();
+  slRender();
+  spSelectFile(f.id);
+  openSentenceEditor();
+}
+function slEditSent(fid,i){
+  spSelectFile(fid);
+  openSentenceEditor();
+  spEdit(i);
+}
+function slDelSent(fid,i){
+  var f = sFileOf(fid);
+  if(!f || !f.items[i]) return;
+  var removed = f.items.splice(i,1)[0];
+  f.updated = Date.now();
+  if(spDraft.fileId===fid){ spDraft.items = spCopy(f.items); spEditIdx = -1; }
+  saveSL(); slRender();
+  showToast('🗑️ বাক্য মুছে ফেলা হয়েছে','Undo',function(){
+    f.items.splice(Math.min(i,f.items.length),0,removed);
+    if(spDraft.fileId===fid) spDraft.items = spCopy(f.items);
+    saveSL(); slRender();
+  });
+}
+function slDeleteFile(fid){
+  var f = sFileOf(fid);
+  if(!f) return;
+  showWarn({icon:'🗑️', title:'File মুছে ফেলবে?', highlight:f.name, message:'এই Sentence File স্থায়ীভাবে মুছে যাবে।', okText:'মুছে ফেলো', theme:'danger', onConfirm:function(){
+    var idx = sfiles.indexOf(f);
+    sfiles = sfiles.filter(function(x){return x.id!==fid;});
+    spValidateDraft();
+    saveSL(); spSaveDraft();
+    slRender(); renderSentences();
+    showToast('🗑️ File মুছে ফেলা হয়েছে', 'Undo', function(){
+      sfiles.splice(Math.min(idx,sfiles.length), 0, f);
+      saveSL(); slRender();
+      showToast('✅ ফিরিয়ে আনা হয়েছে');
+    });
+  }});
+}
+function slExportFolderPDF(){
+  var ids = slFolderId ? sCollectIds(slFolderId) : null;
+  var list = sfiles.filter(function(f){
+    return f.items.length && (!ids || ids.indexOf(f.folderId||null)>=0);
+  }).sort(function(a,b){return a.id-b.id;});
+  if(!list.length){ showToast('❗ এখানে কোনো বাক্য নেই'); return; }
+  var title = slFolderId ? sGetFolder(slFolderId).name : 'Sentence Library';
+  openPDF(spBuildPdfHtml(slFolderId ? title : '', list.map(function(f){ return {name:f.name, items:f.items}; })));
+}
+
+// ── Sentence File picker (folders → files), like the Deck picker for cards ──
+var spk = {folderId:null, onPick:null};
+function openSPicker(startId, onPick){
+  spk = {folderId:(startId && sGetFolder(startId)) ? startId : null, onPick:onPick};
+  renderSPicker();
+  document.getElementById('pickerOverlay').style.display = 'flex';
+}
+function spkNav(id){ spk.folderId = id||null; renderSPicker(); }
+function spkPickFile(fid){
+  var cb = spk.onPick;
+  closePicker();
+  if(cb) cb(fid);
+}
+function renderSPicker(){
+  var path = spk.folderId ? sFolderPath(spk.folderId) : [];
+  var h = '<div style="text-align:center;margin-bottom:14px;"><div style="font-size:17px;font-weight:900;color:var(--text);">📂 File বেছে নাও</div></div>';
+  h += '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:12px;margin-bottom:14px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:9px 12px;">';
+  h += '<span style="color:'+(spk.folderId?'var(--cyan)':'var(--text)')+';font-weight:800;cursor:pointer;" onclick="spkNav(null)">💬 Sentence Library</span>';
+  path.forEach(function(f,i){
+    h += '<span style="color:var(--muted);">›</span>';
+    h += '<span style="color:'+(i===path.length-1?'var(--text)':'var(--cyan)')+';font-weight:800;cursor:pointer;" onclick="spkNav('+f.id+')">'+f.emoji+' '+esc(f.name)+'</span>';
+  });
+  h += '</div>';
+  var subs = sChildFolders(spk.folderId), files = sFilesIn(spk.folderId);
+  if(subs.length || files.length){
+    h += '<div style="max-height:270px;overflow-y:auto;margin-bottom:12px;">';
+    subs.forEach(function(f){
+      h += '<div onclick="spkNav('+f.id+')" style="display:flex;align-items:center;gap:11px;padding:12px 13px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:7px;cursor:pointer;">';
+      h += '<div style="width:38px;height:38px;border-radius:10px;background:#7c5cfc22;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">'+f.emoji+'</div>';
+      h += '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(f.name)+'</div><div style="font-size:11px;color:var(--sub);">'+sChildFolders(f.id).length+' Folder · '+sFilesIn(f.id).length+' File</div></div>';
+      h += '<div style="color:var(--muted);flex-shrink:0;">›</div></div>';
+    });
+    files.forEach(function(f){
+      h += '<div onclick="spkPickFile('+f.id+')" style="display:flex;align-items:center;gap:11px;padding:12px 13px;background:#4cc9f012;border:1px solid #4cc9f044;border-radius:12px;margin-bottom:7px;cursor:pointer;">';
+      h += '<div style="width:38px;height:38px;border-radius:10px;background:#4cc9f022;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">📄</div>';
+      h += '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(f.name)+'</div><div style="font-size:11px;color:var(--sub);">'+f.items.length+' বাক্য</div></div>';
+      h += '<div style="color:var(--cyan);font-size:12px;font-weight:800;flex-shrink:0;">বেছে নাও</div></div>';
+    });
+    h += '</div>';
+  } else {
+    h += '<div style="text-align:center;padding:14px;color:var(--muted);font-size:13px;">এখানে কোনো Folder বা File নেই।</div>';
+  }
+  h += '<button type="button" class="btn btn-green btn-full" style="margin-bottom:9px;" onclick="spkNewFile()">📄+ এখানে নতুন File তৈরি করো</button>';
+  h += '<button type="button" class="btn btn-ghost btn-full" style="margin-bottom:9px;" onclick="spkNewFolder()">📁+ এখানে নতুন Folder</button>';
+  h += '<button class="btn btn-ghost btn-full" onclick="closePicker()">✕ বাতিল</button>';
+  document.getElementById('pickerBody').innerHTML = h;
+}
+function spkNameForm(title, fn, okFn){
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:17px;font-weight:900;color:var(--text);">'+title+'</div>';
+  h += '<div style="font-size:12px;color:var(--sub);margin-top:6px;">এখানে তৈরি হবে: '+sLocLabel(spk.folderId)+'</div></div>';
+  h += '<div class="form-g"><input class="form-inp" id="spkNm" placeholder="নাম... (যেমন: Alltag Sätze)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();'+okFn+'();}"/></div>';
+  h += '<div id="spkMsg"></div>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="'+okFn+'()">💾 তৈরি করো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="renderSPicker()">← ফিরে যাও</button>';
+  h += '</div>';
+  document.getElementById('pickerBody').innerHTML = h;
+  setTimeout(function(){ var el=document.getElementById('spkNm'); if(el) el.focus(); }, 60);
+}
+function spkNewFolder(){ spkNameForm('📁 নতুন Folder', null, 'spkSubmitFolder'); }
+function spkNewFile(){ spkNameForm('📄 নতুন File', null, 'spkSubmitFile'); }
+function spkSubmitFolder(){
+  var nm = document.getElementById('spkNm').value.trim();
+  if(!nm){ showMsg('spkMsg','❗ নাম দিন।','err'); return; }
+  var id = Date.now();
+  sfolders.push({id:id, name:nm, parentId:spk.folderId||null, emoji:'📁', order:id});
+  saveSL();
+  spk.folderId = id;
+  renderSPicker();
+  slRender();
+}
+function spkSubmitFile(){
+  var nm = document.getElementById('spkNm').value.trim();
+  if(!nm){ showMsg('spkMsg','❗ নাম দিন।','err'); return; }
+  var f = {id:Date.now(), name:nm, folderId:spk.folderId||null, items:[], updated:Date.now()};
+  sfiles.push(f);
+  saveSL();
+  slRender();
+  spkPickFile(f.id);
+}
+
+// ════════════════════════════════
+// SENTENCE EDITOR (Create tab → Sentence mode)
+// ════════════════════════════════
+// The editor always works on one Sentence File (picked like a Deck for cards).
+// Every change is saved straight into that file in the Sentence Library.
+var spDraft = {fileId:null, items:[]};
+(function(){
+  var d = loadLS('df_sp_draft', null);
+  var f = d && d.fileId ? sFileOf(d.fileId) : null;
+  if(f) spDraft = {fileId:f.id, items:JSON.parse(JSON.stringify(f.items))};
+})();
+var spEditIdx = -1;
+
+function spSaveDraft(){ saveLS('df_sp_draft', {fileId:spDraft.fileId}); }
+function spCopy(items){ return JSON.parse(JSON.stringify(items)); }
+function spValidateDraft(){
+  if(spDraft.fileId && !sFileOf(spDraft.fileId)){ spDraft = {fileId:null, items:[]}; spEditIdx = -1; spSaveDraft(); }
+}
+function spCurFile(){ return sFileOf(spDraft.fileId); }
+function spAutoSave(){
+  var f = spCurFile();
+  if(!f) return false;
+  f.items = spCopy(spDraft.items); f.updated = Date.now();
+  saveSL(); spSaveDraft();
+  if(typeof slRender==='function') slRender();
+  return true;
+}
+function spPickFile(){
+  var f = spCurFile();
+  openSPicker(f ? f.folderId : null, function(fid){ spSelectFile(fid); });
+}
+function spSelectFile(fid){
+  var f = sFileOf(fid);
+  if(!f) return;
+  spDraft = {fileId:f.id, items:spCopy(f.items)};
+  spEditIdx = -1;
+  spSaveDraft();
+  spClearInputs();
+  renderSentences();
+}
+function spClearInputs(){
+  var a=document.getElementById('spDe'), b=document.getElementById('spBn');
+  if(a) a.value=''; if(b) b.value='';
+}
+function spAdd(){
+  if(!spCurFile()){ showMsg('spMsg','❗ আগে File বেছে নাও।','err'); return; }
+  var de = document.getElementById('spDe').value.trim();
+  var bn = document.getElementById('spBn').value.trim();
+  if(!de || !bn){ showMsg('spMsg','❗ German ও বাংলা — দুটো বাক্যই লিখুন।','err'); return; }
+  if(spEditIdx>=0 && spEditIdx<spDraft.items.length){
+    spDraft.items[spEditIdx] = {de:de, bn:bn};
+  } else {
+    spDraft.items.push({de:de, bn:bn});
+  }
+  var wasEdit = spEditIdx>=0;
+  spEditIdx = -1;
+  spAutoSave();
+  spClearInputs();
+  renderSentences();
+  showMsg('spMsg','✅ '+(wasEdit?'আপডেট হয়েছে':'যোগ হয়েছে')+' (মোট '+spDraft.items.length+'টি বাক্য)','ok');
+  var d=document.getElementById('spDe'); if(d) d.focus();
+}
+function spEdit(i){
+  var it = spDraft.items[i]; if(!it) return;
+  document.getElementById('spDe').value = it.de;
+  document.getElementById('spBn').value = it.bn;
+  spEditIdx = i;
+  renderSentences();
+  document.getElementById('spDe').focus();
+  window.scrollTo(0,0);
+}
+function spCancelEdit(){
+  spEditIdx = -1;
+  spClearInputs();
+  renderSentences();
+}
+function spDel(i){
+  spDraft.items.splice(i,1);
+  if(spEditIdx===i){ spEditIdx=-1; spClearInputs(); }
+  else if(spEditIdx>i){ spEditIdx--; }
+  spAutoSave();
+  renderSentences();
+}
+
+// PDF layout: German sentence on one line, its Bengali translation right below it.
+// sections = [{name, items:[{de,bn}]}]  (name is only shown when given)
+function spBuildPdfHtml(sub, sections){
+  var total = 0;
+  sections.forEach(function(s){ total += s.items.length; });
+  var h = '<div class="sp-pdf"><h1>DeutschFlash Sentence</h1>';
+  h += '<div class="sp-pdf-sub">'+(sub?esc(sub)+' · ':'')+total+' বাক্য</div>';
+  sections.forEach(function(s){
+    if(s.name) h += '<h2>'+esc(s.name)+'</h2>';
+    s.items.forEach(function(it){
+      h += '<div class="sp-row"><div class="sp-row-de">'+esc(it.de)+'</div><div class="sp-row-bn">'+esc(it.bn)+'</div></div>';
+    });
+  });
+  h += '</div>';
+  return h;
+}
+function spPdfFile(fid){
+  var f = sFileOf(fid);
+  if(!f) return;
+  openPDF(spBuildPdfHtml(sPathText(f.folderId), [{name:f.name, items:f.items}]));
+}
+// Opens a saved sentence file in the Create tab.
+function spOpenFile(fid){
+  if(!sFileOf(fid)) return;
+  spSelectFile(fid);
+  openSentenceEditor();
+}
+function renderSentences(){
+  if(!document.getElementById('spFileLabel')) return;
+  spValidateDraft();
+  var f = spCurFile();
+  var lbl = document.getElementById('spFileLabel');
+  if(!f) lbl.textContent = '-- File বেছে নাও --';
+  else {
+    var loc = f.folderId ? sPathText(f.folderId) : '';
+    lbl.innerHTML = '📄 '+esc(f.name)+(loc?' <span style="color:var(--muted);font-size:11px;">('+esc(loc)+')</span>':'');
+  }
+  var editing = spEditIdx>=0 && spEditIdx<spDraft.items.length;
+  if(!editing) spEditIdx = -1;
+  document.getElementById('spAddBtn').textContent = editing ? '✔ বাক্য আপডেট করো' : '➕ বাক্য যোগ করো';
+  document.getElementById('spCancelEditBtn').style.display = editing ? 'flex' : 'none';
+}
+
+// ── Bulk add sentences ──
+// One sentence per line:  German | বাংলা     (comma also works:  German, বাংলা)
+// or two lines per sentence: German line, then its Bengali line right below.
+var spBulkFileId = null, spBulkText = '';
+function spOpenBulk(){
+  spBulkFileId = spDraft.fileId || null;
+  spBulkText = '';
+  renderSpBulk();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function renderSpBulk(){
+  var f = sFileOf(spBulkFileId);
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">📋 একসাথে অনেক বাক্য যোগ করো</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">File বেছে নাও</label>';
+  h += '<button type="button" class="form-sel" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;" onclick="spBulkText=document.getElementById(\'spBulkTa\').value;openSPicker(spBulkFileId&&sFileOf(spBulkFileId)?sFileOf(spBulkFileId).folderId:null,function(fid){spBulkFileId=fid;renderSpBulk();})">';
+  h += '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(f?'📄 '+esc(f.name):'-- File বেছে নাও --')+'</span><span style="color:var(--muted);flex-shrink:0;">📁 ›</span></button></div>';
+  h += '<div class="form-g"><label class="form-lbl">প্রতি লাইনে একটা বাক্য</label>';
+  h += '<div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6;">German | বাংলা<br>অথবা প্রথম লাইনে German, ঠিক নিচের লাইনে বাংলা</div>';
+  h += '<button type="button" class="btn btn-ghost btn-sm btn-full" style="margin-bottom:9px;" onclick="spBulkText=document.getElementById(\'spBulkTa\').value;document.getElementById(\'spBulkFileInp\').click()">📁 File থেকে Import করো (.txt)</button>';
+  h += '<input type="file" id="spBulkFileInp" accept=".txt,.csv,text/plain" style="display:none;" onchange="spBulkFileSelected(event)"/>';
+  h += '<textarea class="form-inp" id="spBulkTa" rows="9" style="resize:vertical;font-size:13px;line-height:1.6;" placeholder="Mein Hund ist sauber | কুকুরটি পরিষ্কার।&#10;Die Katze schläft&#10;বিড়ালটি ঘুমাচ্ছে।"></textarea></div>';
+  h += '<div id="spBulkMsg"></div>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="spSubmitBulk()">➕ সব যোগ করো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ বাতিল</button>';
+  h += '</div>';
+  document.getElementById('modalBody').innerHTML = h;
+  var ta = document.getElementById('spBulkTa');
+  if(ta && spBulkText) ta.value = spBulkText;
+}
+function spBulkFileSelected(evt){
+  var file = evt.target.files && evt.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var ta = document.getElementById('spBulkTa');
+    if(ta){
+      ta.value = ta.value.trim() ? ta.value.replace(/\n+$/,'')+'\n'+e.target.result : e.target.result;
+      showToast('📄 File load হয়েছে, দেখে নিয়ে নিচের বাটনে চাপো');
+    }
+  };
+  reader.readAsText(file);
+  evt.target.value = '';
+}
+function spParseBulk(raw){
+  var BN = /[\u0980-\u09FF]/;
+  var out = [], skipped = 0, pending = null;
+  raw.split('\n').map(function(l){return l.trim();}).filter(function(l){return l;}).forEach(function(line){
+    var sep = line.indexOf('|'); if(sep<0) sep = line.indexOf('\t');
+    if(sep>=0){
+      if(pending){ skipped++; pending = null; }
+      var de = line.slice(0,sep).trim(), bn = line.slice(sep+1).trim();
+      if(de && bn) out.push({de:de, bn:bn}); else skipped++;
+      return;
+    }
+    if(!BN.test(line)){                      // German-only line → wait for its Bengali line
+      if(pending) skipped++;
+      pending = line; return;
+    }
+    if(!/[A-Za-zÄÖÜäöüß]/.test(line)){       // Bengali-only line → translation of previous German line
+      if(pending){ out.push({de:pending, bn:line}); pending = null; } else skipped++;
+      return;
+    }
+    // mixed line: "German, বাংলা" — split at the last comma before the first Bengali character
+    if(pending){ skipped++; pending = null; }
+    var first = line.search(BN), comma = line.lastIndexOf(',', first);
+    if(comma>0){
+      var d2 = line.slice(0,comma).trim(), b2 = line.slice(comma+1).trim();
+      if(d2 && b2){ out.push({de:d2, bn:b2}); return; }
+    }
+    skipped++;
+  });
+  if(pending) skipped++;
+  return {items:out, skipped:skipped};
+}
+function spSubmitBulk(){
+  var f = sFileOf(spBulkFileId);
+  if(!f){ showMsg('spBulkMsg','❗ File বেছে নিন।','err'); return; }
+  var r = spParseBulk(document.getElementById('spBulkTa').value);
+  if(!r.items.length){ showMsg('spBulkMsg','❗ কোনো বাক্য পাওয়া যায়নি।'+(r.skipped?' ('+r.skipped+' লাইন বাদ)':''),'err'); return; }
+  r.items.forEach(function(it){ f.items.push(it); });
+  f.updated = Date.now();
+  if(spDraft.fileId===f.id) spDraft.items = spCopy(f.items);
+  saveSL();
+  closeModal();
+  renderSentences(); slRender();
+  showToast('✅ '+r.items.length+'টা বাক্য যোগ হয়েছে'+(r.skipped?' ('+r.skipped+' লাইন বাদ)':''));
+}
+
+// ════════════════════════════════
+// WARN MODAL ENGINE
+// ════════════════════════════════
+var WARN_THEMES = {
+  danger:  {c1:'#f25c7a', c2:'#c0392b'},
+  warn:    {c1:'#f8c94c', c2:'#e0a92e'},
+  info:    {c1:'#4361ee', c2:'#3651d4'},
+  success: {c1:'#2dd4a0', c2:'#1fa87d'}
+};
+var _warnOkCb = null, _warnCancelCb = null;
+function showWarn(opts) {
+  var th = WARN_THEMES[opts.theme] || WARN_THEMES.danger;
+  document.getElementById('warnIcon').textContent = opts.icon || '⚠️';
+  document.getElementById('warnIconBox').style.background = 'linear-gradient(135deg,'+th.c1+'28,'+th.c2+'18)';
+  document.getElementById('warnIconBox').style.border = '1.5px solid '+th.c1+'44';
+  document.getElementById('warnGlow').style.background = th.c1+'14';
+  document.getElementById('warnCard').style.borderColor = th.c1+'30';
+  document.getElementById('warnTitle').textContent = opts.title || '';
+  document.getElementById('warnDescBox').style.background = th.c1+'0c';
+  document.getElementById('warnDescBox').style.border = '1px solid '+th.c1+'22';
+  var hl = document.getElementById('warnHighlight');
+  if(opts.highlight){ hl.style.display='block'; hl.textContent=opts.highlight; } else { hl.style.display='none'; }
+  document.getElementById('warnMsg').textContent = opts.message || '';
+  var cb = document.getElementById('warnCancelBtn');
+  if(opts.cancelText===null){ cb.style.display='none'; } else { cb.style.display='block'; cb.textContent = opts.cancelText || 'বাতিল'; }
+  var ok = document.getElementById('warnOkBtn');
+  ok.textContent = opts.okText || 'নিশ্চিত করো';
+  ok.style.background = 'linear-gradient(135deg,'+th.c1+','+th.c2+')';
+  ok.style.boxShadow = '0 4px 18px '+th.c1+'44';
+  _warnOkCb = opts.onConfirm || null;
+  _warnCancelCb = opts.onCancel || null;
+  document.getElementById('warnModal').style.display='flex';
+}
+function warnOk(){
+  var cb=_warnOkCb; _warnOkCb=null; _warnCancelCb=null;
+  document.getElementById('warnModal').style.display='none';
+  if(cb) cb();
+}
+function closeWarn(){
+  var cb=_warnCancelCb; _warnOkCb=null; _warnCancelCb=null;
+  document.getElementById('warnModal').style.display='none';
+  if(cb) cb();
+}
+
+// ════════════════════════════════
+// UTILS
+// ════════════════════════════════
+function showMsg(id,text,type){
+  var el=document.getElementById(id); if(!el) return;
+  el.innerHTML='<div class="msg msg-'+(type==='ok'?'ok':'err')+'">'+text+'</div>';
+  if(type==='ok') setTimeout(function(){el.innerHTML='';},2500);
+}
+
+</script>
+</body>
+</html>
