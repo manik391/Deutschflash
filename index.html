@@ -4,7 +4,11 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
 <title>DeutschFlash</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet"/>
+<meta name="theme-color" content="#06071a"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="DeutschFlash"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700&family=Patrick+Hand&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
 :root{
   --bg:#06071a;--navy:#0b0d28;--card:#0f1133;--border:#1e2150;--borderL:#2a2d5e;
@@ -163,7 +167,7 @@ input,select,textarea,button{font-family:var(--font);}
 .chip{display:inline-flex;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;}
 .rday{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:10px 4px;font-size:10px;font-weight:800;color:var(--muted);cursor:pointer;font-family:var(--font);text-align:center;display:flex;align-items:center;justify-content:center;line-height:1.2;transition:all .18s;}
 .rday.on{background:linear-gradient(135deg,#4361ee30,#7c5cfc22);border-color:#5a7aff;color:#a0b4ff;box-shadow:0 2px 10px #4361ee22;}
-#pdfPreviewContent{font-family:Arial,sans-serif;padding:20px;color:#000;}
+#pdfPreviewContent{font-family:Arial,sans-serif;padding:20px;color:#000;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 #pdfPreviewContent h1{color:#4361ee;border-bottom:3px solid #4361ee;padding-bottom:8px;font-size:22px;margin:0 0 12px;}
 #pdfPreviewContent h2{color:#333;margin-top:24px;font-size:16px;border-left:4px solid #4361ee;padding-left:10px;}
 #pdfPreviewContent table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12px;}
@@ -192,13 +196,81 @@ input,select,textarea,button{font-family:var(--font);}
 .sp-pdf{font-family:'Noto Sans Bengali','Nunito',Arial,sans-serif;color:#000;}
 #pdfPreviewContent .sp-pdf h2{font-size:26px;line-height:1.3;margin:26px 0 8px;}
 .sp-pdf-sub{font-size:12px;color:#666;margin:-4px 0 14px;}
-.sp-row{padding:10px 14px;margin:0 0 9px;border:1.5px dotted #aab4d8;border-left:5px solid #4361ee;border-radius:9px;page-break-inside:avoid;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.sp-row{display:flex;align-items:flex-start;gap:12px;padding:11px 14px;margin:0 0 10px;border:1.5px dotted #aab4d8;border-left:5px solid #4361ee;border-radius:9px;page-break-inside:avoid;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.sp-row-n{flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:#e8ecff;color:#4361ee;font-size:12px;font-weight:800;line-height:26px;text-align:center;margin-top:1px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.sp-row-txt{flex:1;min-width:0;}
+.sp-story{margin:6px 0 26px;padding:0;background:transparent;page-break-inside:auto;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.sp-story-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin-bottom:14px;}
+.sp-story-title{grid-column:2;text-align:center;font-family:'Patrick Hand','Nunito','Noto Sans Bengali',Arial,sans-serif;font-size:23px;font-weight:400;color:#2b2b2b;line-height:1.3;}
+.sp-story-tag{grid-column:3;justify-self:end;background:#f9c97c;color:#2b2b2b;font-family:'Patrick Hand','Nunito',Arial,sans-serif;font-size:17px;line-height:1.2;padding:5px 16px;border-radius:7px;white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.sp-story-tag:only-child{grid-column:3;}
+.sp-page + .sp-page{break-before:page;page-break-before:always;}
+.sp-story p{margin:0 0 10px;}
+.sp-story p:last-child{margin-bottom:0;}
+.sp-story-de{font-size:15px;line-height:1.75;color:#000;font-weight:normal;text-align:justify;text-justify:inter-word;hyphens:manual;width:100%;box-sizing:border-box;}
+.sp-story-bn{font-size:15px;line-height:1.75;color:#000;margin-top:30px;padding:0;text-align:justify;}
 .sp-row-de{font-size:15px;font-weight:bold;color:#1a2a6e;line-height:1.5;}
 .sp-row-bn{font-size:14px;color:#000;line-height:1.6;margin-top:2px;}
+/* UX additions */
+.btn-sm{min-height:40px;}
+.sp-ib{width:38px !important;height:38px !important;}
+.seg.help-btn{flex:0 0 46px;font-size:15px;}
+.empty-box{text-align:center;padding:42px 20px;color:var(--muted);}
+.empty-box .ico{font-size:40px;margin-bottom:12px;}
+.empty-box .txt{font-size:14px;line-height:1.6;margin-bottom:16px;}
+.empty-box .acts{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;}
+.sl-de{font-size:var(--sfs,14px) !important;}
+.sl-bn{font-size:calc(var(--sfs,14px) - 1px) !important;}
+.sl-mv{display:flex;flex-direction:column;gap:2px;flex-shrink:0;}
+.sl-mv button{width:30px;height:18px;line-height:1;font-size:9px;border-radius:6px;border:1px solid var(--borderL);background:#ffffff0a;color:var(--sub);cursor:pointer;padding:0;}
+.sl-more{width:100%;margin:4px 0 10px;}
+#onbOverlay{display:none;position:fixed;inset:0;z-index:900;background:#000000d9;align-items:center;justify-content:center;padding:20px;}
+.onb-card{width:100%;max-width:380px;background:var(--card);border:1px solid var(--borderL);border-radius:24px;padding:26px 22px 20px;text-align:center;animation:popIn .3s ease both;}
+.onb-ico{font-size:54px;margin-bottom:12px;}
+.onb-ttl{font-size:20px;font-weight:900;color:var(--text);margin-bottom:10px;}
+.onb-txt{font-size:14px;line-height:1.75;color:var(--sub);text-align:left;margin-bottom:18px;}
+.onb-dots{display:flex;gap:7px;justify-content:center;margin-bottom:16px;}
+.onb-dots i{width:8px;height:8px;border-radius:50%;background:var(--border);display:block;}
+.onb-dots i.on{background:var(--blue);width:22px;border-radius:99px;}
+.help-txt{font-size:14px;line-height:1.8;color:var(--sub);margin-bottom:16px;}
+.help-txt b{color:var(--text);}
+.goal-chip{flex:1;padding:11px 0;border-radius:11px;border:1.5px solid var(--borderL);background:#ffffff08;color:var(--sub);font-weight:800;font-size:14px;cursor:pointer;}
+.goal-chip.on{background:linear-gradient(135deg,#4361ee,#7c5cfc);border-color:transparent;color:#fff;}
+/* ONBOARDING + HELP */
+#obOverlay{display:none;position:fixed;inset:0;z-index:1200;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;padding:28px 24px calc(28px + env(safe-area-inset-bottom));}
+#obOverlay.open{display:flex;}
+.ob-slide{text-align:center;max-width:420px;width:100%;animation:fadeUp .35s ease both;}
+.ob-ico{width:104px;height:104px;border-radius:30px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-size:52px;background:linear-gradient(135deg,#4361ee33,#7c5cfc33);border:1px solid #4361ee55;}
+.ob-title{font-size:23px;font-weight:900;color:var(--text);margin-bottom:12px;}
+.ob-txt{font-size:15px;line-height:1.75;color:var(--sub);}
+.ob-txt b{color:var(--text);}
+.ob-dots{display:flex;gap:8px;justify-content:center;margin:28px 0 22px;}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--borderL);transition:all .2s;}
+.ob-dot.on{width:24px;border-radius:5px;background:#4361ee;}
+.help-btn{flex:0 0 46px !important;max-width:46px;}
+.help-steps{margin:0;padding:0;list-style:none;counter-reset:hs;}
+.help-steps li{counter-increment:hs;position:relative;padding:0 0 12px 36px;font-size:14px;line-height:1.6;color:var(--text);}
+.help-steps li::before{content:counter(hs);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:8px;background:#4361ee22;color:var(--cyan);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+@page{margin:12mm;}
+@media screen{
+  /* preview: every page is its own sheet of paper */
+  #pdfPreviewContent.paged{background:#e6e9f4;padding:14px 12px;}
+  #pdfPreviewContent.paged .sp-page{background:#fff;border-radius:6px;box-shadow:0 2px 10px #1a24602e;padding:20px 18px 26px;margin:0 0 16px;min-height:min(560px,100vw * 1.2);}
+  #pdfPreviewContent.paged .sp-page:last-child{margin-bottom:0;}
+  #pdfPreviewContent.paged .sp-page::after{content:attr(data-n);display:block;text-align:center;font-size:11px;color:#9aa0bd;margin-top:14px;}
+}
 @media print{
-  body *{visibility:hidden;}
-  #pdfPreviewContent,#pdfPreviewContent *{visibility:visible;}
-  #pdfPreviewContent{position:absolute;left:0;top:0;width:100%;padding:20px;}
+  html,body{height:auto !important;min-height:0 !important;margin:0 !important;padding:0 !important;background:#fff !important;overflow:visible !important;}
+  /* take everything except the PDF content out of the layout, so no empty trailing page is created */
+  body > *:not(#pgPdfPreview){display:none !important;}
+  #pgPdfPreview{display:block !important;min-height:0 !important;height:auto !important;}
+  #pgPdfPreview > *:not(:last-child){display:none !important;}
+  #pgPdfPreview > :last-child{display:block !important;height:auto !important;min-height:0 !important;overflow:visible !important;flex:none !important;background:#fff !important;}
+  #pdfPreviewContent{position:static !important;width:auto !important;padding:0 !important;background:#fff !important;}
+  #pdfPreviewContent .sp-page{box-shadow:none !important;border-radius:0 !important;padding:0 !important;margin:0 !important;min-height:0 !important;}
+  #pdfPreviewContent .sp-page::after{display:none !important;}
+  #pdfPreviewContent > :last-child{margin-bottom:0 !important;}
+  #pdfPreviewContent .sp-pdf > :last-child{margin-bottom:0 !important;}
 }
 </style>
 </head>
@@ -260,6 +332,7 @@ input,select,textarea,button{font-family:var(--font);}
           <div style="flex:1;">
             <div style="font-size:15px;font-weight:900;color:#fff;" id="reminderTitle">আজকের Practice বাকি!</div>
             <div style="font-size:12px;color:#a78bfa;" id="reminderSub">প্রতিদিন অল্প করে শিখলেই হবে</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;"><div style="flex:1;height:7px;background:#ffffff1c;border-radius:99px;overflow:hidden;"><div id="goalFill" style="height:100%;width:0%;background:linear-gradient(90deg,#7c5cfc,#2dd4a0);border-radius:99px;transition:width .4s;"></div></div><span id="goalTxt" style="font-size:11px;color:#a78bfa;font-weight:800;white-space:nowrap;">0/5</span></div>
           </div>
           <button onclick="dismissReminder()" style="background:none;border:none;color:#a78bfa;cursor:pointer;font-size:18px;padding:0;">✕</button>
         </div>
@@ -276,6 +349,14 @@ input,select,textarea,button{font-family:var(--font);}
           <div style="font-size:12px;color:var(--sub);">আজকে review করে ফেলো</div>
         </div>
         <button class="btn btn-gold btn-sm" onclick="startAllDifficultTest()">Review</button>
+      </div>
+      <div id="dueReviewCard" style="display:none;background:linear-gradient(135deg,#4361ee22,#4361ee0a);border:1px solid #4361ee55;border-radius:16px;padding:16px;margin-bottom:18px;align-items:center;gap:12px;">
+        <div style="font-size:28px;">📅</div>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:800;color:var(--text);" id="dueReviewCount"></div>
+          <div style="font-size:12px;color:var(--sub);">ভুলে যাওয়ার আগেই আজ review করো</div>
+        </div>
+        <button class="btn btn-blue btn-sm" onclick="startDueTest()">Review</button>
       </div>
       <!-- Stats -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;">
@@ -313,6 +394,7 @@ input,select,textarea,button{font-family:var(--font);}
       <div class="seg-wrap">
         <button class="seg on" id="crSegCard" onclick="setCreateMode('card')">✍️ Card</button>
         <button class="seg" id="crSegSent" onclick="setCreateMode('sent')">💬 Sentence</button>
+        <button class="seg help-btn" onclick="openHelp(createMode==='sent'?'sentence':'card')" aria-label="সাহায্য">❓</button>
       </div>
 
       <!-- CARD -->
@@ -381,6 +463,7 @@ input,select,textarea,button{font-family:var(--font);}
       <div class="seg-wrap">
         <button class="seg on" id="libSegCards" onclick="setLibMode('cards')">🗂️ Cards</button>
         <button class="seg" id="libSegSent" onclick="setLibMode('sent')">💬 Sentences</button>
+        <button class="seg help-btn" onclick="openHelp(libMode==='sent'?'libsent':'libcard')" aria-label="সাহায্য">❓</button>
       </div>
 
       <!-- CARDS LIBRARY (decks + folders) -->
@@ -405,6 +488,10 @@ input,select,textarea,button{font-family:var(--font);}
           <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="slFolderForm()">📁+ Folder</button>
           <button class="btn btn-green btn-sm" style="flex:1;" onclick="slNewFile()">📄+ File</button>
           <button class="btn btn-blue btn-sm" onclick="slExportFolderPDF()">📄 PDF</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin:0 0 13px;padding:9px 13px;background:var(--card);border:1px solid var(--border);border-radius:12px;">
+          <span style="font-size:12px;color:var(--sub);white-space:nowrap;">🔠 অক্ষরের size</span>
+          <input type="range" id="sfsRange" min="12" max="24" step="1" value="14" style="flex:1;" oninput="setSfs(this.value)" aria-label="অক্ষরের size"/>
         </div>
         <div id="slList"></div>
       </div>
@@ -545,6 +632,12 @@ input,select,textarea,button{font-family:var(--font);}
       <div id="profMsg"></div>
       <button class="btn btn-blue btn-full" onclick="saveProfileData()">💾 সংরক্ষণ করো</button>
     </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:800;color:var(--sub);margin-bottom:6px;">🎯 দৈনিক লক্ষ্য</div>
+      <div style="font-size:12px;color:var(--sub);margin-bottom:12px;line-height:1.5;">প্রতিদিন কতগুলো সঠিক উত্তর দিলে streak বাড়বে।</div>
+      <div style="display:flex;gap:8px;" id="goalChips"></div>
+    </div>
+    <button onclick="openOnboarding()" class="btn btn-ghost btn-full" style="margin-bottom:14px;padding:15px;font-size:14px;">❓ App-এর গাইড আবার দেখো</button>
     <button id="themeToggleBtn" onclick="toggleTheme()" class="btn btn-ghost btn-full" style="margin-bottom:14px;padding:15px;font-size:14px;">🌙 Dark Mode</button>
     <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;">
       <div style="font-size:14px;font-weight:800;color:var(--sub);margin-bottom:12px;">💾 Backup</div>
@@ -665,6 +758,8 @@ input,select,textarea,button{font-family:var(--font);}
   <div class="modal-sheet"><div class="modal-handle"></div><div id="pickerBody"></div></div>
 </div>
 
+<div id="onbOverlay"><div class="onb-card" id="onbCard"></div></div>
+
 <script>
 'use strict';
 
@@ -694,6 +789,8 @@ function saveLS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 var decks = loadLS('df_decks', JSON.parse(JSON.stringify(DDECKS)));
 var folders = loadLS('df_folders', []);
 var practice = loadLS('df_prac', {streak:0,lastDate:'',todayCount:0,streakDate:''});
+if(!practice.hist) practice.hist = {};
+if(!practice.goal) practice.goal = 5;
 var profile = loadLS('df_prof', {name:'শিক্ষার্থী',level:''});
 var reminder = loadLS('df_rem', {time:'08:00',days:[0,1,2,3,4,5,6]});
 
@@ -765,6 +862,7 @@ window.addEventListener('load', function() {
     var tb = document.getElementById('themeToggleBtn');
     if(tb) tb.textContent = document.body.classList.contains('light-theme') ? '☀️ Light Mode' : '🌙 Dark Mode';
     showPage('pgApp');
+    if(!loadLS('df_onboarded', false)) openOnboarding();
   }, 2500);
 });
 
@@ -803,18 +901,23 @@ function doSearch(q) {
   clr.style.display = q ? 'block' : 'none';
   if(!q){ drop.style.display='none'; if(mc) mc.style.display=''; return; }
   if(mc) mc.style.display = 'none';
-  var res = [];
+  var res = [], sres = [];
   decks.forEach(function(dk){
     dk.cards.forEach(function(c){
-      if(c.german.toLowerCase().indexOf(q)>=0 || c.bengali.toLowerCase().indexOf(q)>=0 || c.english.toLowerCase().indexOf(q)>=0)
+      if((c.german||'').toLowerCase().indexOf(q)>=0 || (c.bengali||'').toLowerCase().indexOf(q)>=0 || (c.english||'').toLowerCase().indexOf(q)>=0)
         res.push({card:c, deck:dk});
     });
   });
-  if(!res.length){
-    drop.innerHTML = '<div style="padding:40px 20px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;">🔍</div><div style="font-size:16px;font-weight:700;color:var(--text);">"'+q+'" পাওয়া যায়নি</div></div>';
+  sfiles.forEach(function(f){
+    f.items.forEach(function(it){
+      if(((it.title||'')+' '+it.de+' '+it.bn).toLowerCase().indexOf(q)>=0) sres.push({file:f, item:it});
+    });
+  });
+  if(!res.length && !sres.length){
+    drop.innerHTML = '<div style="padding:40px 20px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;">🔍</div><div style="font-size:16px;font-weight:700;color:var(--text);">"'+esc(q)+'" পাওয়া যায়নি</div></div>';
     drop.style.display = 'block'; return;
   }
-  var html = '<div style="padding:10px 16px 4px;font-size:12px;color:var(--muted);font-weight:700;">'+res.length+' ফলাফল</div>';
+  var html = '<div style="padding:10px 16px 4px;font-size:12px;color:var(--muted);font-weight:700;">'+(res.length+sres.length)+' ফলাফল</div>';
   res.slice(0,50).forEach(function(r){
     var art = r.card.german.split(' ')[0];
     var ha = (art==='der'||art==='die'||art==='das');
@@ -826,8 +929,32 @@ function doSearch(q) {
     var loc = r.deck.folderId ? ' · '+folderPath(r.deck.folderId).map(function(f){return esc(f.name);}).join(' › ') : '';
     html += '<div style="font-size:11px;color:var(--muted);">'+r.deck.emoji+' '+r.deck.name+loc+'</div></div></div>';
   });
+  if(sres.length){
+    html += '<div style="padding:12px 16px 4px;font-size:12px;color:var(--muted);font-weight:700;">💬 বাক্য ও Story ('+sres.length+')</div>';
+    sres.slice(0,30).forEach(function(r){
+      var txt = r.item.de.length>90 ? r.item.de.slice(0,90)+'…' : r.item.de;
+      var bn = r.item.bn.length>70 ? r.item.bn.slice(0,70)+'…' : r.item.bn;
+      var loc = r.file.folderId ? sPathText(r.file.folderId)+' › ' : '';
+      html += '<div class="sr-item" onclick="openSentSearch('+r.file.id+')">';
+      html += '<div style="width:38px;height:38px;border-radius:11px;background:#4cc9f018;border:1px solid #4cc9f033;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">'+(r.item.story?'📖':'💬')+'</div>';
+      html += '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:800;color:var(--text);word-break:break-word;">'+esc(r.item.title||txt)+'</div>';
+      html += '<div style="font-size:12px;color:var(--sub);word-break:break-word;">'+esc(r.item.title?txt:bn)+'</div>';
+      html += '<div style="font-size:11px;color:var(--muted);">📄 '+esc(loc+r.file.name)+'</div></div></div>';
+    });
+  }
   drop.innerHTML = html;
   drop.style.display = 'block';
+}
+function openSentSearch(fid){
+  var f = sFileOf(fid); if(!f) return;
+  clearSearch();
+  showPage('pgApp');
+  switchTab('library');
+  setLibMode('sent');
+  slFolderId = f.folderId || null;
+  slOpen[fid] = true;
+  slRender();
+  setTimeout(function(){ var el=document.getElementById('slf'+fid); if(el && el.scrollIntoView) el.scrollIntoView({block:'start'}); }, 80);
 }
 
 function clearSearch() {
@@ -1269,6 +1396,7 @@ function renderHome() {
   if(!el) return;
   var h = '';
   sortedDecks().filter(function(d){return d.cards.length>0;}).slice(0,3).forEach(function(dk,i){ h += deckHTML(dk, i*0.06, false); });
+  if(!h) h = '<div class="empty-box"><div class="ico">🗂️</div><div class="txt">এখনো কোনো card নেই।<br>প্রথম card যোগ করে শেখা শুরু করো!</div><div class="acts"><button class="btn btn-green" onclick="setCreateMode(\'card\');switchTab(\'create\')">➕ প্রথম Card যোগ করো</button></div></div>';
   el.innerHTML = h;
   updateStats();
 }
@@ -1312,7 +1440,7 @@ function renderLibrary() {
   subs.forEach(function(f,i){ h += folderCardHTML(f, i*0.04); });
   dks.forEach(function(dk,i){ h += deckHTML(dk, i*0.04, true); });
   if(!subs.length && !dks.length){
-    h = '<div style="text-align:center;padding:50px 20px;color:var(--muted);"><div style="font-size:40px;margin-bottom:12px;">📭</div><div style="font-size:14px;">এই folder-এ কিছু নেই।<br>নতুন Folder বা Deck যোগ করো।</div></div>';
+    h = '<div class="empty-box"><div class="ico">📭</div><div class="txt">এই folder-এ কিছু নেই।<br>নতুন Folder বা Deck যোগ করো।</div><div class="acts"><button class="btn btn-ghost" onclick="openFolderCreate()">📁+ Folder</button><button class="btn btn-green" onclick="openDeckCreateHere()">🗂️+ Deck</button></div></div>';
   }
   el.innerHTML = h;
 }
@@ -1500,7 +1628,7 @@ function renderMyCard() {
     modes.forEach(function(m, mi){
       var brd = mi < modes.length-1 ? 'border-bottom:1px solid var(--border);' : '';
       var action = m.id==='difficult' ? 'activeDeckId='+dk.id+';startDifficultTest()' : 'activeDeckId='+dk.id+';startMode(\''+m.id+'\')';
-      h += '<div onclick="'+action+'" style="display:flex;align-items:center;gap:14px;padding:15px 18px;'+brd+'cursor:pointer;" onmouseover="this.style.background=\'#141640\'" onmouseout="this.style.background=\'\'">';
+      h += '<div onclick="'+action+'" style="display:flex;align-items:center;gap:14px;padding:15px 18px;'+brd+'cursor:pointer;">';
       h += '<div style="width:44px;height:44px;border-radius:12px;background:'+m.bg+';display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">'+m.ico+'</div>';
       h += '<div style="flex:1;"><div style="font-size:16px;font-weight:800;color:var(--text);">'+m.name+'</div><div style="font-size:12px;color:var(--sub);">'+m.desc+'</div></div>';
       h += '<div style="font-size:20px;color:var(--muted);">›</div></div>';
@@ -1508,7 +1636,7 @@ function renderMyCard() {
     h += '</div></div>';
   });
   if(!withCards.length){
-    h = '<div style="text-align:center;padding:50px 20px;color:var(--muted);"><div style="font-size:40px;margin-bottom:12px;">📭</div><div style="font-size:14px;">কোনো card নেই এখনো।<br>Create ট্যাব থেকে card যোগ করো।</div></div>';
+    h = '<div class="empty-box"><div class="ico">📭</div><div class="txt">Practice করার মতো কোনো card নেই এখনো।</div><div class="acts"><button class="btn btn-green" onclick="setCreateMode(\'card\');switchTab(\'create\')">➕ Card যোগ করো</button></div></div>';
   }
   el.innerHTML = h;
 }
@@ -1757,7 +1885,9 @@ function backToDeck() {
 // backing deck — that one should return Home; everything else returns to
 // the deck page (repopulated via backToDeck()).
 function backFromTest() {
-  if(testState && testState.dk && testState.dk.id==='__all_difficult__') showPage('pgApp');
+  var id = testState && testState.dk ? String(testState.dk.id) : '';
+  if(id==='__sent__'){ showPage('pgApp'); switchTab('library'); }
+  else if(id.indexOf('__')===0) showPage('pgApp');
   else backToDeck();
 }
 function startDifficultTest() {
@@ -1874,7 +2004,7 @@ setTimeout(_loadTTSVoices, 100);
 setTimeout(_loadTTSVoices, 1000);
 setTimeout(_loadTTSVoices, 2000);
 
-function speak(text, lang) {
+function speak(text, lang, onend) {
   if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
     showToast('❗ এই device/browser-এ Text-to-Speech সাপোর্ট নাই');
     return;
@@ -1910,6 +2040,7 @@ function speak(text, lang) {
     u.pitch = 1;
     u.volume = 1;
 
+    u.onend = function(){ if(mySeq === _ttsSeq && onend) onend(); };
     u.onerror = function(ev) {
       var err = ev && ev.error;
       if(err === 'interrupted' || err === 'canceled') return;
@@ -2054,7 +2185,38 @@ function toggleDifficult(did, cid, btn) {
 function buildPool(cards){
   var pool=[];
   cards.forEach(function(c){ pool.push(c); if(c.difficult) pool.push(c); });
-  return pool.sort(function(){return Math.random()-.5;});
+  pool.sort(function(){return Math.random()-.5;});
+  // Spaced repetition: cards that are due for review come first.
+  var now = Date.now();
+  var due = pool.filter(function(c){return c.due && c.due<=now;});
+  var rest = pool.filter(function(c){return !(c.due && c.due<=now);});
+  return due.concat(rest);
+}
+// Simple Leitner boxes: right answer → longer gap, wrong answer → review again right away.
+var SRS_DAYS = [0,1,2,4,8,16];
+function srsUpdate(c, ok){
+  if(!c || typeof c.id==='undefined' || !c.german) return;
+  var box = ok ? Math.min(5,(c.box||0)+1) : 1;
+  c.box = box;
+  c.due = ok ? Date.now() + SRS_DAYS[box]*86400000 : Date.now();
+  saveLS('df_decks', decks);
+}
+function dueCards(){
+  var now = Date.now(), out = [];
+  decks.forEach(function(dk){ dk.cards.forEach(function(c){ if(c.due && c.due<=now) out.push(c); }); });
+  return out;
+}
+function startDueTest(){
+  var due = dueCards();
+  if(!due.length){ showToast('🎉 আজ review করার মতো কিছু নেই'); return; }
+  var all = [];
+  decks.forEach(function(dk){ dk.cards.forEach(function(c){ all.push(c); }); });
+  var pick = due.slice().sort(function(){return Math.random()-.5;}).slice(0,30);
+  if(pick.length<2){
+    var extra = all.filter(function(c){return pick.indexOf(c)<0;}).sort(function(){return Math.random()-.5;});
+    if(extra.length) pick.push(extra[0]);
+  }
+  startTest({id:'__due__', name:'আজকের Review', emoji:'📅', color:'#4361ee', cards:pick, pool:all}, 'normal');
 }
 // Weighted random sample of n unique cards (used by Match, where duplicates aren't possible).
 function weightedSample(cards, n){
@@ -2103,6 +2265,7 @@ function checkLearn() {
   document.getElementById('learnCheckBtn').style.display='none';
   document.getElementById('learnNextBtn').style.display='flex';
   if(ok) recPrac(1);
+  srsUpdate(c, ok);
 }
 function learnNext() {
   var dk = decks.find(function(d){return d.id===activeDeckId;});
@@ -2124,7 +2287,7 @@ function startTest(dk, mode) {
   if(dk.cards.length<2){ showWarn({icon:'✖️', title:'যথেষ্ট Card নেই', message:'Test করতে কমপক্ষে ২টি card দরকার।', cancelText:null, okText:'বুঝেছি', theme:'info'}); return; }
   var seq = buildPool(dk.cards);
   var field = mode==='reverse' ? 'german' : 'bengali';
-  testState = {dk:dk,mode:mode,idx:0,score:0,answers:[],seq:seq,opts:seq.map(function(c){return getOpts(c,dk.cards,field);})};
+  testState = {dk:dk,mode:mode,idx:0,score:0,answers:[],seq:seq,opts:seq.map(function(c){return getOpts(c,dk.pool||dk.cards,field);})};
   showPage('pgTest'); renderTestQ();
 }
 function renderTestQ() {
@@ -2141,10 +2304,10 @@ function renderTestQ() {
     h += '<div style="font-size:12px;color:var(--sub);margin-top:10px;font-weight:700;"></div>';
   } else if(mode==='reverse'){
     h += '<div style="font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:11px;">German শব্দটা কী?</div>';
-    h += '<div style="font-size:26px;font-weight:900;color:var(--text);font-family:var(--display);">'+c.bengali+'</div>';
+    h += '<div style="font-size:'+(c.bengali.length>28?'18':'26')+'px;line-height:1.5;font-weight:900;color:var(--text);font-family:var(--display);">'+c.bengali+'</div>';
   } else {
     h += '<div style="font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:11px;">বাংলা অর্থ কী?</div>';
-    h += '<div style="font-size:28px;font-weight:900;color:var(--text);font-family:var(--display);">'+c.german+'</div>';
+    h += '<div style="font-size:'+(c.german.length>28?'18':'28')+'px;line-height:1.5;font-weight:900;color:var(--text);font-family:var(--display);">'+c.german+'</div>';
     h += '<button id="ttsQ" style="background:#4361ee22;border:1.5px solid #4361ee44;border-radius:9px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--blue);font-weight:700;margin-top:8px;">🔊 শুনুন</button>';
   }
   h += '</div>';
@@ -2171,6 +2334,7 @@ function pickTest(chosen, bi, c, opts, field) {
   var correct = c[field];
   var ok = (chosen===correct);
   if(ok){ testState.score++; recPrac(1); }
+  srsUpdate(c, ok);
   testState.answers.push({card:c,chosen:chosen,correct:ok,field:field});
   opts.forEach(function(o,i){
     var b = document.getElementById('qo'+i); b.disabled=true;
@@ -2182,7 +2346,7 @@ function pickTest(chosen, bi, c, opts, field) {
     if(qcard && !document.getElementById('listenReveal')){
       var rev = document.createElement('div');
       rev.id = 'listenReveal';
-      rev.style.cssText = 'font-size:22px;font-weight:900;color:var(--text);font-family:var(--display);margin-top:12px;';
+      rev.style.cssText = 'font-size:'+(c.german.length>28?'16':'22')+'px;line-height:1.5;font-weight:900;color:var(--text);font-family:var(--display);margin-top:12px;';
       rev.textContent = c.german;
       qcard.appendChild(rev);
     }
@@ -2505,12 +2669,17 @@ function initPractice() {
   updateStats();
   renderStreakDots();
   updateReminderBanner();
+  renderGoalChips();
   setInterval(checkNotify, 60000);
 }
 function recPrac(n) {
   practice.todayCount = (practice.todayCount||0) + (n||1);
   var today = new Date().toDateString();
-  if(practice.todayCount>=5 && practice.streakDate!==today){
+  practice.hist = practice.hist || {};
+  practice.hist[today] = (practice.hist[today]||0) + (n||1);
+  var keys = Object.keys(practice.hist);
+  if(keys.length>60){ keys.sort(function(a,b){return new Date(a)-new Date(b);}).slice(0,keys.length-60).forEach(function(k){delete practice.hist[k];}); }
+  if(practice.todayCount>=(practice.goal||5) && practice.streakDate!==today){
     practice.streak = (practice.streak||0)+1;
     practice.streakDate = today;
   }
@@ -2524,6 +2693,12 @@ function updateStats() {
   var d=document.getElementById('statDeck'); if(d) d.textContent=decks.length;
   var diffCount = 0;
   decks.forEach(function(dk){ dk.cards.forEach(function(c){ if(c.difficult) diffCount++; }); });
+  var dueN = dueCards().length;
+  var dueEl = document.getElementById('dueReviewCard');
+  if(dueEl){
+    dueEl.style.display = dueN>0 ? 'flex' : 'none';
+    var dc = document.getElementById('dueReviewCount'); if(dc) dc.textContent = dueN+'টা card review করার সময় হয়েছে';
+  }
   var card = document.getElementById('difficultReviewCard');
   if(card){
     if(diffCount>0){
@@ -2537,27 +2712,46 @@ function updateStats() {
 function renderStreakDots() {
   var el = document.getElementById('streakDots'); if(!el) return;
   var days=['র','সো','ম','বু','বৃ','শু','শ'];
-  var today = new Date().getDay();
+  var now = new Date(), dow = now.getDay();
+  var hist = practice.hist || {};
   var h='';
   for(var i=0;i<7;i++){
-    var act=i<=today;
-    var col=act?'#7c5cfc':'#ffffff18';
+    var d = new Date(now); d.setDate(now.getDate() - (dow - i));
+    var key = d.toDateString();
+    var cnt = hist[key] || (i===dow ? (practice.todayCount||0) : 0);
+    var future = i>dow, isToday = i===dow;
+    var col = cnt>0 ? '#2dd4a0' : (isToday ? '#7c5cfc' : '#ffffff18');
     h+='<div style="flex:1;text-align:center;">';
-    h+='<div style="height:4px;background:'+col+';border-radius:99px;margin-bottom:4px;"></div>';
-    h+='<div style="font-size:10px;color:'+(act?'#a78bfa':'var(--muted)')+';">'+days[i]+'</div></div>';
+    h+='<div style="height:5px;background:'+col+';border-radius:99px;margin-bottom:4px;opacity:'+(future?0.4:1)+';"></div>';
+    h+='<div style="font-size:10px;font-weight:'+(isToday?'900':'600')+';color:'+(cnt>0?'#2dd4a0':(isToday?'#a78bfa':'var(--muted)'))+';">'+days[i]+'</div></div>';
   }
   el.innerHTML=h;
+}
+function renderGoalChips(){
+  var el = document.getElementById('goalChips'); if(!el) return;
+  var h = '';
+  [5,10,20,30].forEach(function(n){ h += '<button class="goal-chip'+((practice.goal||5)===n?' on':'')+'" onclick="setGoal('+n+')">'+n+'</button>'; });
+  el.innerHTML = h;
+}
+function setGoal(n){
+  practice.goal = n;
+  saveLS('df_prac', practice);
+  renderGoalChips(); updateReminderBanner();
+  showToast('🎯 দৈনিক লক্ষ্য: '+n+'টি');
 }
 function updateReminderBanner() {
   var t=document.getElementById('reminderTitle');
   var s=document.getElementById('reminderSub');
   var done=practice.todayCount||0;
-  if(done>=5){
+  var goal=practice.goal||5;
+  var gf=document.getElementById('goalFill'); if(gf) gf.style.width=Math.min(100,Math.round(done/goal*100))+'%';
+  var gt=document.getElementById('goalTxt'); if(gt) gt.textContent=Math.min(done,goal)+'/'+goal;
+  if(done>=goal){
     if(t) t.textContent='আজকের Practice সম্পন্ন! 🎉';
     if(s) s.textContent=(practice.streak||0)+' দিনের streak চলছে!';
   } else {
     if(t) t.textContent='আজকের Practice বাকি! ⚡';
-    if(s) s.textContent='আর '+(5-done)+'টি কার্ড দেখলেই লক্ষ্য পূরণ!';
+    if(s) s.textContent='আর '+(goal-done)+'টি সঠিক উত্তর দিলেই লক্ষ্য পূরণ!';
   }
 }
 function dismissReminder(){ document.getElementById('reminderBanner').style.display='none'; }
@@ -2609,7 +2803,7 @@ function showToast(msg, actionText, actionFn) {
 function checkNotify(){
   var now=new Date();
   var p=(reminder.time||'08:00').split(':');
-  if(reminder.days.indexOf(now.getDay())>=0 && now.getHours()===parseInt(p[0]) && now.getMinutes()===parseInt(p[1]) && practice.todayCount<5){
+  if(reminder.days.indexOf(now.getDay())>=0 && now.getHours()===parseInt(p[0]) && now.getMinutes()===parseInt(p[1]) && practice.todayCount<(practice.goal||5)){
     if('Notification' in window && Notification.permission==='granted'){
       new Notification('DeutschFlash 🇩🇪',{body:'আজকের German practice বাকি!'});
     }
@@ -2636,7 +2830,11 @@ function buildPDF(tDecks){
   return h;
 }
 function openPDF(html){
-  document.getElementById('pdfPreviewContent').innerHTML = html;
+  var pc = document.getElementById('pdfPreviewContent');
+  pc.innerHTML = html;
+  var pages = pc.querySelectorAll('.sp-page');
+  pc.className = pages.length ? 'paged' : '';
+  for(var i=0;i<pages.length;i++) pages[i].setAttribute('data-n', pages.length>1 ? 'পাতা '+(i+1)+' / '+pages.length : '');
   showPage('pgPdfPreview');
 }
 function printPdfPreview(){
@@ -2709,6 +2907,7 @@ function sLocLabel(id){
   if(!id || !sGetFolder(id)) return '📂 Sentence Library';
   return sFolderPath(id).map(function(f){return f.emoji+' '+esc(f.name);}).join(' › ');
 }
+function sTagOf(f){ var p = f && f.folderId ? sFolderPath(f.folderId) : []; return p.length ? p[p.length-1].name : ''; }
 function sPathText(id){
   return sFolderPath(id).map(function(f){return f.name;}).join(' › ');
 }
@@ -2775,31 +2974,110 @@ function slRender(){
   });
   files.forEach(function(f,i){
     var open = !!slOpen[f.id];
-    h += '<div class="deck-card" style="animation-delay:'+((subs.length+i)*0.04)+'s;">';
+    var lim = slLimit[f.id] || SL_PAGE;
+    h += '<div class="deck-card" id="slf'+f.id+'" style="animation-delay:'+((subs.length+i)*0.04)+'s;">';
     h += '<div class="d-row" style="cursor:pointer;" onclick="slToggle('+f.id+')">';
     h += '<div class="d-ebox" style="background:#4cc9f020;border:1px solid #4cc9f040;">📄</div>';
-    h += '<div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:15px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(f.name)+'</div><div style="font-size:12px;color:var(--sub);">'+f.items.length+' বাক্য</div></div>';
+    h += '<div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:15px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(f.name)+'</div><div style="font-size:12px;color:var(--sub);">'+f.items.length+' টি</div></div>';
     h += '<div style="color:var(--muted);font-size:16px;flex-shrink:0;">'+(open?'▲':'▼')+'</div></div>';
     if(open){
       h += '<div style="margin:-4px 0 13px;">';
-      if(!f.items.length) h += '<div style="font-size:12px;color:var(--muted);padding:8px 0;">এই File-এ কোনো বাক্য নেই।</div>';
+      if(!f.items.length) h += '<div style="font-size:12px;color:var(--muted);padding:8px 0;">এই File-এ কোনো বাক্য নেই। "✏️ খোলো" চেপে যোগ করো।</div>';
+      var sn = 0;
       f.items.forEach(function(it,si){
-        h += '<div class="sl-sent" style="display:flex;gap:8px;align-items:flex-start;"><div style="flex:1;min-width:0;"><div class="sl-de">'+esc(it.de)+'</div><div class="sl-bn">'+esc(it.bn)+'</div></div>';
+        if(!it.story) sn++;
+        if(si>=lim) return;
+        h += '<div class="sl-sent" style="display:flex;gap:8px;align-items:flex-start;">'+(it.story?'':'<div class="sp-num" style="margin-top:2px;">'+sn+'</div>')+'<div style="flex:1;min-width:0;'+(it.story?'white-space:pre-wrap;':'')+'">'+(it.story?'<div style="font-size:11px;color:var(--cyan);font-weight:800;margin-bottom:3px;">📖 Story'+(it.title?' · '+esc(it.title):'')+'</div>':'')+'<div class="sl-de">'+esc(it.de)+'</div><div class="sl-bn">'+esc(it.bn)+'</div></div>';
+        h += '<div class="sl-mv"><button onclick="slMoveSent('+f.id+','+si+',-1)" aria-label="উপরে">▲</button><button onclick="slMoveSent('+f.id+','+si+',1)" aria-label="নিচে">▼</button></div>';
+        h += '<button class="sp-ib" onclick="slSpeak('+f.id+','+si+',this)" aria-label="শুনুন">🔊</button>';
         h += '<button class="sp-ib" onclick="slEditSent('+f.id+','+si+')">✏️</button><button class="sp-ib" style="color:var(--red);border-color:#f25c7a44;" onclick="slDelSent('+f.id+','+si+')">✕</button></div>';
       });
+      if(f.items.length>lim) h += '<button class="btn btn-ghost btn-sm sl-more" onclick="slMore('+f.id+')">⬇️ আরও দেখাও ('+(f.items.length-lim)+'টি বাকি)</button>';
       h += '</div>';
     }
-    h += '<div class="d-acts">';
+    h += '<div class="d-acts" style="flex-wrap:wrap;">';
     h += '<button class="btn btn-ghost btn-sm" style="flex:1;" onclick="spOpenFile('+f.id+')">✏️ খোলো</button>';
     h += '<button class="btn btn-blue btn-sm" style="flex:1;" onclick="spPdfFile('+f.id+')">📄 PDF</button>';
+    h += '<button class="btn btn-ghost btn-sm" style="padding:8px 11px;" onclick="slRenameFile('+f.id+')" title="নাম বদলাও">🏷️</button>';
+    h += '<button class="btn btn-ghost btn-sm" style="padding:8px 11px;" onclick="slMoveFile('+f.id+')" title="অন্য folder-এ সরাও">📂</button>';
     h += '<button class="btn btn-sm" style="padding:8px 11px;background:#f25c7a18;border:1.5px solid #f25c7a44;color:var(--red);" onclick="slDeleteFile('+f.id+')">🗑️</button>';
     h += '</div></div>';
   });
   if(!subs.length && !files.length){
-    h = '<div style="text-align:center;padding:50px 20px;color:var(--muted);"><div style="font-size:40px;margin-bottom:12px;">📭</div><div style="font-size:14px;">এখানে কিছু নেই।<br>নতুন Folder বা File যোগ করো।</div></div>';
+    h = '<div class="empty-box"><div class="ico">📭</div><div class="txt">'+(slFolderId?'এই folder-এ কিছু নেই।':'এখনো কোনো বাক্যের File নেই।')+'<br>প্রথম File বানিয়ে German-বাংলা বাক্য যোগ করো।</div><div class="acts"><button class="btn btn-green" onclick="slNewFile()">📄+ নতুন File</button><button class="btn btn-ghost" onclick="slFolderForm()">📁+ Folder</button></div></div>';
   }
   el.innerHTML = h;
 }
+
+// ── Library: extras (paging, speak, reorder, move, practice, font size) ──
+var SL_PAGE = 40, slLimit = {};
+function slMore(fid){ slLimit[fid] = (slLimit[fid]||SL_PAGE) + SL_PAGE; slRender(); }
+var _storyTok = 0, _storyBtn = null;
+function _storySplit(text){
+  var out = [];
+  String(text||'').replace(/\r/g,'').split(/\n+/).forEach(function(par){
+    par = par.trim(); if(!par) return;
+    var m = par.match(/[^.!?…]+[.!?…]+["“”„'’»)]*|[^.!?…]+$/g) || [par];
+    m.forEach(function(x){
+      x = x.trim(); if(!x) return;
+      // keep chunks short: long sentences are cut at commas/semicolons (speech engines stop on long text)
+      while(x.length > 170){
+        var cut = Math.max(x.lastIndexOf(',',160), x.lastIndexOf(';',160), x.lastIndexOf(' ',160));
+        if(cut < 40) cut = 160;
+        out.push(x.slice(0,cut+1).trim()); x = x.slice(cut+1).trim();
+      }
+      if(x) out.push(x);
+    });
+  });
+  return out;
+}
+function _storyStop(){
+  _storyTok++; _ttsSeq++;
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  if(_storyBtn){ _storyBtn.textContent = '🔊'; _storyBtn = null; }
+}
+function slSpeak(fid,i,btn){
+  var f=sFileOf(fid), it=f && f.items[i]; if(!it) return;
+  if(!it.story){ _storyStop(); speak(it.de,'de-DE'); return; }
+  if(_storyBtn && btn && _storyBtn===btn){ _storyStop(); return; }   // tap again = stop
+  _storyStop();
+  var parts = _storySplit(it.de); if(!parts.length) return;
+  var my = ++_storyTok;
+  _storyBtn = btn || null; if(btn) btn.textContent = '⏹';
+  (function go(k){
+    if(my !== _storyTok) return;
+    if(k >= parts.length){ if(_storyBtn){ _storyBtn.textContent = '🔊'; _storyBtn = null; } return; }
+    speak(parts[k], 'de-DE', function(){ setTimeout(function(){ go(k+1); }, 250); });
+  })(0);
+}
+function slMoveSent(fid,i,dir){
+  var f = sFileOf(fid); if(!f) return;
+  var j = i+dir;
+  if(j<0 || j>=f.items.length) return;
+  var tmp = f.items[i]; f.items[i] = f.items[j]; f.items[j] = tmp;
+  f.updated = Date.now();
+  if(spDraft.fileId===fid){ spDraft.items = spCopy(f.items); spEditIdx = -1; }
+  saveSL(); slRender();
+}
+function slMoveFile(fid){
+  var f = sFileOf(fid); if(!f) return;
+  openSPicker(f.folderId, function(folderId){
+    f.folderId = folderId || null;
+    f.updated = Date.now();
+    saveSL();
+    slFolderId = f.folderId;
+    slOpen[fid] = true;
+    slRender(); renderSentences();
+    showToast('📂 File সরানো হয়েছে');
+  }, 'folder');
+}
+function setSfs(v){
+  v = Math.max(12, Math.min(24, parseInt(v,10)||14));
+  document.documentElement.style.setProperty('--sfs', v+'px');
+  saveLS('df_sfs', v);
+  var r = document.getElementById('sfsRange'); if(r && String(r.value)!==String(v)) r.value = v;
+}
+setSfs(loadLS('df_sfs', 14));
 
 // ── Library: folders ──
 function slFolderForm(id){
@@ -2905,7 +3183,34 @@ function slFileCreate(){
   spSelectFile(f.id);
   openSentenceEditor();
 }
+function slRenameFile(fid){
+  var f = sFileOf(fid);
+  if(!f) return;
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">🏷️ File-এর নাম বদলাও</div></div>';
+  h += '<div class="form-g"><label class="form-lbl">File-এর নাম *</label><input class="form-inp" id="slRenameNm" value="'+esc(f.name)+'" onkeydown="if(event.key===\'Enter\'){event.preventDefault();slRenameSave('+fid+');}"/></div>';
+  h += '<div id="slRenameMsg"></div>';
+  h += '<div style="display:flex;gap:9px;">';
+  h += '<button class="btn btn-green" style="flex:1;" onclick="slRenameSave('+fid+')">💾 Save করো</button>';
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ বাতিল</button>';
+  h += '</div>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(function(){ var el=document.getElementById('slRenameNm'); if(el){ el.focus(); el.select(); } }, 60);
+}
+function slRenameSave(fid){
+  var f = sFileOf(fid);
+  if(!f) return;
+  var nm = document.getElementById('slRenameNm').value.trim();
+  if(!nm){ showMsg('slRenameMsg','❗ File-এর নাম দিন।','err'); return; }
+  f.name = nm; f.updated = Date.now();
+  saveSL();
+  closeModal();
+  slRender(); renderSentences();
+  showToast('✅ নাম আপডেট হয়েছে');
+}
 function slEditSent(fid,i){
+  var f0 = sFileOf(fid);
+  if(f0 && f0.items[i] && f0.items[i].story){ slEditStory(fid,i); return; }
   spSelectFile(fid);
   openSentenceEditor();
   spEdit(i);
@@ -2946,13 +3251,13 @@ function slExportFolderPDF(){
   }).sort(function(a,b){return a.id-b.id;});
   if(!list.length){ showToast('❗ এখানে কোনো বাক্য নেই'); return; }
   var title = slFolderId ? sGetFolder(slFolderId).name : 'Sentence Library';
-  openPDF(spBuildPdfHtml(slFolderId ? title : '', list.map(function(f){ return {name:f.name, items:f.items}; })));
+  openPDF(spBuildPdfHtml(slFolderId ? title : '', list.map(function(f){ return {name:f.name, tag:sTagOf(f), items:f.items}; })));
 }
 
 // ── Sentence File picker (folders → files), like the Deck picker for cards ──
-var spk = {folderId:null, onPick:null};
-function openSPicker(startId, onPick){
-  spk = {folderId:(startId && sGetFolder(startId)) ? startId : null, onPick:onPick};
+var spk = {folderId:null, onPick:null, mode:'file'};
+function openSPicker(startId, onPick, mode){
+  spk = {folderId:(startId && sGetFolder(startId)) ? startId : null, onPick:onPick, mode:mode||'file'};
   renderSPicker();
   document.getElementById('pickerOverlay').style.display = 'flex';
 }
@@ -2964,7 +3269,8 @@ function spkPickFile(fid){
 }
 function renderSPicker(){
   var path = spk.folderId ? sFolderPath(spk.folderId) : [];
-  var h = '<div style="text-align:center;margin-bottom:14px;"><div style="font-size:17px;font-weight:900;color:var(--text);">📂 File বেছে নাও</div></div>';
+  var folderMode = spk.mode==='folder';
+  var h = '<div style="text-align:center;margin-bottom:14px;"><div style="font-size:17px;font-weight:900;color:var(--text);">'+(folderMode?'📂 কোন folder-এ সরাবে?':'📂 File বেছে নাও')+'</div></div>';
   h += '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:12px;margin-bottom:14px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:9px 12px;">';
   h += '<span style="color:'+(spk.folderId?'var(--cyan)':'var(--text)')+';font-weight:800;cursor:pointer;" onclick="spkNav(null)">💬 Sentence Library</span>';
   path.forEach(function(f,i){
@@ -2972,7 +3278,7 @@ function renderSPicker(){
     h += '<span style="color:'+(i===path.length-1?'var(--text)':'var(--cyan)')+';font-weight:800;cursor:pointer;" onclick="spkNav('+f.id+')">'+f.emoji+' '+esc(f.name)+'</span>';
   });
   h += '</div>';
-  var subs = sChildFolders(spk.folderId), files = sFilesIn(spk.folderId);
+  var subs = sChildFolders(spk.folderId), files = folderMode ? [] : sFilesIn(spk.folderId);
   if(subs.length || files.length){
     h += '<div style="max-height:270px;overflow-y:auto;margin-bottom:12px;">';
     subs.forEach(function(f){
@@ -2991,7 +3297,8 @@ function renderSPicker(){
   } else {
     h += '<div style="text-align:center;padding:14px;color:var(--muted);font-size:13px;">এখানে কোনো Folder বা File নেই।</div>';
   }
-  h += '<button type="button" class="btn btn-green btn-full" style="margin-bottom:9px;" onclick="spkNewFile()">📄+ এখানে নতুন File তৈরি করো</button>';
+  if(folderMode) h += '<button type="button" class="btn btn-green btn-full" style="margin-bottom:9px;" onclick="spkPickFile(spk.folderId)">✅ এখানে সরাও</button>';
+  else h += '<button type="button" class="btn btn-green btn-full" style="margin-bottom:9px;" onclick="spkNewFile()">📄+ এখানে নতুন File তৈরি করো</button>';
   h += '<button type="button" class="btn btn-ghost btn-full" style="margin-bottom:9px;" onclick="spkNewFolder()">📁+ এখানে নতুন Folder</button>';
   h += '<button class="btn btn-ghost btn-full" onclick="closePicker()">✕ বাতিল</button>';
   document.getElementById('pickerBody').innerHTML = h;
@@ -3074,11 +3381,17 @@ function spClearInputs(){
   var a=document.getElementById('spDe'), b=document.getElementById('spBn');
   if(a) a.value=''; if(b) b.value='';
 }
+function spSwapIfNeeded(de, bn){
+  var BN = /[ঀ-৿]/g, LA = /[A-Za-zÄÖÜäöüß]/g;
+  function bnScore(t){ var b=(t.match(BN)||[]).length, l=(t.match(LA)||[]).length; return b-l; }
+  return bnScore(de)>0 && bnScore(bn)<0 ? {de:bn, bn:de, swapped:true} : {de:de, bn:bn};
+}
 function spAdd(){
   if(!spCurFile()){ showMsg('spMsg','❗ আগে File বেছে নাও।','err'); return; }
   var de = document.getElementById('spDe').value.trim();
   var bn = document.getElementById('spBn').value.trim();
   if(!de || !bn){ showMsg('spMsg','❗ German ও বাংলা — দুটো বাক্যই লিখুন।','err'); return; }
+  var sw = spSwapIfNeeded(de, bn); de = sw.de; bn = sw.bn;
   if(spEditIdx>=0 && spEditIdx<spDraft.items.length){
     spDraft.items[spEditIdx] = {de:de, bn:bn};
   } else {
@@ -3116,24 +3429,52 @@ function spDel(i){
 
 // PDF layout: German sentence on one line, its Bengali translation right below it.
 // sections = [{name, items:[{de,bn}]}]  (name is only shown when given)
+// Pasted text often has hard line breaks (copied from a PDF/book). Join single line
+// breaks into spaces so lines fill the full width; a blank line starts a new paragraph.
+function spParas(text){
+  return String(text||'').split(/\n\s*\n/).map(function(x){return x.replace(/\s*\n\s*/g,' ').trim();}).filter(function(x){return x;})
+    .map(function(x){ return '<p>'+esc(x)+'</p>'; }).join('');
+}
 function spBuildPdfHtml(sub, sections){
   var total = 0;
   sections.forEach(function(s){ total += s.items.length; });
-  var h = '<div class="sp-pdf"><h1>DeutschFlash Sentence</h1>';
+  var h = '<div class="sp-pdf"><div class="sp-page"><h1>DeutschFlash Sentence</h1>';
   h += '<div class="sp-pdf-sub">'+(sub?esc(sub)+' · ':'')+total+' বাক্য</div>';
+  // One story per page: every story after the first thing on the PDF starts on a fresh page.
+  var hadContent = false, justHeaded = false;
   sections.forEach(function(s){
-    if(s.name) h += '<h2>'+esc(s.name)+'</h2>';
+    var allStory = s.items.length && s.items.every(function(it){return it.story;});
+    justHeaded = false;
+    if(s.name && !allStory){
+      if(hadContent && s.items[0] && s.items[0].story) h += '</div><div class="sp-page">';
+      h += '<h2>'+esc(s.name)+'</h2>';
+      justHeaded = true; hadContent = true;
+    }
+    var n = 0;
     s.items.forEach(function(it){
-      h += '<div class="sp-row"><div class="sp-row-de">'+esc(it.de)+'</div><div class="sp-row-bn">'+esc(it.bn)+'</div></div>';
+      if(it.story){
+        var tag = s.tag || (allStory ? s.name : '');
+        var brk = hadContent && !justHeaded;
+        justHeaded = false; hadContent = true;
+        if(brk) h += '</div><div class="sp-page">';
+        h += '<div class="sp-story">';
+        if(it.title || tag){
+          h += '<div class="sp-story-head">'+(it.title?'<div class="sp-story-title">'+esc(it.title)+'</div>':'')+(tag?'<div class="sp-story-tag">'+esc(tag)+'</div>':'')+'</div>';
+        }
+        h += '<div class="sp-story-de" lang="de">'+spParas(it.de)+'</div><div class="sp-story-bn">'+spParas(it.bn)+'</div></div>';
+        return;
+      }
+      n++; justHeaded = false; hadContent = true;
+      h += '<div class="sp-row"><div class="sp-row-n">'+n+'</div><div class="sp-row-txt"><div class="sp-row-de">'+esc(it.de)+'</div><div class="sp-row-bn">'+esc(it.bn)+'</div></div></div>';
     });
   });
-  h += '</div>';
+  h += '</div></div>';
   return h;
 }
 function spPdfFile(fid){
   var f = sFileOf(fid);
   if(!f) return;
-  openPDF(spBuildPdfHtml(sPathText(f.folderId), [{name:f.name, items:f.items}]));
+  openPDF(spBuildPdfHtml(sPathText(f.folderId), [{name:f.name, tag:sTagOf(f), items:f.items}]));
 }
 // Opens a saved sentence file in the Create tab.
 function spOpenFile(fid){
@@ -3160,32 +3501,84 @@ function renderSentences(){
 // ── Bulk add sentences ──
 // One sentence per line:  German | বাংলা     (comma also works:  German, বাংলা)
 // or two lines per sentence: German line, then its Bengali line right below.
-var spBulkFileId = null, spBulkText = '';
+var spBulkFileId = null, spBulkText = '', spBulkMode = 'sent', spBulkDe = '', spBulkBn = '', spBulkTitle = '', spBulkEditIdx = -1;
 function spOpenBulk(){
   spBulkFileId = spDraft.fileId || null;
-  spBulkText = '';
+  spBulkText = ''; spBulkDe = ''; spBulkBn = ''; spBulkTitle = ''; spBulkMode = 'sent'; spBulkEditIdx = -1;
   renderSpBulk();
   document.getElementById('modalOverlay').classList.add('open');
 }
+function spBulkSave(){
+  var a=document.getElementById('spBulkTa'), d=document.getElementById('spStoryDe'), b=document.getElementById('spStoryBn');
+  var tt=document.getElementById('spStoryTitle');
+  if(a) spBulkText=a.value; if(d) spBulkDe=d.value; if(b) spBulkBn=b.value; if(tt) spBulkTitle=tt.value;
+}
+function spBulkSetMode(m){ spBulkSave(); spBulkMode = m; renderSpBulk(); }
+function spBulkPickFile(){
+  spBulkSave();
+  var f = sFileOf(spBulkFileId);
+  openSPicker(f ? f.folderId : null, function(fid){ spBulkFileId = fid; renderSpBulk(); });
+}
 function renderSpBulk(){
   var f = sFileOf(spBulkFileId);
-  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">📋 একসাথে অনেক বাক্য যোগ করো</div></div>';
+  var story = spBulkMode==='story';
+  var h = '<div style="text-align:center;margin-bottom:14px;"><div style="font-size:19px;font-weight:900;color:var(--text);">'+(spBulkEditIdx>=0?'✏️ Story Edit করো':'📋 একসাথে অনেক যোগ করো')+'</div></div>';
+  if(spBulkEditIdx<0){
+    h += '<div class="seg-wrap" style="margin-top:0;margin-bottom:14px;"><button class="seg'+(story?'':' on')+'" onclick="spBulkSetMode(\'sent\')">💬 বাক্য</button><button class="seg'+(story?' on':'')+'" onclick="spBulkSetMode(\'story\')">📖 Story / Paragraph</button></div>';
+  }
   h += '<div class="form-g"><label class="form-lbl">File বেছে নাও</label>';
-  h += '<button type="button" class="form-sel" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;" onclick="spBulkText=document.getElementById(\'spBulkTa\').value;openSPicker(spBulkFileId&&sFileOf(spBulkFileId)?sFileOf(spBulkFileId).folderId:null,function(fid){spBulkFileId=fid;renderSpBulk();})">';
+  h += '<button type="button" class="form-sel" style="text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;" onclick="spBulkPickFile()">';
   h += '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(f?'📄 '+esc(f.name):'-- File বেছে নাও --')+'</span><span style="color:var(--muted);flex-shrink:0;">📁 ›</span></button></div>';
-  h += '<div class="form-g"><label class="form-lbl">প্রতি লাইনে একটা বাক্য</label>';
-  h += '<div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6;">German | বাংলা<br>অথবা প্রথম লাইনে German, ঠিক নিচের লাইনে বাংলা</div>';
-  h += '<button type="button" class="btn btn-ghost btn-sm btn-full" style="margin-bottom:9px;" onclick="spBulkText=document.getElementById(\'spBulkTa\').value;document.getElementById(\'spBulkFileInp\').click()">📁 File থেকে Import করো (.txt)</button>';
-  h += '<input type="file" id="spBulkFileInp" accept=".txt,.csv,text/plain" style="display:none;" onchange="spBulkFileSelected(event)"/>';
-  h += '<textarea class="form-inp" id="spBulkTa" rows="9" style="resize:vertical;font-size:13px;line-height:1.6;" placeholder="Mein Hund ist sauber | কুকুরটি পরিষ্কার।&#10;Die Katze schläft&#10;বিড়ালটি ঘুমাচ্ছে।"></textarea></div>';
-  h += '<div id="spBulkMsg"></div>';
-  h += '<div style="display:flex;gap:9px;">';
-  h += '<button class="btn btn-green" style="flex:1;" onclick="spSubmitBulk()">➕ সব যোগ করো</button>';
-  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ বাতিল</button>';
-  h += '</div>';
+  if(story){
+    h += '<div class="form-g"><label class="form-lbl">📌 Story-র নাম (Title)</label><input class="form-inp" id="spStoryTitle" lang="de" placeholder="যেমন: Ein Tag voller Essen" autocomplete="off"/></div>';
+    h += '<div class="form-g"><label class="form-lbl">🇩🇪 প্রথমে Deutsch Story / Paragraph *</label>';
+    h += '<textarea class="form-inp" id="spStoryDe" lang="de" rows="7" style="resize:vertical;font-size:14px;line-height:1.6;" placeholder="Mein Hund heißt Max. Er ist sehr sauber ..."></textarea></div>';
+    h += '<div class="form-g"><label class="form-lbl">🇧🇩 তারপর বাংলা অনুবাদ *</label>';
+    h += '<textarea class="form-inp" id="spStoryBn" lang="bn" rows="7" style="resize:vertical;font-size:14px;line-height:1.6;" placeholder="আমার কুকুরের নাম ম্যাক্স। সে খুব পরিষ্কার ..."></textarea></div>';
+    h += '<div id="spBulkMsg"></div>';
+    h += '<div style="display:flex;gap:9px;"><button class="btn btn-green" style="flex:1;" onclick="spSubmitStory()">'+(spBulkEditIdx>=0?'💾 Save করো':'➕ Story যোগ করো')+'</button>';
+  } else {
+    h += '<div class="form-g"><label class="form-lbl">প্রতি লাইনে একটা বাক্য</label>';
+    h += '<div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6;">German | বাংলা<br>অথবা প্রথম লাইনে German, ঠিক নিচের লাইনে বাংলা</div>';
+    h += '<button type="button" class="btn btn-ghost btn-sm btn-full" style="margin-bottom:9px;" onclick="spBulkSave();document.getElementById(\'spBulkFileInp\').click()">📁 File থেকে Import করো (.txt)</button>';
+    h += '<input type="file" id="spBulkFileInp" accept=".txt,.csv,text/plain" style="display:none;" onchange="spBulkFileSelected(event)"/>';
+    h += '<textarea class="form-inp" id="spBulkTa" rows="9" style="resize:vertical;font-size:13px;line-height:1.6;" placeholder="Mein Hund ist sauber | কুকুরটি পরিষ্কার।&#10;Die Katze schläft&#10;বিড়ালটি ঘুমাচ্ছে।"></textarea></div>';
+    h += '<div id="spBulkMsg"></div>';
+    h += '<div style="display:flex;gap:9px;"><button class="btn btn-green" style="flex:1;" onclick="spSubmitBulk()">➕ সব যোগ করো</button>';
+  }
+  h += '<button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">✕ বাতিল</button></div>';
   document.getElementById('modalBody').innerHTML = h;
-  var ta = document.getElementById('spBulkTa');
-  if(ta && spBulkText) ta.value = spBulkText;
+  var ta=document.getElementById('spBulkTa'); if(ta && spBulkText) ta.value = spBulkText;
+  var tt=document.getElementById('spStoryTitle'); if(tt && spBulkTitle) tt.value = spBulkTitle;
+  var d=document.getElementById('spStoryDe'); if(d && spBulkDe) d.value = spBulkDe;
+  var b=document.getElementById('spStoryBn'); if(b && spBulkBn) b.value = spBulkBn;
+}
+function spSubmitStory(){
+  var f = sFileOf(spBulkFileId);
+  if(!f){ showMsg('spBulkMsg','❗ File বেছে নিন।','err'); return; }
+  var de = document.getElementById('spStoryDe').value.trim();
+  var bn = document.getElementById('spStoryBn').value.trim();
+  if(!de || !bn){ showMsg('spBulkMsg','❗ Deutsch ও বাংলা — দুটো Paragraph-ই লিখুন।','err'); return; }
+  var sw2 = spSwapIfNeeded(de, bn); de = sw2.de; bn = sw2.bn;
+  var ttl = document.getElementById('spStoryTitle').value.trim();
+  var it = {de:de, bn:bn, story:true};
+  if(ttl) it.title = ttl;
+  var editing = spBulkEditIdx>=0 && spBulkEditIdx<f.items.length;
+  if(editing) f.items[spBulkEditIdx] = it; else f.items.push(it);
+  f.updated = Date.now();
+  if(spDraft.fileId===f.id) spDraft.items = spCopy(f.items);
+  saveSL();
+  closeModal();
+  renderSentences(); slRender();
+  showToast(editing ? '✅ Story আপডেট হয়েছে' : '✅ Story যোগ হয়েছে');
+}
+function slEditStory(fid,i){
+  var f = sFileOf(fid);
+  if(!f || !f.items[i]) return;
+  spBulkFileId = fid; spBulkMode = 'story'; spBulkEditIdx = i;
+  spBulkText = ''; spBulkDe = f.items[i].de; spBulkBn = f.items[i].bn; spBulkTitle = f.items[i].title || '';
+  renderSpBulk();
+  document.getElementById('modalOverlay').classList.add('open');
 }
 function spBulkFileSelected(evt){
   var file = evt.target.files && evt.target.files[0];
@@ -3202,30 +3595,50 @@ function spBulkFileSelected(evt){
   evt.target.value = '';
 }
 function spParseBulk(raw){
-  var BN = /[\u0980-\u09FF]/;
+  // Order does not matter: each line is recognised as German (Latin script) or Bengali by its letters.
+  var BNr = /[ঀ-৿]/, LAr = /[A-Za-zÄÖÜäöüß]/;
   var out = [], skipped = 0, pending = null;
+  function kind(t){
+    var nb = (t.match(/[ঀ-৿]/g)||[]).length, nl = (t.match(/[A-Za-zÄÖÜäöüß]/g)||[]).length;
+    if(!nb && !nl) return 'none';
+    if(nb && !nl) return 'bn';
+    if(nl && !nb) return 'de';
+    if(nb>=nl*1.6) return 'bn';        // Bengali sentence with a few English/Latin words
+    if(nl>=nb*1.6) return 'de';
+    return 'mix';
+  }
+  function push(x, y){            // x, y in any order
+    var kx = kind(x), ky = kind(y);
+    if(kx==='bn' && ky!=='bn') out.push({de:y, bn:x});
+    else out.push({de:x, bn:y});
+  }
   raw.split('\n').map(function(l){return l.trim();}).filter(function(l){return l;}).forEach(function(line){
-    var sep = line.indexOf('|'); if(sep<0) sep = line.indexOf('\t');
+    var sep = line.indexOf('|'), sl = 1; if(sep<0) sep = line.indexOf('\t');
+    if(sep<0){ var mm = line.match(/\s(?:-|–|—|=|\/|=>|->)\s/); if(mm && kind(line.slice(0,mm.index))!==kind(line.slice(mm.index+mm[0].length))){ sep = mm.index; sl = mm[0].length; } }
     if(sep>=0){
       if(pending){ skipped++; pending = null; }
-      var de = line.slice(0,sep).trim(), bn = line.slice(sep+1).trim();
-      if(de && bn) out.push({de:de, bn:bn}); else skipped++;
+      var p1 = line.slice(0,sep).trim(), p2 = line.slice(sep+sl).trim();
+      if(p1 && p2) push(p1, p2); else skipped++;
       return;
     }
-    if(!BN.test(line)){                      // German-only line → wait for its Bengali line
-      if(pending) skipped++;
-      pending = line; return;
-    }
-    if(!/[A-Za-zÄÖÜäöüß]/.test(line)){       // Bengali-only line → translation of previous German line
-      if(pending){ out.push({de:pending, bn:line}); pending = null; } else skipped++;
+    var k = kind(line);
+    if(k==='de' || k==='bn'){
+      if(pending && pending.k!==k){
+        push(pending.t, line); pending = null;
+      } else {
+        if(pending) skipped++;
+        pending = {k:k, t:line};
+      }
       return;
     }
-    // mixed line: "German, বাংলা" — split at the last comma before the first Bengali character
     if(pending){ skipped++; pending = null; }
-    var first = line.search(BN), comma = line.lastIndexOf(',', first);
+    if(k==='none'){ skipped++; return; }
+    // mixed line with a comma: "German, বাংলা" or "বাংলা, German"
+    var bnFirst = BNr.test(line.charAt(0)) || line.search(BNr) < line.search(LAr);
+    var idx = bnFirst ? line.search(LAr) : line.search(BNr), comma = line.lastIndexOf(',', idx);
     if(comma>0){
       var d2 = line.slice(0,comma).trim(), b2 = line.slice(comma+1).trim();
-      if(d2 && b2){ out.push({de:d2, bn:b2}); return; }
+      if(d2 && b2){ push(d2, b2); return; }
     }
     skipped++;
   });
@@ -3244,6 +3657,73 @@ function spSubmitBulk(){
   closeModal();
   renderSentences(); slRender();
   showToast('✅ '+r.items.length+'টা বাক্য যোগ হয়েছে'+(r.skipped?' ('+r.skipped+' লাইন বাদ)':''));
+}
+
+// ════════════════════════════════
+// ONBOARDING + HELP
+// ════════════════════════════════
+var OB_SLIDES = [
+  {ico:'🗂️', title:'Card দিয়ে শব্দ শেখো', txt:'<b>Create</b> ট্যাবে Deck বেছে German শব্দ ও বাংলা অর্থ যোগ করো। তারপর <b>Flashcards, Learn, Test, Match</b> দিয়ে practice করো। অনেক শব্দ একসাথে দিতে <b>Bulk Add</b> আছে।'},
+  {ico:'💬', title:'বাক্য ও Story', txt:'<b>Create → Sentence</b>-এ একটি File বেছে German ও বাংলা বাক্য বা পুরো Story যোগ করো — নিজে নিজেই Library-র <b>Sentences</b> অংশে Save হবে। সেখান থেকে <b>Practice</b> করো, বাক্য শুনো, আর <b>PDF</b> বানাও।'},
+  {ico:'🔥', title:'প্রতিদিন একটু একটু', txt:'প্রোফাইলে <b>দৈনিক লক্ষ্য</b> ঠিক করো — রোজ সেটা পূরণ করলে <b>streak</b> বাড়বে। ভুল হওয়া card আবার আগে আসবে, তাই কম সময়েই বেশি মনে থাকবে। যেকোনো জায়গায় আটকে গেলে <b>❓</b> চাপো।'}
+];
+var obIdx = 0;
+function openOnboarding(){ obIdx = 0; renderOnboarding(); document.getElementById('obOverlay').classList.add('open'); }
+function closeOnboarding(){
+  document.getElementById('obOverlay').classList.remove('open');
+  saveLS('df_onboarded', true);
+}
+function obGo(d){
+  obIdx += d;
+  if(obIdx<0) obIdx = 0;
+  if(obIdx>=OB_SLIDES.length){ closeOnboarding(); return; }
+  renderOnboarding();
+}
+function renderOnboarding(){
+  var s = OB_SLIDES[obIdx], last = obIdx===OB_SLIDES.length-1;
+  var h = '<div class="ob-slide" key="'+obIdx+'"><div class="ob-ico">'+s.ico+'</div><div class="ob-title">'+s.title+'</div><div class="ob-txt">'+s.txt+'</div></div>';
+  h += '<div class="ob-dots">';
+  OB_SLIDES.forEach(function(x,i){ h += '<div class="ob-dot'+(i===obIdx?' on':'')+'"></div>'; });
+  h += '</div>';
+  h += '<div style="display:flex;gap:10px;width:100%;max-width:420px;">';
+  if(obIdx>0) h += '<button class="btn btn-ghost" style="flex:1;padding:14px;" onclick="obGo(-1)">← আগে</button>';
+  else h += '<button class="btn btn-ghost" style="flex:1;padding:14px;" onclick="closeOnboarding()">Skip</button>';
+  h += '<button class="btn btn-blue" style="flex:2;padding:14px;" onclick="obGo(1)">'+(last?'🚀 শুরু করি':'পরের ›')+'</button>';
+  h += '</div>';
+  document.getElementById('obOverlay').innerHTML = h;
+}
+var HELP_TOPICS = {
+  card: {title:'✍️ Card যোগ করা', steps:[
+    '<b>Deck বেছে নাও</b> — বাটনে চাপলে Folder ও Deck-এর তালিকা আসবে, সেখান থেকেই নতুন Deck-ও বানানো যায়।',
+    'German শব্দ ও বাংলা অর্থ লেখো (English, উদাহরণ বাক্য ঐচ্ছিক)।',
+    '<b>➕ কার্ড যোগ করো</b> চাপো। অনেক শব্দ থাকলে <b>📋 একসাথে অনেক Card</b> ব্যবহার করো — প্রতি লাইনে একটা card।']},
+  sentence: {title:'💬 বাক্য ও Story যোগ করা', steps:[
+    '<b>File বেছে নাও</b> — Sentence Library-র Folder থেকে একটি File বাছো, অথবা সেখানেই নতুন File বানাও।',
+    'German ও বাংলা বাক্য লিখে <b>➕ বাক্য যোগ করো</b> চাপো। যোগ করার সাথে সাথেই File-এ Save হয়ে যায় — আলাদা Save বাটন নেই।',
+    '<b>📋 একসাথে অনেক বাক্য</b>-এ <i>German | বাংলা</i> ফরম্যাটে অনেক বাক্য, বা <b>Story / Paragraph</b> ট্যাবে পুরো গল্প (প্রথমে Deutsch, তারপর বাংলা) যোগ করা যায়।',
+    'বাক্য Edit, মোছা বা ক্রম বদলাতে Library → Sentences-এ File খুলো।']},
+  libcard: {title:'🗂️ Card Library', steps:[
+    '<b>📁+ Folder</b> ও <b>🗂️+ Deck</b> দিয়ে নিজের মতো সাজাও। Folder-এর ভেতরে Folder-ও রাখা যায়।',
+    'Deck-এ চাপলে Flashcards, Learn, Test, Match ইত্যাদি mode পাবে।',
+    'Deck বা Folder মুছলে নিচে <b>Undo</b> আসে — ভুলে মুছে গেলে সাথে সাথে ফিরিয়ে আনো।',
+    'Deck-এর ক্রম বদলাতে Deck চেপে ধরে টানো।']},
+  libsent: {title:'💬 Sentence Library', steps:[
+    '<b>📁+ Folder</b> ও <b>📄+ File</b> দিয়ে বাক্য সাজাও। এখানে flashcard নেই — শুধু বাক্য ও Story।',
+    'File-এ চাপলে বাক্যগুলো খোলে। প্রতিটির পাশে <b>🔊</b> শুনতে, <b>✏️</b> Edit করতে, <b>✕</b> মুছতে পারবে।',
+    '<b>🧠 Practice</b> — German দেখে বাংলা বাছো, উল্টো, বা শুনে বাছো।',
+    '<b>📄 PDF</b> — German বাক্যের নিচে বাংলা সাজানো PDF; Story হলে বইয়ের পাতার মতো।',
+    'উপরের <b>Aa</b> স্লাইডার দিয়ে লেখার size বড়-ছোট করো।']}
+};
+function openHelp(topic){
+  var tp = HELP_TOPICS[topic] || HELP_TOPICS.card;
+  var h = '<div style="text-align:center;margin-bottom:16px;"><div style="font-size:19px;font-weight:900;color:var(--text);">'+tp.title+'</div></div>';
+  h += '<ol class="help-steps">';
+  tp.steps.forEach(function(s){ h += '<li>'+s+'</li>'; });
+  h += '</ol>';
+  h += '<button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="closeModal();openOnboarding()">🎓 পুরো গাইড আবার দেখো</button>';
+  h += '<button class="btn btn-blue btn-full" style="margin-top:9px;" onclick="closeModal()">বুঝেছি</button>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
 }
 
 // ════════════════════════════════
@@ -3300,5 +3780,6 @@ function showMsg(id,text,type){
 }
 
 </script>
+<div id="obOverlay" role="dialog" aria-modal="true"></div>
 </body>
 </html>
