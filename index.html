@@ -327,6 +327,13 @@ input,select,textarea,button{font-family:var(--font);}
 .dr-x{width:34px;height:34px;border-radius:10px;background:#ffffff0c;border:1.5px solid var(--borderL);color:var(--text);font-size:15px;cursor:pointer;}
 .dr-danger{color:var(--red);}
 .dr-danger .dr-n{background:#f25c7a22;color:var(--red);}
+
+.sr-w{cursor:pointer;border-radius:5px;padding:0 1px;border-bottom:1px dotted #4361ee88;}
+.sr-w.on{background:#4361ee55;color:#fff;}
+#srPop{display:none;position:fixed;left:12px;right:12px;bottom:14px;max-width:616px;margin:0 auto;z-index:60;background:var(--navy);border:1.5px solid var(--blue);border-radius:16px;padding:12px 15px;box-shadow:0 8px 30px #0008;}
+#libQ{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 36px 11px 38px;color:var(--text);font-size:14px;outline:none;}
+.sp-vocab-g{font-size:11px;font-weight:700;color:#4361ee;margin:7px 0 2px;}
+.sp-story.hasv5 .sp-vocab-g,.sp-story.hasv6 .sp-vocab-g{font-size:9px;margin:3px 0 1px;}
 </style>
 </head>
 <body>
@@ -380,6 +387,7 @@ input,select,textarea,button{font-family:var(--font);}
   <div id="mainContent" style="flex:1;overflow-y:auto;">
     <!-- HOME -->
     <div class="tab-content on" id="tabHome">
+      <div id="xsContinue"></div>
       <!-- Reminder Banner -->
       <div id="reminderBanner" style="background:linear-gradient(135deg,#1a0a50,#0e0c40);border:1.5px solid #7c5cfc55;border-radius:20px;padding:18px;margin:17px 0 14px;position:relative;overflow:hidden;">
         <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:#7c5cfc18;border-radius:50%;"></div>
@@ -422,7 +430,7 @@ input,select,textarea,button{font-family:var(--font);}
         </div>
         <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 10px;text-align:center;">
           <div style="font-size:22px;font-weight:900;color:var(--green);" id="statToday">0</div>
-          <div style="font-size:11px;color:var(--sub);">আজকের কার্ড</div>
+          <div style="font-size:11px;color:var(--sub);">আজকের Practice</div>
         </div>
         <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 10px;text-align:center;">
           <div style="font-size:22px;font-weight:900;color:var(--gold);" id="statDeck">0</div>
@@ -517,10 +525,15 @@ input,select,textarea,button{font-family:var(--font);}
     <!-- LIBRARY -->
     <div class="tab-content" id="tabLibrary">
       <div class="seg-wrap">
-        <button class="seg on" id="libSegCards" onclick="setLibMode('cards')">🗂️ Cards</button>
-        <button class="seg" id="libSegSent" onclick="setLibMode('sent')">💬 Sentences</button>
+        <button class="seg on" id="libSegCards" onclick="setLibMode('cards')">🗂️ শব্দ (Card)</button>
+        <button class="seg" id="libSegSent" onclick="setLibMode('sent')">💬 বাক্য (Sentence)</button>
         <button class="seg help-btn" onclick="openHelp(libMode==='sent'?'libsent':'libcard')" aria-label="সাহায্য">❓</button>
       </div>
+      <div style="position:relative;margin-top:12px;"><span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;">🔍</span><input id="libQ" type="search" placeholder="শব্দ, বাক্য বা file খোঁজো…" oninput="xsLibSearch(this.value)" autocomplete="off"/><button id="libQClr" onclick="xsLibClear()" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--sub);font-size:16px;cursor:pointer;">✕</button></div>
+      <div id="libQRes"></div>
+      <div id="libBody">
+      <div id="libScopeBar"></div>
+      <div id="libRecent" style="margin-top:12px;"></div>
 
       <!-- CARDS LIBRARY (decks + folders) -->
       <div id="libCards">
@@ -550,6 +563,7 @@ input,select,textarea,button{font-family:var(--font);}
           <input type="range" id="sfsRange" min="12" max="24" step="1" value="14" style="flex:1;" oninput="setSfs(this.value)" aria-label="অক্ষরের size"/>
         </div>
         <div id="slList"></div>
+      </div>
       </div>
     </div>
   </div>
@@ -629,11 +643,32 @@ input,select,textarea,button{font-family:var(--font);}
 </div>
 
 <!-- PDF PREVIEW -->
+<!-- STORY READER -->
+<div id="pgStoryRead" class="page">
+  <div class="inner-page-bar"><button class="back-btn" onclick="xsReadClose()">←</button><span class="ipb-title" id="srTitle">📖 Story</span></div>
+  <div style="flex:1;overflow-y:auto;padding:16px 16px 90px;max-width:640px;width:100%;margin:0 auto;">
+    <div style="font-size:12px;color:var(--sub);margin-bottom:10px;">💡 যেকোনো শব্দে চাপো — বাংলা অর্থ দেখাবে</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;"><button class="btn btn-blue btn-sm" style="flex:1;" id="srPlay" data-ico="🔊 সব শোনো" onclick="xsReadPlay(this)">🔊 সব শোনো</button><button class="btn btn-blue btn-sm" style="flex:1;" id="srSlow" data-ico="🐢 ধীরে শোনো" onclick="xsReadPlay(this,true)">🐢 ধীরে শোনো</button><button class="btn btn-ghost btn-sm" style="flex:1;" id="srBnBtn" onclick="xsReadBn()">🇧🇩 অনুবাদ দেখাও</button></div>
+    <button class="btn btn-gold btn-full" style="margin:-4px 0 14px;" onclick="xsReadQuiz()">🧠 এই Story-র Quiz দাও</button>
+    <div id="srText" style="font-size:18px;line-height:2;color:var(--text);"></div>
+    <div id="srBnBox" style="display:none;margin-top:16px;padding:13px;background:var(--card);border:1px solid var(--border);border-radius:14px;font-size:14px;line-height:1.8;color:var(--sub);white-space:pre-wrap;"><span id="srBn"></span></div>
+    <div id="srPop"><div style="display:flex;align-items:center;gap:10px;"><div style="flex:1;min-width:0;"><div id="srPopW" style="font-size:17px;font-weight:900;color:var(--text);"></div><div id="srPopDe" style="font-size:12px;color:var(--cyan);"></div><div id="srPopBn" style="font-size:14px;color:var(--sub);margin-top:3px;"></div></div><button class="sp-ib" onclick="speak(xr.curW,'de-DE')">🔊</button></div></div>
+  </div>
+</div>
+
+<!-- QUIZ ENGINE PAGE -->
+<div id="pgXQuiz" class="page">
+  <div class="inner-page-bar"><button class="back-btn" onclick="xqBack()">←</button><span class="ipb-title" id="xqTitle">Test</span><span style="font-size:13px;color:var(--sub);" id="xqCounter"></span></div>
+  <div class="prog-bar" style="margin:0;border-radius:0;"><div class="prog-fill" id="xqProg" style="background:var(--blue);"></div></div>
+  <div id="xqBody" style="flex:1;overflow-y:auto;padding-top:14px;max-width:560px;width:100%;margin:0 auto;"></div>
+</div>
+
 <!-- SENTENCE FLASHCARD -->
 <div id="pgSFlash" class="page">
   <div class="inner-page-bar"><button class="back-btn" onclick="slFlashClose()">←</button><span class="ipb-title" id="sfTitle">📖 Flashcards</span><span style="font-size:13px;color:var(--sub);" id="sfCounter"></span></div>
   <div class="flash-wrap">
     <div class="prog-bar"><div class="prog-fill" id="sfProg" style="background:var(--blue);"></div></div>
+    <div id="sfKnown" style="font-size:12px;font-weight:800;color:var(--green);margin-bottom:8px;"></div>
     <div id="sfTabs" style="display:none;gap:6px;width:100%;max-width:460px;margin-bottom:12px;"></div>
     <div class="flip-card" id="sfCard" onclick="slFlashFlip()">
       <div class="flip-inner"><div class="flip-face flip-front" id="sfFront"></div><div class="flip-face flip-back" id="sfBack"></div></div>
@@ -652,7 +687,7 @@ input,select,textarea,button{font-family:var(--font);}
 
 <div id="pgPdfPreview" class="page">
   <div class="inner-page-bar"><button class="back-btn" onclick="showPage('pgApp')">←</button><span class="ipb-title">📄 PDF Preview</span></div>
-  <div style="padding:12px 16px;background:var(--navy);border-bottom:1px solid var(--border);"><button class="btn btn-blue btn-full" onclick="printPdfPreview()">🖨️ Save / Print করো</button></div>
+  <div style="padding:12px 16px;background:var(--navy);border-bottom:1px solid var(--border);"><button class="btn btn-blue btn-full" onclick="printPdfPreview()">🖨️ Save / Print করো</button><button id="pdfGrpBtn" class="btn btn-ghost btn-full" style="margin-top:8px;display:none;" onclick="xsTogglePdfGroups()">🏷️ শব্দের দল</button></div>
   <div style="flex:1;overflow-y:auto;background:#fff;"><div id="pdfPreviewContent"></div></div>
 </div>
 
@@ -741,12 +776,15 @@ input,select,textarea,button{font-family:var(--font);}
       <button class="dr-item" onclick="drGo('setCreateMode(\'card\');switchTab(\'create\')')"><span class="dr-ico">🃏</span><span>Card যোগ করো<small>জার্মান শব্দ + বাংলা অর্থ</small></span></button>
       <button class="dr-item" onclick="drGo('openSentenceEditor()')"><span class="dr-ico">💬</span><span>Sentence যোগ করো<small>বাক্য, bulk ও Story</small></span></button>
     </div>
+    <div class="dr-sec">অগ্রগতি</div>
+    <button class="dr-item" onclick="drGo('xsHard()')"><span class="dr-n">5</span><span class="dr-ico">⚠️</span><span>কঠিন শব্দ<small>বারবার ভুল হওয়া শব্দ ও বাক্য</small></span></button>
+    <button class="dr-item" onclick="drGo('xsReport()')"><span class="dr-n">6</span><span class="dr-ico">📊</span><span>সাপ্তাহিক রিপোর্ট<small>শেষ ৭ দিনের practice</small></span></button>
     <div class="dr-sec">তৈরি Data যোগ করো</div>
-    <button class="dr-item" onclick="drGo('importVP()')"><span class="dr-n">5</span><span class="dr-ico">📖</span><span>Vocabulary Project Story<small>Kapitel 1–12, ৫২টি story</small></span></button>
-    <button class="dr-item" onclick="drGo('importNetzwerk()')"><span class="dr-n">6</span><span class="dr-ico">📘</span><span>Netzwerk A1 Glossar<small>Kapitel 1–12 card</small></span></button>
+    <button class="dr-item" onclick="drGo('importVP()')"><span class="dr-n">7</span><span class="dr-ico">📖</span><span>Vocabulary Project Story<small>Kapitel 1–12, ৫২টি story</small></span></button>
+    <button class="dr-item" onclick="drGo('importNetzwerk()')"><span class="dr-n">8</span><span class="dr-ico">📘</span><span>Netzwerk A1 Glossar<small>Kapitel 1–12 card</small></span></button>
     <div class="dr-sec">সেটিংস</div>
-    <button class="dr-item" id="themeToggleBtn" onclick="toggleTheme()"><span class="dr-n">7</span><span id="themeLbl">🌙 Dark Mode</span></button>
-    <button class="dr-item" onclick="drGo('openOnboarding()')"><span class="dr-n">8</span><span class="dr-ico">❓</span><span>App-এর গাইড</span></button>
+    <button class="dr-item" id="themeToggleBtn" onclick="toggleTheme()"><span class="dr-n">9</span><span id="themeLbl">🌙 Dark Mode</span></button>
+    <button class="dr-item" onclick="drGo('openOnboarding()')"><span class="dr-n">10</span><span class="dr-ico">❓</span><span>App-এর গাইড</span></button>
   </div>
 </div>
 
@@ -1532,6 +1570,7 @@ function renderLibrary() {
   }
   var subs = childFolders(currentFolderId);
   var dks = sortedDecks().filter(function(d){ return (d.folderId||null)===(currentFolderId||null); });
+  if(!currentFolderId){ subs = xsScopeF(subs,isBuiltFolder); if(libScope==='built') dks=[]; }
   var reorderHintEl = document.getElementById('libReorderHint');
   if(reorderHintEl) reorderHintEl.innerHTML = (subs.length>1 || dks.length>1) ? '✋ চেপে ধরে উপরে-নিচে টেনে সাজাতে পারো' : '';
   var h = '';
@@ -2023,6 +2062,7 @@ function speakWord(btn) {
 
 var _ttsVoiceCache = {};
 var _ttsSeq = 0;
+var _ttsSlow = false;
 var _ttsVoicesReady = false;
 
 var _MALE_DE = /\b(stefan|conrad|killian|jonas|florian|christoph|markus|martin|hans|jan|yannick|dieter|klaus|michael|max|felix|lukas|jens|thomas|ralf|reed|daniel|male|männlich|maennlich|de-de-x-(dee|nfh|deg))\b|-(dee|nfh|deg)-/i;
@@ -2123,6 +2163,7 @@ function speak(text, lang, onend) {
   var targetLang = lang || 'de-DE';
   var base = targetLang.toLowerCase().split('-')[0];
   var mySeq = ++_ttsSeq;
+  var slowAtCall = _ttsSlow;
 
   // Stop the previous utterance so rapid taps never overlap.
   try { synth.cancel(); } catch(e) {}
@@ -2138,7 +2179,7 @@ function speak(text, lang, onend) {
     } else if(n === 2) {
       u.lang = '';
     }
-    u.rate = base === 'de' ? 1.08 : (base === 'bn' ? 0.88 : 0.90);
+    u.rate = base === 'de' ? (slowAtCall ? 0.62 : 1.08) : (base === 'bn' ? 0.88 : 0.90);
     u.pitch = 1; u.volume = 1;
     // No male German voice installed → lower the pitch so the default voice sounds male.
     if(base === 'de' && !(u.voice && _isMaleDE(u.voice))) u.pitch = 0.6;
@@ -2733,7 +2774,7 @@ function clearAllData() {
   }});
 }
 function exportBackup() {
-  var backup = {version:2, exportedAt:new Date().toISOString(), decks:decks, folders:folders, sfolders:sfolders, sfiles:sfiles, practice:practice, profile:profile, reminder:reminder};
+  var backup = {version:2, exportedAt:new Date().toISOString(), decks:decks, folders:folders, sfolders:sfolders, sfiles:sfiles, practice:practice, profile:profile, reminder:reminder, xs:(typeof xs!=='undefined'?xs:null)};
   var blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
@@ -2771,6 +2812,7 @@ function importBackup(evt) {
       if(data.practice) practice = data.practice;
       if(data.profile) profile = data.profile;
       if(data.reminder) reminder = data.reminder;
+      if(data.xs){ xs = data.xs; xsSave(); }
       saveLS('df_decks', decks);
       saveLS('df_folders', folders);
       saveLS('df_prac', practice);
@@ -3094,6 +3136,7 @@ function slRender(){
     bc.innerHTML = bh;
   }
   var subs = sChildFolders(slFolderId), files = sFilesIn(slFolderId);
+  if(!slFolderId){ files = xsScopeF(files,isBuiltFile); if(libScope==='built') subs=[]; }
   var h = '';
   subs.forEach(function(f,i){
     var fc = sFilesIn(f.id).length, sc = sChildFolders(f.id).length;
@@ -3118,9 +3161,12 @@ function slRender(){
       f.items.forEach(function(it,si){
         if(!it.story) sn++;
         if(si>=lim) return;
-        h += '<div class="sl-sent" style="display:flex;gap:8px;align-items:flex-start;">'+(it.story?'':'<div class="sp-num" style="margin-top:2px;">'+sn+'</div>')+'<div style="flex:1;min-width:0;'+(it.story?'white-space:pre-wrap;':'')+'">'+(it.story?'<div style="font-size:11px;color:var(--cyan);font-weight:800;margin-bottom:3px;">📖 Story'+(it.title?' · '+esc(it.title):'')+(it.vocab&&it.vocab.length?' · 📚 '+it.vocab.length+' শব্দ':'')+'</div>':'')+'<div class="sl-de">'+esc(it.de)+'</div><div class="sl-bn">'+esc(it.bn)+'</div></div>';
+        h += '<div class="sl-sent" style="display:flex;gap:8px;align-items:flex-start;'+(it.story?'flex-wrap:wrap;':'')+'">'+(it.story?'':'<div class="sp-num" style="margin-top:2px;">'+sn+'</div>')+'<div style="'+(it.story?'flex:1 1 100%;white-space:pre-wrap;':'flex:1;')+'min-width:0;">'+(it.story?'<div style="font-size:11px;color:var(--cyan);font-weight:800;margin-bottom:3px;">📖 Story'+(it.title?' · '+esc(it.title):'')+(it.vocab&&it.vocab.length?' · 📚 '+it.vocab.length+' শব্দ':'')+'</div>':'')+'<div class="sl-de">'+esc(it.de)+'</div><div class="sl-bn">'+esc(it.bn)+'</div></div>';
         h += '<div class="sl-mv"><button onclick="slMoveSent('+f.id+','+si+',-1)" aria-label="উপরে">▲</button><button onclick="slMoveSent('+f.id+','+si+',1)" aria-label="নিচে">▼</button></div>';
+        if(it.story) h += '<button class="sp-ib" onclick="xsStoryQuiz('+f.id+','+si+')" aria-label="Quiz">🧠</button>';
+        if(it.story) h += '<button class="sp-ib" onclick="xsStoryOpen('+f.id+','+si+')" aria-label="পড়ো">📖</button>';
         h += '<button class="sp-ib" onclick="slSpeak('+f.id+','+si+',this)" aria-label="শুনুন">🔊</button>';
+        if(it.story) h += '<button class="sp-ib" data-ico="🐢" onclick="slSpeak('+f.id+','+si+',this,true)" aria-label="ধীরে শুনুন">🐢</button>';
         h += '<button class="sp-ib" onclick="slEditSent('+f.id+','+si+')">✏️</button><button class="sp-ib" style="color:var(--red);border-color:#f25c7a44;" onclick="slDelSent('+f.id+','+si+')">✕</button></div>';
       });
       if(f.items.length>lim) h += '<button class="btn btn-ghost btn-sm sl-more" onclick="slMore('+f.id+')">⬇️ আরও দেখাও ('+(f.items.length-lim)+'টি বাকি)</button>';
@@ -3129,7 +3175,9 @@ function slRender(){
     h += '<div class="d-acts" style="flex-wrap:wrap;">';
     h += '<button class="btn btn-ghost btn-sm" style="flex:1;" onclick="spOpenFile('+f.id+')">✏️ খোলো</button>';
     h += '<button class="btn btn-ghost btn-sm" style="flex:1;" onclick="slFlash('+f.id+')">🃏 Flashcard</button>';
+    h += '<button class="btn btn-gold btn-sm" style="flex:1;" onclick="xsFileTest('+f.id+')">🧠 Test</button>';
     h += '<button class="btn btn-blue btn-sm" style="flex:1;" onclick="spPdfFile('+f.id+')">📄 PDF</button>';
+    h += '<button class="btn btn-ghost btn-sm" style="padding:8px 11px;" onclick="xsDocx('+f.id+')" title="Word (.docx)">📝 Word</button>';
     h += '<button class="btn btn-ghost btn-sm" style="padding:8px 11px;" onclick="slRenameFile('+f.id+')" title="নাম বদলাও">🏷️</button>';
     h += '<button class="btn btn-ghost btn-sm" style="padding:8px 11px;" onclick="slMoveFile('+f.id+')" title="অন্য folder-এ সরাও">📂</button>';
     h += '<button class="btn btn-sm" style="padding:8px 11px;background:#f25c7a18;border:1.5px solid #f25c7a44;color:var(--red);" onclick="slDeleteFile('+f.id+')">🗑️</button>';
@@ -3166,19 +3214,20 @@ function _storySplit(text){
 function _storyStop(){
   _storyTok++; _ttsSeq++;
   try{ window.speechSynthesis.cancel(); }catch(e){}
-  if(_storyBtn){ _storyBtn.textContent = '🔊'; _storyBtn = null; }
+  _ttsSlow = false;
+  if(_storyBtn){ _storyBtn.textContent = _storyBtn.getAttribute('data-ico')||'🔊'; _storyBtn = null; }
 }
-function slSpeak(fid,i,btn){
+function slSpeak(fid,i,btn,slow){
   var f=sFileOf(fid), it=f && f.items[i]; if(!it) return;
   if(!it.story){ _storyStop(); speak(it.de,'de-DE'); return; }
   if(_storyBtn && btn && _storyBtn===btn){ _storyStop(); return; }   // tap again = stop
   _storyStop();
   var parts = _storySplit(it.de); if(!parts.length) return;
   var my = ++_storyTok;
-  _storyBtn = btn || null; if(btn) btn.textContent = '⏹';
+  _storyBtn = btn || null; if(btn) btn.textContent = '⏹'; _ttsSlow = !!slow;
   (function go(k){
     if(my !== _storyTok) return;
-    if(k >= parts.length){ if(_storyBtn){ _storyBtn.textContent = '🔊'; _storyBtn = null; } return; }
+    if(k >= parts.length){ _ttsSlow = false; if(_storyBtn){ _storyBtn.textContent = _storyBtn.getAttribute('data-ico')||'🔊'; _storyBtn = null; } return; }
     speak(parts[k], 'de-DE', function(){ setTimeout(function(){ go(k+1); }, 250); });
   })(0);
 }
@@ -3595,14 +3644,7 @@ function spBuildPdfHtml(sub, sections){
         }
         h += '<div class="sp-story-de" lang="de">'+spParas(it.de)+'</div><div class="sp-story-bn">'+spParas(it.bn)+'</div>';
         if(it.vocab && it.vocab.length){
-          var VV = spSortVocab(it.vocab);
-          var vr = '', vn = it.vocab.length, nc = vn>140 ? 6 : vn>120 ? 5 : vn>90 ? 4 : vn>34 ? 3 : 2, rowsN = Math.ceil(vn/nc);
-          for(var vi=0; vi<rowsN; vi++){
-            vr += '<tr>';
-            for(var c=0; c<nc; c++){ var a = VV[vi+c*rowsN]; vr += a ? '<td class="de">'+esc(a.de)+'</td><td>'+esc(a.bn)+'</td>' : '<td></td><td></td>'; }
-            vr += '</tr>';
-          }
-          h += '<div class="sp-vocab-h">📚 Wortschatz · শব্দভান্ডার</div><table class="sp-vocab'+(it.vocab.length>34?' v3':'')+(it.vocab.length>66?' vt':'')+(it.vocab.length>90?' v4':'')+(it.vocab.length>108?' v5':'')+(it.vocab.length>120?' v6':'')+'"><tbody>'+vr+'</tbody></table>';
+          h += spVocabHtml(it.vocab);
         }
         h += '</div>';
         return;
@@ -4103,7 +4145,7 @@ function importVP(){
     chs.forEach(function(k){
       var nm = 'Kapitel '+k+' Stories';
       var f = sfiles.find(function(x){ return x.name===nm; });
-      if(!f){ f = {id:base+Number(k), name:nm, folderId:null, updated:base, items:[]}; sfiles.push(f); }
+      if(!f){ f = {id:base+Number(k), name:nm, folderId:null, updated:base, items:[], built:true}; sfiles.push(f); }
       data[k].forEach(function(st){
         var old = f.items.find(function(it){ return it.story && it.title===st.title && String(it.de).slice(0,12)===String(st.de).slice(0,12); });
         if(old && !/[.?!]/.test(String(old.de)) && /[.?!]/.test(String(st.de))){ old.de = st.de; old.bn = st.bn; added++; }   // old copy had no punctuation → update text
@@ -4117,5 +4159,833 @@ function importVP(){
   }});
 }
 </script>
+
+<script>
+// ===== EXTRAS 1,2,4 =====
+// ════════════════════════════════
+// EXTRAS: progress store, activity, Leitner
+// ════════════════════════════════
+var xs = loadLS('df_xs', null) || {recent:[], sp:{}, wp:{}, act:{},rd:{}};
+xs.recent = xs.recent||[]; xs.sp = xs.sp||{}; xs.wp = xs.wp||{}; xs.act = xs.act||{}; xs.rd = xs.rd||{};
+function xsSave(){ saveLS('df_xs', xs); }
+var XS_DAYS = [0,1,3,7,14,30];
+function xsMark(map, key, ok, bn){
+  if(!key) return;
+  var m = xs[map], it = m[key] || (m[key] = {b:0,w:0,n:0,d:0});
+  it.n++; it.bn = bn || it.bn || '';
+  if(ok){ it.b = Math.min(5, it.b+1); } else { it.b = 0; it.w++; }
+  it.d = Date.now() + XS_DAYS[it.b]*86400000;
+  xsSave();
+}
+function xsDue(map, key){ var it = xs[map][key]; return !it || it.d <= Date.now(); }
+function xsKnown(map, key){ var it = xs[map][key]; return !!(it && it.b>=3); }
+function xsAct(kind, n){
+  var d = new Date().toDateString();
+  var a = xs.act[d] || (xs.act[d] = {s:0,w:0,r:0});
+  a[kind] = (a[kind]||0) + (n||1);
+  var ks = Object.keys(xs.act);
+  if(ks.length>60){ ks.sort(function(a,b){return new Date(a)-new Date(b);}).slice(0,ks.length-60).forEach(function(k){ delete xs.act[k]; }); }
+  xsSave();
+  recPrac(n||1);
+}
+function xsRecent(type, id, name, extra){
+  xs.recent = xs.recent.filter(function(r){ return !(r.t===type && r.id===id && (r.si||0)===((extra&&extra.si)||0)); });
+  var r = {t:type, id:id, name:name, ts:Date.now()}; if(extra) for(var k in extra) r[k]=extra[k];
+  xs.recent.unshift(r); xs.recent = xs.recent.slice(0,8);
+  xsSave();
+}
+function xsShuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+// ════════════════════════════════
+// STORY READER (tap a word → meaning) + STORY QUIZ
+// ════════════════════════════════
+function xsKey(w){ return String(w).toLowerCase().replace(/^[„“”"'(\[\-]+/,'').replace(/[„“”"'.,!?:;)\]\-]+$/,''); }
+function xsWordMap(vocab){
+  var m = {};
+  function add(k, e){ k = xsKey(k); if(k && k.length>=1 && !/[^a-zäöüß\-]/.test(k) && !(k in m)) m[k] = e; }
+  (vocab||[]).forEach(function(v){
+    var de = String(v.de||''), e = {de:de, bn:v.bn};
+    var lem = de.replace(/\s*\(.*$/,''), par = (de.match(/\(([^)]*)\)/)||[])[1] || '';
+    var parts = [];
+    lem.split(/\s*\/\s*/).forEach(function(x){ parts.push(x.replace(/^(der|die|das|sich)\s+/i,'')); });
+    par.split(/\s*\/\s*/).forEach(function(x){ parts.push(x); });
+    parts.forEach(function(p){
+      p = p.trim(); if(!p) return;
+      add(p, e);
+      var w = p.split(/\s+/);
+      if(w.length>1 && w.length<=3) w.forEach(function(x){ if(x.length>2 && !/^(der|die|das|ein|eine|zu|um|sich|und|mit|von)$/i.test(x)) add(x, e); });
+    });
+  });
+  return m;
+}
+function xsLookup(m, tok){
+  var k = xsKey(tok); if(!k) return null;
+  if(m[k]) return m[k];
+  var best = null, bl = 0;
+  Object.keys(m).forEach(function(key){
+    if(key.length<4) return;
+    var stem = key.replace(/(en|er|n|e)$/,'');
+    if(stem.length>=3 && k.indexOf(stem)===0 && k.length-stem.length<=4 && stem.length>bl){ best = m[key]; bl = stem.length; }
+  });
+  return best;
+}
+var xr = {fid:0, si:0, map:{}, showBn:false};
+function xsStoryOpen(fid, si){
+  var f = sFileOf(fid), it = f && f.items[si]; if(!it || !it.story) return;
+  _storyStop();
+  xr = {fid:fid, si:si, map:xsWordMap(it.vocab), showBn:false};
+  xsRecent('story', fid, it.title || f.name, {si:si});
+  var day = new Date().toDateString(), rk = fid+'|'+(it.title||'')+'|'+day;
+  xs.rd = xs.rd || {};
+  if(!xs.rd[rk]){ xs.rd[rk] = 1; var ks = Object.keys(xs.rd); if(ks.length>80) delete xs.rd[ks[0]]; xsAct('r', 3); }
+  document.getElementById('srTitle').textContent = '📖 '+(it.title||'Story');
+  var html = '';
+  String(it.de).replace(/([A-Za-zÄÖÜäöüß\-]+)|([^A-Za-zÄÖÜäöüß\-]+)/g, function(all, w, o){
+    if(w){ html += '<span class="sr-w" data-w="'+esc(w)+'">'+esc(w)+'</span>'; }
+    else html += esc(o).replace(/\n/g,'<br>');
+    return all;
+  });
+  document.getElementById('srText').innerHTML = html;
+  document.getElementById('srBn').textContent = it.bn || '';
+  document.getElementById('srBnBox').style.display = 'none';
+  document.getElementById('srBnBtn').textContent = '🇧🇩 অনুবাদ দেখাও';
+  document.getElementById('srPop').style.display = 'none';
+  document.getElementById('srPlay').textContent = '🔊 সব শোনো';
+  document.getElementById('srSlow').textContent = '🐢 ধীরে শোনো';
+  _storyBtn = document.getElementById('srPlay');
+  _storyBtn = null;
+  showPage('pgStoryRead');
+}
+document.addEventListener('click', function(e){
+  var t = e.target; if(!t || !t.classList || !t.classList.contains('sr-w')) return;
+  var w = t.getAttribute('data-w');
+  document.querySelectorAll('.sr-w.on').forEach(function(x){ x.classList.remove('on'); });
+  t.classList.add('on');
+  var hit = xsLookup(xr.map, w), pop = document.getElementById('srPop');
+  document.getElementById('srPopW').textContent = w;
+  document.getElementById('srPopBn').textContent = hit ? hit.bn : 'এই শব্দের অর্থ table-এ পাওয়া যায়নি';
+  document.getElementById('srPopDe').textContent = hit && hit.de.toLowerCase()!==w.toLowerCase() ? hit.de : '';
+  pop.style.display = 'block'; xr.curW = w;
+  speak(w, 'de-DE');
+});
+function xsReadPlay(btn,slow){ slSpeak(xr.fid, xr.si, btn, slow); }
+function xsReadBn(){
+  var b = document.getElementById('srBnBox'), show = b.style.display==='none';
+  b.style.display = show ? 'block' : 'none';
+  document.getElementById('srBnBtn').textContent = show ? '🇧🇩 অনুবাদ লুকাও' : '🇧🇩 অনুবাদ দেখাও';
+}
+function xsReadClose(){ _storyStop(); showPage('pgApp'); }
+
+// ════════════════════════════════
+// HOME: "আজ পড়ো" + hard words + report entry
+// ════════════════════════════════
+function xsRecValid(r){
+  if(r.t==='deck') return decks.some(function(d){ return d.id===r.id && d.cards.length; });
+  if(r.t==='file') return !!sFileOf(r.id);
+  if(r.t==='story'){ var f=sFileOf(r.id); return !!(f && f.items[r.si] && f.items[r.si].story); }
+  return false;
+}
+function xsContinueList(){
+  var l = xs.recent.filter(xsRecValid);
+  if(!l.length){
+    var dk = sortedDecks().filter(function(d){return d.cards.length;})[0];
+    if(dk) l.push({t:'deck',id:dk.id,name:dk.emoji+' '+dk.name});
+    else if(sfiles.length) l.push({t:'file',id:sfiles[0].id,name:sfiles[0].name});
+  }
+  return l;
+}
+function xsResume(i){
+  var r = xsContinueList()[i]; if(!r) return;
+  if(r.t==='deck'){ openDeck(r.id); startMode('flash'); }
+  else if(r.t==='file'){ slFlash(r.id); }
+  else if(r.t==='story'){ xsStoryOpen(r.id, r.si); }
+}
+function xsRecLabel(r){ return (r.t==='deck'?'🗂️ ':r.t==='story'?'📖 ':'💬 ')+r.name; }
+function xsRenderContinue(){
+  var el = document.getElementById('xsContinue'); if(!el) return;
+  var l = xsContinueList(), h = '';
+  if(l.length){
+    h += '<div style="background:linear-gradient(135deg,#2dd4a022,#4361ee18);border:1.5px solid #2dd4a055;border-radius:20px;padding:16px;margin:17px 0 12px;">';
+    h += '<div style="font-size:12px;color:var(--green);font-weight:800;letter-spacing:1px;margin-bottom:6px;">▶ আজ পড়ো</div>';
+    h += '<div style="display:flex;align-items:center;gap:12px;"><div style="flex:1;min-width:0;"><div style="font-size:16px;font-weight:900;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(xsRecLabel(l[0]))+'</div><div style="font-size:11px;color:var(--sub);margin-top:2px;">যেখানে শেষ করেছিলে সেখান থেকে</div></div>';
+    h += '<button class="btn btn-green btn-sm" style="flex-shrink:0;padding:11px 18px;" onclick="xsResume(0)">শুরু করো</button></div>';
+    if(l.length>1){
+      h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:11px;">';
+      l.slice(1,4).forEach(function(r,i){ h += '<button onclick="xsResume('+(i+1)+')" style="background:#ffffff0c;border:1px solid var(--borderL);border-radius:99px;padding:6px 11px;font-size:11px;font-weight:700;color:var(--sub);cursor:pointer;max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(xsRecLabel(r))+'</button>'; });
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+  el.innerHTML = h;
+}
+var _renderHome0 = renderHome;
+renderHome = function(){ _renderHome0(); xsRenderContinue(); };
+var _openDeck0 = openDeck;
+openDeck = function(id){ var dk = decks.find(function(d){return d.id===id;}); if(dk) xsRecent('deck', id, dk.emoji+' '+dk.name); return _openDeck0.apply(this, arguments); };
+
+
+function xsRecentChips(){
+  var el = document.getElementById('libRecent'); if(!el) return;
+  var l = xs.recent.filter(xsRecValid).slice(0,5);
+  if(!l.length){ el.innerHTML=''; return; }
+  var h = '<div style="font-size:11px;color:var(--muted);font-weight:800;margin:2px 2px 6px;">🕘 সম্প্রতি খোলা</div><div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;">';
+  l.forEach(function(r,i){ h += '<button onclick="xsOpenRecent('+xs.recent.indexOf(r)+')" style="flex-shrink:0;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;">'+esc(xsRecLabel(r))+'</button>'; });
+  el.innerHTML = h + '</div>';
+}
+function xsOpenRecent(i){
+  var r = xs.recent[i]; if(!r) return;
+  if(r.t==='deck'){ openDeck(r.id); }
+  else if(r.t==='file'){ libSetFileFocus(r.id); }
+  else if(r.t==='story'){ xsStoryOpen(r.id, r.si); }
+}
+function libSetFileFocus(fid){
+  var f = sFileOf(fid); if(!f) return;
+  setLibMode('sent'); slFolderId = f.folderId||null; slOpen[fid] = true; slRender();
+  setTimeout(function(){ var e=document.getElementById('slf'+fid); if(e) e.scrollIntoView({behavior:'smooth',block:'start'}); }, 80);
+}
+function xsLibSearch(q){
+  q = String(q||'').trim().toLowerCase();
+  var el = document.getElementById('libQRes'), clr = document.getElementById('libQClr');
+  if(clr) clr.style.display = q ? 'block' : 'none';
+  document.getElementById('libBody').style.display = q ? 'none' : '';
+  if(!q){ el.innerHTML=''; return; }
+  var h = '', n = 0;
+  var sec = function(t){ return '<div style="font-size:11px;color:var(--muted);font-weight:800;letter-spacing:1px;margin:12px 2px 6px;">'+t+'</div>'; };
+  var row = function(ico, a, b, click, speakTxt){
+    return '<div style="display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 11px;margin-bottom:6px;"><div style="flex:1;min-width:0;cursor:pointer;" '+(click?'onclick="'+click+'"':'')+'><div style="font-size:13px;font-weight:800;color:var(--text);overflow-wrap:anywhere;">'+ico+' '+esc(a)+'</div>'+(b?'<div style="font-size:12px;color:var(--sub);overflow-wrap:anywhere;">'+esc(b)+'</div>':'')+'</div>'+(speakTxt?'<button class="sp-ib" data-say="'+esc(speakTxt)+'" onclick="xsSay(this.getAttribute(\'data-say\'))">🔊</button><button class="sp-ib" data-say="'+esc(speakTxt)+'" onclick="xsSay(this.getAttribute(\'data-say\'),true)">🐢</button>':'')+'</div>';
+  };
+  var hit = function(s){ return String(s||'').toLowerCase().indexOf(q)>=0; };
+  var sb = function(txt,ico,slow){ return '<button class="sp-ib" data-say="'+esc(txt)+'" onclick="xsSay(this.getAttribute(\'data-say\'),'+(slow?'true':'false')+')" aria-label="'+(slow?'ধীরে শুনুন':'শুনুন')+'">'+ico+'</button>'; };
+  var rich = function(o){
+    var s = '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px 12px;margin-bottom:8px;">';
+    s += '<div style="display:flex;align-items:flex-start;gap:7px;"><div style="flex:1;min-width:0;"><div style="font-size:15px;font-weight:900;color:var(--text);overflow-wrap:anywhere;">'+o.ico+' '+esc(o.de)+'</div>';
+    if(o.bn) s += '<div style="font-size:14px;color:var(--cyan);font-weight:700;margin-top:3px;overflow-wrap:anywhere;">'+esc(o.bn)+'</div>';
+    if(o.en) s += '<div style="font-size:12px;color:var(--sub);margin-top:2px;">'+esc(o.en)+'</div>';
+    s += '</div>'+sb(o.say,'🔊',false)+sb(o.say,'🐢',true)+(o.open?'<button class="sp-ib" onclick="'+o.open+'" aria-label="খোলো">↗</button>':'')+'</div>';
+    if(o.ex) s += '<div style="margin-top:8px;padding:8px 10px;background:#ffffff08;border-radius:10px;display:flex;align-items:flex-start;gap:7px;"><div style="flex:1;min-width:0;"><div style="font-size:13px;color:var(--text);overflow-wrap:anywhere;">'+esc(o.ex)+'</div>'+(o.exBn?'<div style="font-size:12px;color:var(--sub);margin-top:2px;overflow-wrap:anywhere;">'+esc(o.exBn)+'</div>':'')+'</div>'+sb(o.ex,'🔊',false)+sb(o.ex,'🐢',true)+'</div>';
+    if(o.src) s += '<div style="font-size:10px;color:var(--muted);margin-top:6px;">'+esc(o.src)+'</div>';
+    return s+'</div>';
+  };
+  var dh = '';
+  decks.forEach(function(d){ if(hit(d.name)) { dh += row('🗂️', d.name, d.cards.length+' card', 'openDeck('+d.id+')'); n++; } });
+  var fh = '';
+  sfiles.forEach(function(f){ if(hit(f.name)) { fh += row('📄', f.name, f.items.length+' টি', 'libSetFileFocus('+f.id+');xsLibClear()'); n++; } });
+  var ch = '', cc = 0;
+  decks.forEach(function(d){ d.cards.forEach(function(c){ if(cc<25 && (hit(c.german)||hit(c.bengali)||hit(c.english))){ ch += rich({ico:'🔤',de:c.german,bn:c.bengali,en:c.english,ex:c.sentence,exBn:c.sentenceBn,src:'🗂️ '+d.name,open:'openDeck('+d.id+')',say:c.german}); cc++; n++; } }); });
+  var sh = '', sc = 0, wh = '', wc = 0;
+  sfiles.forEach(function(f){ f.items.forEach(function(it){
+    if(!it.story){ if(sc<25 && (hit(it.de)||hit(it.bn))){ sh += rich({ico:'💬',de:it.de,bn:it.bn,src:'📄 '+f.name,open:'libSetFileFocus('+f.id+');xsLibClear()',say:it.de}); sc++; n++; } }
+    else (it.vocab||[]).forEach(function(v){ if(wc<25 && (hit(v.de)||hit(v.bn))){ wh += rich({ico:'📚',de:v.de,bn:v.bn,src:'📖 '+(it.title||f.name),open:'libSetFileFocus('+f.id+');xsLibClear()',say:v.de.replace(/\s*\(.*$/,'')}); wc++; n++; } });
+  }); });
+  var th = '', tc = 0;
+  sfiles.forEach(function(f){ f.items.forEach(function(it,si){ if(!it.story) return;
+    var m = xsWordMap(it.vocab);
+    String(it.de).split(/(?<=[.!?][“”"]?)\s+/).forEach(function(s){
+      if(tc<15 && hit(s)){
+        var tok = (s.match(/[A-Za-zÄÖÜäöüß\-]+/g)||[]).filter(function(w){ return xsKey(w).indexOf(q)>=0; })[0], ent = tok ? xsLookup(m, tok) : null;
+        th += rich({ico:'📖',de:s.trim(),bn:ent?(tok+' = '+ent.bn):'',src:(it.title||f.name),open:'xsStoryOpen('+f.id+','+si+')',say:s.trim()}); tc++; n++;
+      }
+    });
+  }); });
+  if(dh) h += sec('DECK / FOLDER')+dh;
+  if(fh) h += sec('FILE')+fh;
+  if(ch) h += sec('CARD')+ch;
+  if(sh) h += sec('বাক্য')+sh;
+  if(wh) h += sec('Story-র শব্দ')+wh;
+  if(th) h += sec('Story-র বাক্য')+th;
+  if(!n) h = '<div class="empty-box"><div class="ico">🔍</div><div class="txt">কিছু পাওয়া যায়নি</div></div>';
+  el.innerHTML = h;
+}
+function xsSay(txt, slow){ var prev = _ttsSlow; _ttsSlow = !!slow; speak(txt, 'de-DE'); _ttsSlow = prev; }
+function xsLibClear(){ var i=document.getElementById('libQ'); if(i){ i.value=''; } xsLibSearch(''); }
+var _renderLibrary0 = renderLibrary;
+renderLibrary = function(){ _renderLibrary0(); xsRecentChips(); };
+var _slRender0 = slRender;
+slRender = function(){ _slRender0(); xsRecentChips(); };
+
+renderHome();
+</script>
+
+<script>
+// ===== EXTRAS 5,6,7 =====
+// ════════════════════════════════
+// SENTENCE / WORD FLASHCARDS (deck-style card, জানি / জানি না)
+// ════════════════════════════════
+var slFC = {cards:[],all:[],i:0,rev:false,src:'sent',fid:0,onlyDue:false,custom:false};
+function slFlashCards(f, src){
+  var out = [];
+  f.items.forEach(function(it){
+    if(it.story){ if(src==='vocab') (it.vocab||[]).forEach(function(v){ out.push({de:v.de,bn:v.bn,k:'w'}); }); }
+    else if(src==='sent') out.push({de:it.de,bn:it.bn,k:'s'});
+  });
+  return out;
+}
+function slFlash(fid, src, onlyDue){
+  var f = sFileOf(fid); if(!f) return;
+  var hasS = f.items.some(function(it){ return !it.story; });
+  var hasV = f.items.some(function(it){ return it.story && it.vocab && it.vocab.length; });
+  if(!src) src = hasS ? 'sent' : 'vocab';
+  var all = slFlashCards(f, src);
+  if(!all.length){ showWarn('এই File-এ Flashcard বানানোর মতো কিছু নেই।'); return; }
+  _storyStop();
+  xsRecent('file', fid, f.name);
+  slFlashSetup({all:all,src:src,fid:fid,hasS:hasS,hasV:hasV,name:f.name,onlyDue:!!onlyDue,custom:false});
+}
+function slFlashCustom(cards, title){
+  if(!cards.length){ showWarn('Flashcard বানানোর মতো কিছু নেই।'); return; }
+  _storyStop();
+  slFlashSetup({all:cards,src:'mix',fid:0,hasS:false,hasV:false,name:title,onlyDue:false,custom:true});
+}
+function slFlashSetup(o){
+  var shown = o.all;
+  if(o.onlyDue){
+    shown = o.all.filter(function(c){ return xsDue(c.k==='w'?'wp':'sp', c.de); });
+    if(!shown.length){ showToast('🎉 আজকের জন্য সব শেখা — "সব" দেখানো হচ্ছে'); shown = o.all; o.onlyDue = false; }
+  }
+  slFC = {cards:shown,all:o.all,i:0,rev:(slFC.fid===o.fid&&o.fid?slFC.rev:false),src:o.src,fid:o.fid,hasS:o.hasS,hasV:o.hasV,name:o.name,onlyDue:o.onlyDue,custom:o.custom};
+  showPage('pgSFlash');
+  slFlashDraw(true);
+}
+function slFlashClose(){ showPage('pgApp'); }
+function slFlashDraw(autoplay){
+  var c = slFC.cards[slFC.i], n = slFC.cards.length;
+  document.getElementById('sfCard').classList.remove('flipped');
+  document.getElementById('sfTitle').textContent = '📖 '+slFC.name;
+  document.getElementById('sfCounter').textContent = (slFC.i+1)+'/'+n;
+  document.getElementById('sfIdx').textContent = (slFC.i+1)+' / '+n;
+  document.getElementById('sfProg').style.width = (((slFC.i+1)/n)*100)+'%';
+  var pv=document.getElementById('sfPrev'), nx=document.getElementById('sfNext');
+  pv.disabled = slFC.i===0; nx.disabled = slFC.i===n-1;
+  pv.style.opacity = slFC.i===0?'0.3':'1'; nx.style.opacity = slFC.i===n-1?'0.3':'1';
+  var kn = 0; slFC.all.forEach(function(x){ if(xsKnown(x.k==='w'?'wp':'sp', x.de)) kn++; });
+  var tabs = document.getElementById('sfTabs'), th = '';
+  if(slFC.hasS && slFC.hasV){
+    th += '<button class="btn btn-sm '+(slFC.src==='sent'?'btn-blue':'btn-ghost')+'" style="flex:1;" onclick="slFlash('+slFC.fid+',\'sent\','+slFC.onlyDue+')">💬 বাক্য</button><button class="btn btn-sm '+(slFC.src==='vocab'?'btn-blue':'btn-ghost')+'" style="flex:1;" onclick="slFlash('+slFC.fid+',\'vocab\','+slFC.onlyDue+')">📚 শব্দ</button>';
+  }
+  if(!slFC.custom){
+    th += '<button class="btn btn-sm '+(slFC.onlyDue?'btn-gold':'btn-ghost')+'" style="flex:1;" onclick="slFlash('+slFC.fid+',\''+slFC.src+'\','+(!slFC.onlyDue)+')">🎯 '+(slFC.onlyDue?'শুধু বাকি':'সব')+'</button>';
+  }
+  tabs.style.display = th ? 'flex' : 'none'; tabs.innerHTML = th;
+  document.getElementById('sfKnown').textContent = '✅ জানি '+kn+' / '+slFC.all.length;
+  var rev = slFC.rev;
+  var fText = rev ? c.bn : c.de, bText = rev ? c.de : c.bn;
+  var deFront = !rev;
+  var art = deFront ? String(c.de).split(' ')[0] : '';
+  var ha = deFront && (art==='der'||art==='die'||art==='das');
+  var col = ha ? acol(art) : '#f8c94c';
+  var rest = ha ? c.de.slice(art.length+1) : fText;
+  var long = String(fText).length>70;
+  var front = '<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;position:absolute;top:13px;right:15px;color:var(--muted);">সামনে</div>';
+  if(ha) front += '<div style="position:absolute;top:13px;left:15px;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:700;background:'+col+'22;border:1px solid '+col+'55;color:'+col+';">'+art+'</div>';
+  front += '<div class="flip-ger" style="'+(long?'font-size:19px;line-height:1.4;':'')+'overflow-wrap:anywhere;">'+(ha?'<span style="color:'+col+';">'+esc(art)+'</span> '+esc(rest):esc(fText))+'</div>';
+  front += '<div style="position:absolute;bottom:13px;display:flex;align-items:center;gap:10px;">';
+  front += '<span style="font-size:11px;color:var(--muted);">👆 ট্যাপ করুন</span>';
+  front += '<button id="sfTtsF" style="background:#4361ee22;border:1.5px solid #4361ee44;border-radius:9px;padding:5px 10px;font-size:13px;cursor:pointer;color:var(--blue);">🔊</button></div>';
+  document.getElementById('sfFront').innerHTML = front;
+  document.getElementById('sfTtsF').addEventListener('click', function(e){ e.stopPropagation(); speak(c.de,'de-DE'); });
+  var back = '<div style="display:flex;align-items:center;justify-content:space-between;">';
+  back += '<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#4cc9f080;">পিছনে</div>';
+  back += '<button id="sfTtsB" style="background:#4361ee22;border:1.5px solid #4361ee44;border-radius:9px;padding:4px 10px;font-size:13px;cursor:pointer;color:var(--blue);">🔊</button></div>';
+  back += '<div class="mn-box" style="background:'+(rev?'#f8c94c12':'#4361ee15')+';border:1px solid '+(rev?'#f8c94c30':'#4361ee30')+';flex:1;margin:8px 0;display:flex;flex-direction:column;justify-content:center;overflow-y:auto;">';
+  back += '<div style="font-size:10px;color:'+(rev?'var(--gold)':'var(--blue)')+';letter-spacing:1px;margin-bottom:6px;">'+(rev?'🇩🇪 DEUTSCH':'🇧🇩 BENGALI')+'</div>';
+  back += '<div class="mn-word" style="'+(String(bText).length>70?'font-size:15px;line-height:1.5;':'')+'overflow-wrap:anywhere;">'+esc(bText)+'</div></div>';
+  back += '<div style="display:flex;gap:8px;"><button id="sfNo" style="flex:1;background:#f25c7a18;border:1.5px solid #f25c7a55;border-radius:10px;padding:9px;font-size:13px;font-weight:800;color:var(--red);cursor:pointer;">😕 জানি না</button><button id="sfYes" style="flex:1;background:#2dd4a018;border:1.5px solid #2dd4a055;border-radius:10px;padding:9px;font-size:13px;font-weight:800;color:var(--green);cursor:pointer;">✅ জানি</button></div>';
+  document.getElementById('sfBack').innerHTML = back;
+  document.getElementById('sfTtsB').addEventListener('click', function(e){ e.stopPropagation(); speak(c.de,'de-DE'); });
+  document.getElementById('sfNo').addEventListener('click', function(e){ e.stopPropagation(); slFlashMark(false); });
+  document.getElementById('sfYes').addEventListener('click', function(e){ e.stopPropagation(); slFlashMark(true); });
+  if(autoplay && !rev) setTimeout(function(){ speak(c.de,'de-DE'); }, 180);
+}
+function slFlashMark(ok){
+  var c = slFC.cards[slFC.i]; if(!c) return;
+  xsMark(c.k==='w'?'wp':'sp', c.de, ok, c.bn);
+  xsAct(c.k==='w'?'w':'s', 1);
+  if(slFC.i < slFC.cards.length-1){ slFC.i++; slFlashDraw(true); }
+  else { slFlashDraw(false); showToast('🎉 শেষ! '+(ok?'✅':'😕')+' — আবার করতে 🎯 বা 🔀 চাপো'); }
+}
+function slFlashFlip(){
+  if(_sfTouch.swiped){ _sfTouch.swiped=false; return; }
+  document.getElementById('sfCard').classList.toggle('flipped');
+}
+function slFlashGo(d){
+  var n=slFC.cards.length, j=slFC.i+d; if(j<0||j>=n) return;
+  slFC.i=j; slFlashDraw(true);
+}
+function slFlashRev(){ slFC.rev=!slFC.rev; slFlashDraw(false); showToast(slFC.rev?'⇄ সামনে বাংলা':'⇄ সামনে Deutsch'); }
+function slFlashShuffle(){
+  var a=slFC.cards; for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  slFC.i=0; slFlashDraw(true); showToast('🔀 মিশিয়ে দেওয়া হয়েছে');
+}
+
+// ════════════════════════════════
+// QUIZ ENGINE (used by story quiz, sentence tests, hard-word test)
+// q = {prompt, sub, speak, hideText, hint, opts:[...], ans:idx, explain, onAnswer(ok)}
+// ════════════════════════════════
+var xq = {title:'',qs:[],i:0,score:0,wrong:[],done:false,locked:false,back:'pgApp'};
+var xqLast = null;
+function xqStart(title, qs, back){
+  if(!qs.length){ showWarn('Test বানানোর মতো যথেষ্ট কিছু নেই।'); return; }
+  xq = {title:title,qs:qs,i:0,score:0,wrong:[],done:false,locked:false,back:back||'pgApp'};
+  showPage('pgXQuiz'); xqDraw();
+}
+function xqRun(title, builder, back){ xqLast = builder; xqStart(title, builder(), back); }
+function xqAgain(){ xqStart(xq.title, xqLast ? xqLast() : xq.qs, xq.back); }
+function xqBack(){ _storyStop(); showPage(xq.back || 'pgApp'); }
+function xqDraw(){
+  var n = xq.qs.length;
+  document.getElementById('xqTitle').textContent = xq.title;
+  document.getElementById('xqCounter').textContent = xq.done ? '' : (xq.i+1)+'/'+n;
+  document.getElementById('xqProg').style.width = ((xq.done?n:xq.i)/n*100)+'%';
+  var body = document.getElementById('xqBody');
+  if(xq.done){
+    var pct = Math.round(xq.score/n*100);
+    var h = '<div class="qcard" style="text-align:center;"><div style="font-size:46px;margin-bottom:6px;">'+(pct>=80?'🏆':pct>=50?'👍':'💪')+'</div>';
+    h += '<div style="font-size:28px;font-weight:900;color:var(--text);">'+xq.score+' / '+n+'</div><div style="font-size:13px;color:var(--sub);margin-top:4px;">'+pct+'% সঠিক</div></div>';
+    h += '<div style="padding:0 16px 30px;">';
+    if(xq.wrong.length){
+      h += '<div style="font-size:12px;font-weight:800;color:var(--sub);margin:4px 0 8px;">❌ ভুল হয়েছে ('+xq.wrong.length+'টি)</div>';
+      xq.wrong.forEach(function(q){ h += '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:7px;"><div style="font-size:13px;color:var(--text);font-weight:700;overflow-wrap:anywhere;">'+esc(q.prompt)+'</div><div style="font-size:12px;color:var(--green);margin-top:3px;overflow-wrap:anywhere;">✅ '+esc(q.opts[q.ans])+'</div></div>'; });
+      h += '<button class="btn btn-gold btn-full" style="margin-top:8px;" onclick="xqRetryWrong()">🔁 শুধু ভুলগুলো আবার</button>';
+    }
+    h += '<button class="btn btn-blue btn-full" style="margin-top:8px;" onclick="xqAgain()">🔄 নতুন করে</button>';
+    h += '<button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="xqBack()">← ফিরে যাও</button></div>';
+    body.innerHTML = h; return;
+  }
+  var q = xq.qs[xq.i]; xq.locked = false;
+  var h2 = '<div class="qcard">';
+  if(q.sub) h2 += '<div style="font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:11px;">'+esc(q.sub)+'</div>';
+  if(q.hideText){
+    h2 += '<button id="xqSpeak" style="width:84px;height:84px;border-radius:50%;background:#4361ee22;border:2px solid #4361ee55;font-size:34px;cursor:pointer;color:var(--blue);">🔊</button>';
+  } else {
+    h2 += '<div style="font-size:'+(q.prompt.length>90?'16':q.prompt.length>40?'19':'26')+'px;line-height:1.5;font-weight:900;color:var(--text);font-family:var(--display);overflow-wrap:anywhere;">'+esc(q.prompt)+'</div>';
+    if(q.speak) h2 += '<button id="xqSpeak" style="background:#4361ee22;border:1.5px solid #4361ee44;border-radius:9px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--blue);font-weight:700;margin-top:8px;">🔊 শুনুন</button>';
+  }
+  if(q.hint) h2 += '<div style="font-size:12px;color:var(--gold);margin-top:10px;">💡 '+esc(q.hint)+'</div>';
+  h2 += '</div><div style="padding:0 16px 30px;">';
+  q.opts.forEach(function(o,i){ h2 += '<button class="q-opt" id="xo'+i+'"><span class="opt-l">'+['A','B','C','D'][i]+'</span><span style="overflow-wrap:anywhere;">'+esc(o)+'</span></button>'; });
+  h2 += '<div id="xqNext" style="margin-top:14px;display:none;"><div id="xqExp" style="font-size:12px;color:var(--sub);margin-bottom:10px;line-height:1.5;"></div><button class="btn btn-blue btn-full" onclick="xqNext()">'+(xq.i<n-1?'পরের প্রশ্ন →':'ফলাফল ✅')+'</button></div></div>';
+  body.innerHTML = h2;
+  var sp = document.getElementById('xqSpeak'); if(sp) sp.addEventListener('click', function(){ speak(q.speak,'de-DE'); });
+  q.opts.forEach(function(o,i){ document.getElementById('xo'+i).addEventListener('click', function(){ xqPick(i); }); });
+  if(q.speak) setTimeout(function(){ speak(q.speak,'de-DE'); }, 200);
+  window.scrollTo(0,0);
+}
+function xqPick(i){
+  if(xq.locked) return; xq.locked = true;
+  var q = xq.qs[xq.i], ok = (i===q.ans);
+  if(ok) xq.score++; else xq.wrong.push(q);
+  q.opts.forEach(function(o,k){ var b=document.getElementById('xo'+k); if(!b) return; if(k===q.ans) b.classList.add('ok'); else if(k===i) b.classList.add('ng'); });
+  var ex = document.getElementById('xqExp'); if(ex) ex.textContent = (ok?'✅ সঠিক! ':'❌ সঠিক উত্তর: '+q.opts[q.ans]+'। ')+(q.explain?('('+q.explain+')'):'');
+  document.getElementById('xqNext').style.display = 'block';
+  try{ if(q.onAnswer) q.onAnswer(ok); }catch(e){}
+}
+function xqNext(){
+  if(xq.i < xq.qs.length-1){ xq.i++; xqDraw(); } else { xq.done = true; xqDraw(); }
+}
+function xqRetryWrong(){
+  var w = xq.wrong.slice(); xq.qs = w; xq.i = 0; xq.score = 0; xq.wrong = []; xq.done = false; xqDraw();
+}
+// correct + up to 3 distractors from pool (strings), shuffled → {opts, ans}
+function xqOpts(correct, pool){
+  var d = xsShuffle(pool.filter(function(x){ return x && x!==correct; }));
+  var seen = {}; seen[correct]=1; var out=[correct];
+  for(var i=0;i<d.length && out.length<4;i++){ if(!seen[d[i]]){ seen[d[i]]=1; out.push(d[i]); } }
+  out = xsShuffle(out);
+  return {opts:out, ans:out.indexOf(correct)};
+}
+
+// ════════════════════════════════
+// SENTENCE / WORD TESTS
+// ════════════════════════════════
+function xsFirstBn(s){ return String(s).replace(/\s*\(.*?\)/g,'').split(/\s*\/\s*/)[0].trim() || String(s); }
+function xsSentPool(fid){
+  var f = sFileOf(fid), own = [], more = [];
+  if(f) f.items.forEach(function(it){ if(!it.story && it.de && it.bn) own.push({de:it.de,bn:it.bn,k:'s'}); });
+  sfiles.forEach(function(g){ if(g.id!==fid) g.items.forEach(function(it){ if(!it.story && it.de && it.bn) more.push({de:it.de,bn:it.bn,k:'s'}); }); });
+  return {own:own, all:own.concat(more)};
+}
+function xsWordPool(fid){
+  var out = [];
+  var files = fid ? [sFileOf(fid)] : sfiles;
+  files.forEach(function(f){ if(f) f.items.forEach(function(it){ if(it.story) (it.vocab||[]).forEach(function(v){ if(v.de&&v.bn) out.push({de:v.de,bn:v.bn,k:'w'}); }); }); });
+  return out;
+}
+function xsItemQs(items, poolAll, mode, n){
+  var picked = xsShuffle(items).slice(0, n||10), qs = [];
+  picked.forEach(function(c){
+    var map = c.k==='w'?'wp':'sp';
+    var bnTxt = function(x){ return x.k==='w' ? xsFirstBn(x.bn) : x.bn; };
+    var q;
+    if(mode==='bn2de'){
+      var o = xqOpts(c.de, poolAll.map(function(x){return x.de;}));
+      q = {prompt:bnTxt(c), sub:'German কী?', opts:o.opts, ans:o.ans, explain:c.de, speak:null};
+    } else {
+      var o2 = xqOpts(bnTxt(c), poolAll.map(bnTxt));
+      q = {prompt:c.de, sub:mode==='listen'?'শুনে বাংলা অর্থ বলো':'বাংলা অর্থ কী?', speak:c.de, hideText:mode==='listen', opts:o2.opts, ans:o2.ans, explain:c.de};
+    }
+    q.onAnswer = function(ok){ xsMark(map, c.de, ok, c.bn); if(ok) xsAct(c.k==='w'?'w':'s', 1); };
+    qs.push(q);
+  });
+  return qs;
+}
+function xsFileTest(fid){
+  var f = sFileOf(fid); if(!f) return;
+  var sp = xsSentPool(fid), wp = xsWordPool(fid);
+  if(sp.own.length<2 && wp.length<4){ showWarn('Test-এর জন্য অন্তত ২টি বাক্য বা ৪টি শব্দ দরকার।'); return; }
+  var h = '<div style="text-align:center;margin-bottom:14px;"><div style="font-size:19px;font-weight:900;color:var(--text);">🧠 Test — '+esc(f.name)+'</div></div>';
+  var btn = function(label, code){ return '<button class="btn btn-ghost btn-full" style="margin-bottom:9px;text-align:left;padding:14px;" onclick="closeModal();'+code+'">'+label+'</button>'; };
+  if(sp.own.length>=2){
+    h += '<div style="font-size:12px;font-weight:800;color:var(--sub);margin:4px 0 8px;">💬 বাক্য ('+sp.own.length+'টি)</div>';
+    h += btn('🇩🇪→🇧🇩 German দেখে বাংলা বলো','xsRunSent('+fid+',\'de2bn\')');
+    h += btn('🇧🇩→🇩🇪 বাংলা দেখে German বলো','xsRunSent('+fid+',\'bn2de\')');
+    h += btn('🎧 শুনে বাংলা অর্থ বলো','xsRunSent('+fid+',\'listen\')');
+  }
+  if(wp.length>=4){
+    h += '<div style="font-size:12px;font-weight:800;color:var(--sub);margin:10px 0 8px;">📚 শব্দ ('+wp.length+'টি)</div>';
+    h += btn('🇩🇪→🇧🇩 শব্দের অর্থ','xsRunWords('+fid+',\'de2bn\')');
+    h += btn('🇧🇩→🇩🇪 বাংলা দেখে German শব্দ','xsRunWords('+fid+',\'bn2de\')');
+    h += btn('🎧 শুনে শব্দের অর্থ','xsRunWords('+fid+',\'listen\')');
+  }
+  h += '<button class="btn btn-ghost btn-full" onclick="closeModal()">✕ বাতিল</button>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+var XS_MODE_NAME = {de2bn:'German → বাংলা', bn2de:'বাংলা → German', listen:'শুনে অর্থ'};
+function xsRunSent(fid, mode){
+  var f = sFileOf(fid); xsRecent('file', fid, f.name);
+  xqRun('💬 '+f.name+' · '+XS_MODE_NAME[mode], function(){ var p = xsSentPool(fid); return xsItemQs(p.own, p.all.length>=4?p.all:p.own, mode, 10); }, 'pgApp');
+}
+function xsRunWords(fid, mode){
+  var f = sFileOf(fid); xsRecent('file', fid, f.name);
+  xqRun('📚 '+f.name+' · '+XS_MODE_NAME[mode], function(){ var w = xsWordPool(fid); return xsItemQs(w, w, mode, 10); }, 'pgApp');
+}
+
+function xsReadQuiz(){ _storyStop(); xsStoryQuiz(xr.fid, xr.si); }
+function xsStoryQuiz(fid, si){
+  var f = sFileOf(fid), it = f && f.items[si]; if(!it) return;
+  xqRun('📝 '+(it.title||'Story'), function(){ return xsStoryQs(it); }, 'pgStoryRead');
+}
+function xsStoryQs(it){
+  var vocab = (it.vocab||[]).filter(function(v){ return v.de && v.bn; });
+  var map = xsWordMap(vocab);
+  var skip = /^(der|die|das|den|dem|des|ein|eine|einen|einem|einer|und|oder|aber|mit|von|zu|zum|zur|in|im|an|am|auf|aus|für|bei|nach|ich|du|er|sie|es|wir|ihr|mir|mich|dir|dich|uns|euch|ihn|ihm|nicht|auch|sehr|noch|dann|wie|was|wer|wo|ist|sind|war|hat|habe|bin|dass|denn|wenn|als|um)$/i;
+  var sents = String(it.de).split(/(?<=[.!?][“”"]?)\s+/).filter(function(s){ return s.trim().length>12; });
+  var allTok = []; (String(it.de).match(/[A-Za-zÄÖÜäöüß]{4,}/g)||[]).forEach(function(t){ if(!skip.test(t) && allTok.indexOf(t)<0) allTok.push(t); });
+  var qs = [];
+  // cloze
+  xsShuffle(sents).some(function(s){
+    if(qs.length>=4) return true;
+    var toks = (s.match(/[A-Za-zÄÖÜäöüß]{4,}/g)||[]).filter(function(t){ return !skip.test(t) && map[xsKey(t)]; });
+    if(!toks.length) return false;
+    var t = toks[Math.floor(Math.random()*toks.length)], ent = map[xsKey(t)];
+    var cap = /^[A-ZÄÖÜ]/.test(t);
+    var pool = allTok.filter(function(x){ return x!==t && /^[A-ZÄÖÜ]/.test(x)===cap; });
+    if(pool.length<3) pool = allTok.filter(function(x){ return x!==t; });
+    var o = xqOpts(t, pool); if(o.opts.length<3) return false;
+    var blanked = s.replace(new RegExp('\\b'+t+'\\b'), '_____');
+    qs.push({prompt:blanked.trim(), sub:'শূন্যস্থান পূরণ করো', hint:'অর্থ: '+xsFirstBn(ent.bn), opts:o.opts, ans:o.ans, explain:s.trim(),
+      onAnswer:function(ok){ xsMark('wp', ent.de, ok, ent.bn); if(ok) xsAct('w',1); }});
+    return false;
+  });
+  // meaning + listen
+  var words = vocab.filter(function(v){ var l=v.de.replace(/\s*\(.*$/,''); return !skip.test(l) && l.length>=4; });
+  var bnPool = vocab.map(function(v){ return xsFirstBn(v.bn); });
+  var ws = xsShuffle(words);
+  ws.slice(0,3).forEach(function(v){
+    var o = xqOpts(xsFirstBn(v.bn), bnPool);
+    qs.push({prompt:v.de.replace(/\s*\(.*$/,''), sub:'বাংলা অর্থ কী?', speak:v.de.replace(/\s*\(.*$/,''), opts:o.opts, ans:o.ans, explain:v.de,
+      onAnswer:function(ok){ xsMark('wp', v.de, ok, v.bn); if(ok) xsAct('w',1); }});
+  });
+  ws.slice(3,6).forEach(function(v){
+    var o = xqOpts(xsFirstBn(v.bn), bnPool);
+    qs.push({prompt:v.de.replace(/\s*\(.*$/,''), sub:'শুনে বাংলা অর্থ বলো', speak:v.de.replace(/\s*\(.*$/,''), hideText:true, opts:o.opts, ans:o.ans, explain:v.de,
+      onAnswer:function(ok){ xsMark('wp', v.de, ok, v.bn); if(ok) xsAct('w',1); }});
+  });
+  return xsShuffle(qs);
+}
+
+</script>
+
+<script>
+// ===== EXTRAS 8,9 =====
+// ════════════════════════════════
+// PDF: vocab groups (Nomen / Verben / Andere) + Word (.docx) export
+// ════════════════════════════════
+var xsPdfGroups = loadLS('df_pdfgrp', true);
+var XS_GROUP_MAX = 100;
+function spVocabHtml(vocab){
+  var VV = spSortVocab(vocab), vn = VV.length;
+  var nc = vn>140 ? 6 : vn>120 ? 5 : vn>90 ? 4 : vn>34 ? 3 : 2;
+  var cls = 'sp-vocab'+(vn>34?' v3':'')+(vn>66?' vt':'')+(vn>90?' v4':'')+(vn>108?' v5':'')+(vn>120?' v6':'');
+  var mk = function(list){
+    var rowsN = Math.ceil(list.length/nc), vr = '';
+    for(var vi=0; vi<rowsN; vi++){
+      vr += '<tr>';
+      for(var c=0; c<nc; c++){ var a = list[vi+c*rowsN]; vr += a ? '<td class="de">'+esc(a.de)+'</td><td>'+esc(a.bn)+'</td>' : '<td></td><td></td>'; }
+      vr += '</tr>';
+    }
+    return '<table class="'+cls+'"><tbody>'+vr+'</tbody></table>';
+  };
+  var h = '<div class="sp-vocab-h">📚 Wortschatz · শব্দভান্ডার</div>';
+  if(xsPdfGroups && vn<=XS_GROUP_MAX){
+    var g = [[],[],[]]; VV.forEach(function(v){ g[spVocabKind(v)].push(v); });
+    var names = ['Nomen · বিশেষ্য','Verben · ক্রিয়া','Andere · অন্যান্য'];
+    g.forEach(function(list,i){ if(list.length) h += '<div class="sp-vocab-g">'+names[i]+' ('+list.length+')</div>'+mk(list); });
+  } else h += mk(VV);
+  return h;
+}
+function xsTogglePdfGroups(){
+  xsPdfGroups = !xsPdfGroups; saveLS('df_pdfgrp', xsPdfGroups);
+  if(window._pdfRebuild) window._pdfRebuild();
+}
+function xsPdfBarSync(){
+  var b = document.getElementById('pdfGrpBtn'); if(!b) return;
+  b.style.display = window._pdfRebuild ? '' : 'none';
+  b.textContent = '🏷️ শব্দের দল: '+(xsPdfGroups?'ON':'OFF');
+}
+
+// ── tiny ZIP (store) + docx ──
+var _crcT = null;
+function crc32(b){
+  if(!_crcT){ _crcT = []; for(var n=0;n<256;n++){ var c=n; for(var k=0;k<8;k++) c = c&1 ? 0xEDB88320^(c>>>1) : c>>>1; _crcT[n]=c>>>0; } }
+  var c2 = 0xFFFFFFFF; for(var i=0;i<b.length;i++) c2 = _crcT[(c2^b[i])&255]^(c2>>>8); return (c2^0xFFFFFFFF)>>>0;
+}
+function zipStore(files){
+  var enc = new TextEncoder(), parts = [], central = [], off = 0;
+  var u16 = function(v){ return [v&255,(v>>8)&255]; }, u32 = function(v){ return [v&255,(v>>8)&255,(v>>16)&255,(v>>>24)&255]; };
+  files.forEach(function(f){
+    var name = enc.encode(f.name), data = enc.encode(f.data), crc = crc32(data);
+    var lh = [].concat([0x50,0x4b,3,4],u16(20),u16(0x0800),u16(0),u16(0),u16(0x21),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0));
+    parts.push(new Uint8Array(lh), name, data);
+    var ch = [].concat([0x50,0x4b,1,2],u16(20),u16(20),u16(0x0800),u16(0),u16(0),u16(0x21),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(off));
+    central.push(new Uint8Array(ch), name);
+    off += lh.length + name.length + data.length;
+  });
+  var cs = 0; central.forEach(function(c){ cs += c.length; });
+  var end = [].concat([0x50,0x4b,5,6],u16(0),u16(0),u16(files.length),u16(files.length),u32(cs),u32(off),u16(0));
+  return new Blob(parts.concat(central, [new Uint8Array(end)]), {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+}
+function wx(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){ return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;'; }).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,''); }
+function wRun(t, o){ o=o||{}; return '<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Nirmala UI"/>'+(o.b?'<w:b/>':'')+(o.i?'<w:i/>':'')+(o.c?'<w:color w:val="'+o.c+'"/>':'')+'<w:sz w:val="'+(o.sz||24)+'"/><w:szCs w:val="'+(o.sz||24)+'"/></w:rPr><w:t xml:space="preserve">'+wx(t)+'</w:t></w:r>'; }
+function wPara(t, o){ o=o||{}; return '<w:p><w:pPr>'+(o.center?'<w:jc w:val="center"/>':'')+'<w:spacing w:after="'+(o.after==null?120:o.after)+'"/></w:pPr>'+(t?wRun(t,o):'')+'</w:p>'; }
+function wBreak(){ return '<w:p><w:r><w:br w:type="page"/></w:r></w:p>'; }
+function wTable(vocab, pairs){
+  var rowsN = Math.ceil(vocab.length/pairs), cw = Math.floor(9800/(pairs*2)), x = '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>';
+  ['top','left','bottom','right','insideH','insideV'].forEach(function(s){ x += '<w:'+s+' w:val="single" w:sz="4" w:color="BFC5E0"/>'; });
+  x += '</w:tblBorders><w:tblCellMar><w:left w:w="60" w:type="dxa"/><w:right w:w="60" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>';
+  for(var g=0; g<pairs*2; g++) x += '<w:gridCol w:w="'+cw+'"/>';
+  x += '</w:tblGrid>';
+  for(var r=0;r<rowsN;r++){
+    x += '<w:tr>';
+    for(var c=0;c<pairs;c++){ var a = vocab[r+c*rowsN]; x += '<w:tc><w:tcPr><w:tcW w:w="'+cw+'" w:type="dxa"/></w:tcPr>'+wPara(a?a.de:'',{b:true,sz:24,after:0})+'</w:tc><w:tc><w:tcPr><w:tcW w:w="'+cw+'" w:type="dxa"/></w:tcPr>'+wPara(a?a.bn:'',{sz:24,after:0})+'</w:tc>'; }
+    x += '</w:tr>';
+  }
+  return x + '</w:tbl>';
+}
+function xsDocx(fid){
+  var f = sFileOf(fid); if(!f) return;
+  var body = '', first = true, n = 0;
+  body += wPara('DeutschFlash — '+f.name, {b:true,sz:36,c:'4361EE',after:200});
+  f.items.forEach(function(it){
+    if(it.story){
+      if(!first) body += wBreak(); first = false;
+      body += wPara(it.title||'', {b:true,sz:32,center:true,after:200});
+      body += wPara(it.de, {sz:24,after:200});
+      body += wPara(it.bn, {sz:24,after:240});
+      if(it.vocab && it.vocab.length){
+        body += wPara('Wortschatz · শব্দভান্ডার', {b:true,sz:26,after:100});
+        var VV = spSortVocab(it.vocab);
+        if(xsPdfGroups){
+          var g = [[],[],[]]; VV.forEach(function(v){ g[spVocabKind(v)].push(v); });
+          ['Nomen · বিশেষ্য','Verben · ক্রিয়া','Andere · অন্যান্য'].forEach(function(nm,i){ if(g[i].length){ body += wPara(nm, {b:true,sz:22,c:'4361EE',after:60}) + wTable(g[i], 3) + wPara('',{after:80}); } });
+        } else body += wTable(VV, 3);
+      }
+    } else {
+      first = false; n++;
+      body += wPara(n+'. '+it.de, {b:true,sz:24,after:20});
+      body += wPara(it.bn, {sz:24,after:140});
+    }
+  });
+  var doc = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:right="850" w:bottom="850" w:left="850" w:header="400" w:footer="400" w:gutter="0"/></w:sectPr></w:body></w:document>';
+  var ct = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
+  var rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
+  var blob = zipStore([{name:'[Content_Types].xml',data:ct},{name:'_rels/.rels',data:rels},{name:'word/document.xml',data:doc}]);
+  var url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = f.name.replace(/[^\w\- ]+/g,'_')+'.docx';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+  showToast('📝 Word file download হয়েছে');
+}
+
+var _openPDF0 = openPDF;
+openPDF = function(html){ window._pdfRebuild = null; _openPDF0(html); xsPdfBarSync(); };
+spPdfFile = function(fid){
+  var f = sFileOf(fid); if(!f) return;
+  var build = function(){ _openPDF0(spBuildPdfHtml(sPathText(f.folderId), [{name:f.name, tag:sTagOf(f), items:f.items}])); window._pdfRebuild = build; xsPdfBarSync(); };
+  build();
+};
+xsPdfBarSync();
+</script>
+
+<script>
+// ===== EXTRAS 11-14 =====
+function xsHardList(){
+  var out = [];
+  ['sp','wp'].forEach(function(m){
+    Object.keys(xs[m]).forEach(function(k){ var it = xs[m][k]; if(it.w>=2 && it.b<3) out.push({de:k,bn:it.bn||'',k:m==='wp'?'w':'s',w:it.w}); });
+  });
+  return out.sort(function(a,b){ return b.w-a.w; });
+}
+
+// ════════════════════════════════
+// HARD WORDS (auto list from "জানি না"/wrong answers)
+// ════════════════════════════════
+function xsHard(){
+  var l = xsHardList();
+  var h = '<div style="text-align:center;margin-bottom:12px;"><div style="font-size:19px;font-weight:900;color:var(--text);">⚠️ কঠিন শব্দ ও বাক্য</div><div style="font-size:12px;color:var(--sub);margin-top:5px;">যেগুলো ২ বার বা বেশি ভুল হয়েছে (৩ বার পরপর ঠিক হলে তালিকা থেকে বের হয়ে যাবে)</div></div>';
+  if(!l.length){
+    h += '<div class="empty-box"><div class="ico">🎉</div><div class="txt">এখন কোনো কঠিন শব্দ নেই।<br>Flashcard-এ "😕 জানি না" বা Test-এ ভুল করলে এখানে জমবে।</div></div>';
+  } else {
+    h += '<div style="display:flex;gap:8px;margin-bottom:12px;"><button class="btn btn-blue btn-sm" style="flex:1;" onclick="closeModal();xsHardFlash()">🃏 Flashcard</button><button class="btn btn-gold btn-sm" style="flex:1;" onclick="closeModal();xsHardTest()">🧠 Test</button></div>';
+    h += '<div style="max-height:50vh;overflow-y:auto;">';
+    l.slice(0,60).forEach(function(x){ h += '<div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 11px;margin-bottom:6px;"><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:800;color:var(--text);overflow-wrap:anywhere;">'+esc(x.de)+'</div><div style="font-size:12px;color:var(--sub);overflow-wrap:anywhere;">'+esc(x.bn)+'</div></div><span style="font-size:11px;color:var(--red);font-weight:800;flex-shrink:0;">❌'+x.w+'</span></div>'; });
+    if(l.length>60) h += '<div style="font-size:11px;color:var(--muted);text-align:center;">…আরও '+(l.length-60)+'টি</div>';
+    h += '</div>';
+  }
+  h += '<button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="closeModal()">✕ বন্ধ করো</button>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function xsHardFlash(){ slFlashCustom(xsShuffle(xsHardList()), '⚠️ কঠিন শব্দ'); }
+function xsHardTest(){
+  xqRun('⚠️ কঠিন শব্দ Test', function(){
+    var l = xsHardList(); var pool = l.length>=4 ? l : l.concat(xsWordPool(0)).concat(xsSentPool(0).all);
+    return xsItemQs(l, pool, 'de2bn', 10);
+  }, 'pgApp');
+}
+
+// ════════════════════════════════
+// WEEKLY REPORT
+// ════════════════════════════════
+function xsReport(){
+  var days = [], tot = 0, mx = 1, bn = ['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি'];
+  for(var i=6;i>=0;i--){
+    var d = new Date(); d.setDate(d.getDate()-i);
+    var n = (practice.hist||{})[d.toDateString()] || 0;
+    days.push({l:bn[d.getDay()], n:Math.round(n)}); tot += Math.round(n); if(n>mx) mx = n;
+  }
+  var ty = {s:0,w:0,r:0};
+  for(var j=0;j<7;j++){ var dd = new Date(); dd.setDate(dd.getDate()-j); var a = xs.act[dd.toDateString()]; if(a){ ty.s+=a.s||0; ty.w+=a.w||0; ty.r+=a.r||0; } }
+  var sKnown = Object.keys(xs.sp).filter(function(k){return xs.sp[k].b>=3;}).length;
+  var wKnown = Object.keys(xs.wp).filter(function(k){return xs.wp[k].b>=3;}).length;
+  var dueS = Object.keys(xs.sp).filter(function(k){return xsDue('sp',k);}).length;
+  var dueW = Object.keys(xs.wp).filter(function(k){return xsDue('wp',k);}).length;
+  var hard = xsHardList();
+  var h = '<div style="text-align:center;margin-bottom:14px;"><div style="font-size:19px;font-weight:900;color:var(--text);">📊 সাপ্তাহিক রিপোর্ট</div><div style="font-size:12px;color:var(--sub);margin-top:4px;">শেষ ৭ দিন</div></div>';
+  h += '<div style="display:flex;align-items:flex-end;gap:6px;height:110px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 10px 8px;margin-bottom:10px;">';
+  days.forEach(function(x){ var hp = Math.max(3, Math.round(x.n/mx*70)); h += '<div style="flex:1;text-align:center;"><div style="font-size:10px;color:var(--sub);height:14px;">'+(x.n||'')+'</div><div style="height:'+hp+'px;background:'+(x.n?'linear-gradient(180deg,var(--blue),var(--cyan))':'var(--border)')+';border-radius:6px 6px 3px 3px;"></div><div style="font-size:10px;color:var(--muted);margin-top:4px;">'+x.l+'</div></div>'; });
+  h += '</div>';
+  var cell = function(v,l,c){ return '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 6px;text-align:center;"><div style="font-size:19px;font-weight:900;color:'+c+';">'+v+'</div><div style="font-size:10px;color:var(--sub);margin-top:2px;">'+l+'</div></div>'; };
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">'+cell(tot,'মোট practice','var(--blue)')+cell(practice.streak||0,'🔥 streak','var(--gold)')+cell(Math.round(ty.r/3),'📖 story পড়া','var(--green)')+'</div>';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">'+cell(Math.round(ty.s),'💬 বাক্য','var(--cyan)')+cell(Math.round(ty.w),'📚 শব্দ','var(--cyan)')+cell(hard.length,'⚠️ কঠিন','var(--red)')+'</div>';
+  h += '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:12px;color:var(--sub);line-height:1.8;margin-bottom:10px;">';
+  h += '✅ শেখা বাক্য: <b style="color:var(--text);">'+sKnown+'</b> · শেখা শব্দ: <b style="color:var(--text);">'+wKnown+'</b><br>📅 আজ review করার মতো: বাক্য <b style="color:var(--text);">'+dueS+'</b>, শব্দ <b style="color:var(--text);">'+dueW+'</b></div>';
+  if(hard.length){
+    h += '<div style="font-size:12px;font-weight:800;color:var(--sub);margin:4px 0 6px;">বারবার ভুল হচ্ছে</div>';
+    hard.slice(0,5).forEach(function(x){ h += '<div style="font-size:12px;color:var(--text);padding:5px 2px;border-bottom:1px solid var(--border);overflow-wrap:anywhere;">❌'+x.w+' · '+esc(x.de)+' — <span style="color:var(--sub);">'+esc(x.bn)+'</span></div>'; });
+  }
+  h += '<button class="btn btn-ghost btn-full" style="margin-top:12px;" onclick="closeModal()">✕ বন্ধ করো</button>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+
+var libScope = loadLS('df_scope', 'all');
+function isBuiltFolder(f){ return f.id===700001 || !!f.built; }
+function isBuiltFile(f){ return !!f.built || /^Kapitel \d+ Stories$/.test(f.name); }
+function xsScopeBar(){
+  var el = document.getElementById('libScopeBar'); if(!el) return;
+  var root = libMode==='sent' ? !slFolderId : !currentFolderId;
+  if(!root){ el.innerHTML=''; return; }
+  var chip = function(v,l){ return '<button class="seg'+(libScope===v?' on':'')+'" onclick="xsSetScope(\''+v+'\')">'+l+'</button>'; };
+  el.innerHTML = '<div class="seg-wrap" style="margin:6px 0 4px;">'+chip('all','সব')+chip('mine','✏️ আমার')+chip('built','📚 তৈরি data')+'</div>';
+}
+function xsSetScope(v){ libScope = v; saveLS('df_scope', v); if(libMode==='sent') slRender(); else renderLibrary(); }
+function xsScopeF(list, isBuilt){
+  if(libScope==='mine') return list.filter(function(x){ return !isBuilt(x); });
+  if(libScope==='built') return list.filter(function(x){ return isBuilt(x); });
+  return list;
+}
+
+var _renderLibrary1 = renderLibrary;
+renderLibrary = function(){ _renderLibrary1(); xsScopeBar(); };
+var _slRender1 = slRender;
+slRender = function(){ _slRender1(); xsScopeBar(); };
+var _xsRC0 = xsRenderContinue;
+xsRenderContinue = function(){
+  _xsRC0();
+  var el = document.getElementById('xsContinue'); if(!el) return;
+  var hard = xsHardList().length;
+  el.insertAdjacentHTML('beforeend','<div style="display:flex;gap:8px;margin:0 0 14px;"><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xsHard()">⚠️ কঠিন শব্দ'+(hard?' ('+hard+')':'')+'</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xsReport()">📊 সাপ্তাহিক রিপোর্ট</button></div>');
+};
+renderHome(); if(document.getElementById('slList')) { try{ renderLibrary(); slRender(); }catch(e){} }
+</script>
+
+<script>
+// ===== Top search: meaning + listening =====
+function xsSay(t, slow){ _storyStop(); _ttsSlow = !!slow; speak(t, 'de-DE', function(){ _ttsSlow = false; }); }
+function xsPlain(s){ return String(s||'').replace(/\s*\(.*$/,'').replace(/\s*\/.*$/,'').trim(); }
+function xsSB(t){ return '<button class="sp-ib" data-say="'+esc(t)+'" onclick="event.stopPropagation();xsSay(this.getAttribute(\'data-say\'))" aria-label="শুনুন">🔊</button><button class="sp-ib" data-say="'+esc(t)+'" onclick="event.stopPropagation();xsSay(this.getAttribute(\'data-say\'),true)" aria-label="ধীরে শুনুন">🐢</button>'; }
+doSearch = function(q){
+  var drop = document.getElementById('searchDrop'), clr = document.getElementById('sbClear'), mc = document.getElementById('mainContent');
+  q = (q||'').trim().toLowerCase();
+  clr.style.display = q ? 'block' : 'none';
+  if(!q){ drop.style.display='none'; if(mc) mc.style.display=''; return; }
+  if(mc) mc.style.display = 'none';
+  var hit = function(s){ return String(s||'').toLowerCase().indexOf(q)>=0; };
+  var cards = [], sents = [], words = [];
+  decks.forEach(function(dk){ dk.cards.forEach(function(c){ if(hit(c.german)||hit(c.bengali)||hit(c.english)) cards.push({c:c,d:dk}); }); });
+  sfiles.forEach(function(f){ f.items.forEach(function(it,si){
+    if(hit((it.title||'')+' '+it.de+' '+it.bn)) sents.push({f:f,it:it,si:si});
+    if(it.story) (it.vocab||[]).forEach(function(v){ if(hit(v.de)||hit(v.bn)) words.push({f:f,it:it,si:si,v:v}); });
+  }); });
+  var total = cards.length+sents.length+words.length;
+  if(!total){
+    drop.innerHTML = '<div style="padding:40px 20px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;">🔍</div><div style="font-size:16px;font-weight:700;color:var(--text);">"'+esc(q)+'" পাওয়া যায়নি</div></div>';
+    drop.style.display = 'block'; return;
+  }
+  var sec = function(t){ return '<div style="padding:12px 16px 4px;font-size:12px;color:var(--muted);font-weight:700;">'+t+'</div>'; };
+  var ico = function(bg,t){ return '<div style="width:38px;height:38px;border-radius:11px;background:'+bg+'18;border:1px solid '+bg+'33;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:'+bg+';flex-shrink:0;">'+t+'</div>'; };
+  var h = '<div style="padding:10px 16px 0;font-size:12px;color:var(--muted);font-weight:700;">'+total+' ফলাফল</div>';
+  if(cards.length){
+    h += sec('🗂️ শব্দ / Card ('+cards.length+')');
+    cards.slice(0,40).forEach(function(r){
+      var art = r.c.german.split(' ')[0], ha = (art==='der'||art==='die'||art==='das');
+      var col = ha ? (art==='der'?'#4361ee':art==='die'?'#f25c7a':'#2dd4a0') : '#f8c94c';
+      var loc = r.d.folderId ? ' · '+folderPath(r.d.folderId).map(function(f){return esc(f.name);}).join(' › ') : '';
+      h += '<div class="sr-item" onclick="openCardModal('+r.d.id+','+r.c.id+')">'+ico(col, ha?art[0].toUpperCase():'📝')+
+        '<div style="flex:1;min-width:0;"><div style="font-size:15px;font-weight:800;color:var(--text);">'+esc(r.c.german)+'</div><div style="font-size:13px;color:var(--cyan);font-weight:700;">🇧🇩 '+esc(r.c.bengali)+'</div><div style="font-size:12px;color:var(--sub);">'+esc(r.c.english||'')+'</div><div style="font-size:11px;color:var(--muted);">'+r.d.emoji+' '+esc(r.d.name)+loc+'</div></div>'+xsSB(r.c.german)+'</div>';
+    });
+  }
+  if(words.length){
+    h += sec('📚 Story-র শব্দ ('+words.length+')');
+    words.slice(0,40).forEach(function(r){
+      h += '<div class="sr-item" onclick="clearSearch();xsStoryOpen('+r.f.id+','+r.si+')">'+ico('#2dd4a0','📚')+
+        '<div style="flex:1;min-width:0;"><div style="font-size:15px;font-weight:800;color:var(--text);overflow-wrap:anywhere;">'+esc(r.v.de)+'</div><div style="font-size:13px;color:var(--cyan);font-weight:700;overflow-wrap:anywhere;">🇧🇩 '+esc(r.v.bn)+'</div><div style="font-size:11px;color:var(--muted);">📖 '+esc(r.it.title||r.f.name)+'</div></div>'+xsSB(xsPlain(r.v.de))+'</div>';
+    });
+  }
+  if(sents.length){
+    h += sec('💬 বাক্য ও Story ('+sents.length+')');
+    sents.slice(0,30).forEach(function(r){
+      var st = r.it.story, say = st ? (_storySplit(r.it.de)[0]||'') : r.it.de;
+      var de = st && r.it.de.length>110 ? r.it.de.slice(0,110)+'…' : r.it.de, bn = st && r.it.bn.length>110 ? r.it.bn.slice(0,110)+'…' : r.it.bn;
+      var loc = r.f.folderId ? sPathText(r.f.folderId)+' › ' : '';
+      h += '<div class="sr-item" onclick="'+(st?'clearSearch();xsStoryOpen('+r.f.id+','+r.si+')':'openSentSearch('+r.f.id+')')+'">'+ico('#4cc9f0', st?'📖':'💬')+
+        '<div style="flex:1;min-width:0;">'+(st&&r.it.title?'<div style="font-size:11px;color:var(--cyan);font-weight:800;">'+esc(r.it.title)+'</div>':'')+'<div style="font-size:14px;font-weight:800;color:var(--text);overflow-wrap:anywhere;">'+esc(de)+'</div><div style="font-size:13px;color:var(--cyan);overflow-wrap:anywhere;">🇧🇩 '+esc(bn)+'</div><div style="font-size:11px;color:var(--muted);">📄 '+esc(loc+r.f.name)+'</div></div>'+xsSB(say)+'</div>';
+    });
+  }
+  drop.innerHTML = h; drop.style.display = 'block';
+};
+</script>
+
 </body>
 </html>
