@@ -804,12 +804,34 @@ input,select,textarea,button{font-family:var(--font);}
       <button class="dr-item" onclick="drGo('xgModal()',5)"><span class="dr-ico">🧱</span><span>Modalverben<small>kann, muss, will…</small></span></button>
       <button class="dr-item" onclick="drGo('xgAussprache()',5)"><span class="dr-ico">🗣</span><span>উচ্চারণ টিপস<small>ä ö ü ch sch… 🔊</small></span></button>
       <button class="dr-item" onclick="drGo('xgLetters()',5)"><span class="dr-ico">✉️</span><span>Brief / E-Mail<small>লেখার template ও draft</small></span></button>
+      <button class="dr-item" onclick="drGo('xgPerfekt()',5)"><span class="dr-ico">⏪</span><span>Perfekt trainer<small>haben/sein + Partizip II</small></span></button>
+      <button class="dr-item" onclick="drGo('xgPrep()',5)"><span class="dr-ico">📍</span><span>Präpositionen<small>mit, nach, in, auf, zum…</small></span></button>
+      <button class="dr-item" onclick="drGo('xgTrenn()',5)"><span class="dr-ico">✂️</span><span>Trennbare Verben<small>aufstehen → stehe… auf</small></span></button>
+      <button class="dr-item" onclick="drGo('xgPron()',5)"><span class="dr-ico">👤</span><span>Pronomen<small>mich/mir, mein/dein…</small></span></button>
+      <button class="dr-item" onclick="drGo('xgWfrage()',5)"><span class="dr-ico">❓</span><span>W-Fragen<small>Wer, Was, Wo, Wann…</small></span></button>
     </div>
-    <button class="dr-item dr-grp" id="drG6" onclick="drToggle(6)" aria-expanded="false"><span class="dr-ico">🧪</span><span style="flex:1;">পরীক্ষা ও Review<small>আজকের Review, Kapitel পরীক্ষা, Mock</small></span><span class="dr-arr" style="font-size:13px;color:var(--muted);transition:transform .2s;">▼</span></button>
+    <button class="dr-item dr-grp" id="drG6" onclick="drToggle(6)" aria-expanded="false"><span class="dr-ico">🧪</span><span style="flex:1;">পরীক্ষা ও Review<small>Review, Lesen, Hören, Formular, Mock</small></span><span class="dr-arr" style="font-size:13px;color:var(--muted);transition:transform .2s;">▼</span></button>
     <div class="dr-sub" id="drS6" style="display:none;margin:0 0 4px 22px;padding-left:10px;border-left:2px solid var(--border);">
       <button class="dr-item" onclick="drGo('xgReview()',6)"><span class="dr-ico">🔁</span><span>আজকের Review<small>আজ যা দেখার সময় হয়েছে</small></span></button>
       <button class="dr-item" onclick="drGo('xgExam()',6)"><span class="dr-ico">🎓</span><span>Kapitel পরীক্ষা<small>সময়সহ, পাশ ≥৭০%</small></span></button>
+      <button class="dr-item" onclick="drGo('xgLesen()',6)"><span class="dr-ico">📖</span><span>Lesen<small>নোটিশ, ই-মেইল পড়ে প্রশ্ন</small></span></button>
+      <button class="dr-item" onclick="drGo('xgHoeren()',6)"><span class="dr-ico">🎧</span><span>Hören<small>ঘোষণা শুনে প্রশ্ন</small></span></button>
+      <button class="dr-item" onclick="drGo('xgFormular()',6)"><span class="dr-ico">✍️</span><span>Schreiben: Formular<small>টেক্সট দেখে ফর্ম পূরণ</small></span></button>
       <button class="dr-item" onclick="drGo('xpMock()',6)"><span class="dr-ico">🏁</span><span>A1 Mock test<small>মিশ্র ১৬ প্রশ্ন, শেষে স্কোর</small></span></button>
+    </div>
+    <button class="dr-item dr-grp" id="drG7" onclick="drToggle(7)" aria-expanded="false"><span class="dr-ico">🌱</span><span style="flex:1;">শব্দভান্ডার &amp; অভ্যাস<small>Thema-Wortschatz, Daily Challenge, ভুল খাতা</small></span><span class="dr-arr" style="font-size:13px;color:var(--muted);transition:transform .2s;">▼</span></button>
+    <div class="dr-sub" id="drS7" style="display:none;margin:0 0 4px 22px;padding-left:10px;border-left:2px solid var(--border);">
+      <button class="dr-item" onclick="drGo('xgDaily()',7)"><span class="dr-ico">🔥</span><span>Daily Challenge<small>রোজ ~১০টি মিশ্র প্রশ্ন</small></span></button>
+      <button class="dr-item" onclick="drGo('xgThemen()',7)"><span class="dr-ico">🗂</span><span>Thema-Wortschatz<small>Essen, Familie, Körper…</small></span></button>
+      <button class="dr-item" onclick="drGo('xgKalender()',7)"><span class="dr-ico">📅</span><span>Tage, Monate, Farben<small>শুনে ও দেখে শেখো</small></span></button>
+      <button class="dr-item" onclick="drGo('xgMb()',7)"><span class="dr-ico">📓</span><span>ভুল খাতা<small>ভুলগুলো আবার practice</small></span></button>
+      <button class="dr-item" onclick="drGo('xgShadow()',7)"><span class="dr-ico">🎧</span><span>Shadowing<small>শুনে সাথে সাথে বলো</small></span></button>
+    </div>
+    <button class="dr-item dr-grp" id="drG8" onclick="drToggle(8)" aria-expanded="false"><span class="dr-ico">🎬</span><span style="flex:1;">A1 Sprechen Kurs<small>Video, lock/unlock ও transcript practice</small></span><span class="dr-arr" style="font-size:13px;color:var(--muted);transition:transform .2s;">▼</span></button>
+    <div class="dr-sub" id="drS8" style="display:none;margin:0 0 4px 22px;padding-left:10px;border-left:2px solid var(--border);">
+      <button class="dr-item" onclick="drGo('xgCourse()',8)"><span class="dr-ico">🎬</span><span>Video কোর্স<small>তালিকা, দেখা ও practice</small></span></button>
+      <button class="dr-item" onclick="drGo('xgVidEdit(null)',8)"><span class="dr-ico">➕</span><span>Video যোগ করো<small>link + transcript</small></span></button>
+      <button class="dr-item" onclick="drGo('xgPracAll()',8)"><span class="dr-ico">🔀</span><span>সব video মিশ্র<small>সব transcript থেকে practice</small></span></button>
     </div>
     <button class="dr-item dr-grp" id="drG3" onclick="drToggle(3)" aria-expanded="false"><span class="dr-ico">📥</span><span style="flex:1;">তৈরি Data<small>এক চাপে Story ও Card যোগ করো</small></span><span class="dr-arr" style="font-size:13px;color:var(--muted);transition:transform .2s;">▼</span></button>
     <div class="dr-sub" id="drS3" style="display:none;margin:0 0 4px 22px;padding-left:10px;border-left:2px solid var(--border);">
@@ -4938,7 +4960,7 @@ function xsReport(){
 }
 
 
-var libScope = loadLS('df_scope', 'all');
+var libScope = 'all'; saveLS('df_scope','all');
 function isBuiltFolder(f){ return f.id===700001 || !!f.built; }
 function isBuiltFile(f){ return !!f.built || /^Kapitel \d+ Stories$/.test(f.name); }
 function xsScopeBar(){
@@ -4946,7 +4968,7 @@ function xsScopeBar(){
   var root = libMode==='sent' ? !slFolderId : !currentFolderId;
   if(!root){ el.innerHTML=''; return; }
   var chip = function(v,l){ return '<button class="seg'+(libScope===v?' on':'')+'" onclick="xsSetScope(\''+v+'\')">'+l+'</button>'; };
-  el.innerHTML = '<div class="seg-wrap" style="margin:6px 0 4px;">'+chip('all','সব')+chip('mine','✏️ আমার')+chip('built','📚 তৈরি data')+'</div>';
+  el.innerHTML = ''; libScope = 'all';
 }
 function xsSetScope(v){ libScope = v; saveLS('df_scope', v); if(libMode==='sent') slRender(); else renderLibrary(); }
 function xsScopeF(list, isBuilt){
@@ -6333,6 +6355,528 @@ closeModal=function(){ _cm7.apply(this,arguments); var m=_mg; if(m){ setTimeout(
 var _xqBack7=xqBack;
 xqBack=function(){ var g=xq.game; if(g&&g.k!=='menu'){ xq.game=null; _xqBack1(); openDrawer(); drCollapse(); drToggle(1); return; } _xqBack7(); };
 (function(){ var q=document.getElementById('libQ'); if(q&&q.parentNode) q.parentNode.style.display='none'; var r=document.getElementById('libQRes'); if(r) r.style.display='none'; })();
+</script>
+<script>
+// ===== Perfekt, Präpositionen, Trennbare, Pronomen, W-Fragen, Themen, Tage, Fehlerheft, Daily, Shadowing =====
+function xgMC(list,cat,n,sub){
+  return xsShuffle(list).slice(0,n).map(function(d){ var o=xsShuffle(d[2].slice());
+    return {prompt:d[0], sub:sub, opts:o, ans:o.indexOf(d[1]), explain:d[3], cat:cat, onAnswer:function(ok){ xsAct('s',1); }}; });
+}
+// ---- Perfekt ----
+var XG_PF=[['gehen','gegangen','s','যাওয়া','ins Kino'],['kommen','gekommen','s','আসা','zu spät'],['fahren','gefahren','s','যাওয়া (যানে)','nach Berlin'],['bleiben','geblieben','s','থাকা','zu Hause'],['fliegen','geflogen','s','উড়ে যাওয়া','nach Dubai'],['laufen','gelaufen','s','দৌড়ানো/হাঁটা','zum Bahnhof'],['aufstehen','aufgestanden','s','ঘুম থেকে ওঠা','früh'],
+['machen','gemacht','h','করা','die Hausaufgaben'],['lernen','gelernt','h','শেখা','Deutsch'],['spielen','gespielt','h','খেলা','Fußball'],['essen','gegessen','h','খাওয়া','einen Apfel'],['trinken','getrunken','h','পান করা','Kaffee'],['sehen','gesehen','h','দেখা','einen Film'],['schlafen','geschlafen','h','ঘুমানো','lange'],['arbeiten','gearbeitet','h','কাজ করা','viel'],['kaufen','gekauft','h','কেনা','ein Buch'],['lesen','gelesen','h','পড়া','die Zeitung'],['schreiben','geschrieben','h','লেখা','eine E-Mail'],['sprechen','gesprochen','h','কথা বলা','mit Anna'],['nehmen','genommen','h','নেওয়া','den Bus'],['wohnen','gewohnt','h','বাস করা','in Dhaka'],['treffen','getroffen','h','দেখা করা','Freunde'],['helfen','geholfen','h','সাহায্য করা','meiner Mutter'],['besuchen','besucht','h','দেখতে যাওয়া','meine Oma'],['anrufen','angerufen','h','ফোন করা','meinen Bruder'],['einkaufen','eingekauft','h','বাজার করা','im Supermarkt']];
+var XG_PS=[['Ich',0],['Du',1],['Er',2],['Wir',3]], XG_HA=['habe','hast','hat','haben'], XG_SE=['bin','bist','ist','sind'];
+function xgPfBuild(){
+  var qs=[], vs=xsShuffle(XG_PF).slice(0,12);
+  vs.forEach(function(v,i){
+    var s=XG_PS[Math.floor(Math.random()*4)], aux=(v[2]==='h'?XG_HA:XG_SE)[s[1]];
+    if(i<6){
+      var alt=(v[2]==='h'?XG_SE:XG_HA)[s[1]], oth=xsShuffle(XG_HA.concat(XG_SE).filter(function(x){return x!==aux&&x!==alt;})).slice(0,2), o=xsShuffle([aux,alt].concat(oth));
+      qs.push({prompt:s[0]+' ___ gestern '+v[4]+' '+v[1]+'.', sub:'haben না sein? ('+v[0]+')', hint:v[3], opts:o, ans:o.indexOf(aux), explain:v[0]+' → '+(v[2]==='h'?'haben':'sein')+' + '+v[1]+(v[2]==='s'?' (চলাচল/অবস্থা বদল → sein)':''), cat:'haben/sein', onAnswer:function(ok){ xsAct('s',1); }});
+    } else {
+      qs.push({kind:'type', rows:1, prompt:v[0]+' → '+s[0]+' '+(v[2]==='h'?XG_HA:XG_SE)[s[1]]+' … ', sub:'Partizip II লেখো', hint:v[3], acc:[v[1]], opts:[v[1]], ans:0, cat:'Partizip II', onAnswer:function(ok){ xsAct('s',1); }});
+    }
+  });
+  return xsShuffle(qs);
+}
+function xgPerfekt(){ xgRunG('⏪ Perfekt trainer',xgPfBuild,5); }
+
+// ---- Präpositionen ----
+var XG_PP=[
+["Ich fahre ___ dem Bus.","mit",["mit","in","auf","nach"],"mit + Dativ (যানবাহনে)।"],
+["Ich komme ___ Bangladesch.","aus",["aus","von","nach","bei"],"aus + দেশ/শহর (কোথা থেকে)।"],
+["Wir gehen ___ Hause.","nach",["nach","zu","in","bei"],"nach Hause = বাড়ির দিকে (নির্দিষ্ট idiom)।"],
+["Ich bin ___ Hause.","zu",["zu","bei","nach","an"],"zu Hause = বাড়িতে (idiom)।"],
+["Das Buch liegt ___ dem Tisch.","auf",["auf","in","an","über"],"auf = উপরে (পৃষ্ঠের ওপর)।"],
+["Ich wohne ___ Berlin.","in",["in","an","auf","aus"],"in + শহর।"],
+["Ich gehe ___ Arzt.","zum",["zum","im","beim","vom"],"zu + dem = zum (কারো কাছে যাওয়া)।"],
+["Ich bin ___ Arzt.","beim",["beim","zum","im","vom"],"bei + dem = beim (কারো কাছে থাকা)।"],
+["Ich arbeite ___ einer Firma.","bei",["bei","in","auf","zu"],"bei + কোম্পানি/ব্যক্তি।"],
+["Der Kurs beginnt ___ neun Uhr.","um",["um","in","am","bis"],"um + ঘড়ির সময়।"],
+["Ich habe ___ Montag Unterricht.","am",["am","um","im","in"],"am + বার/দিন।"],
+["Ich fahre ___ Januar nach Berlin.","im",["im","am","um","ab"],"im + মাস।"],
+["Das Bild hängt ___ der Wand.","an",["an","auf","in","über"],"an = দেয়ালে/গায়ে লেগে।"],
+["Ich gehe ___ Kino.","ins",["ins","im","zum","zur"],"in + das = ins (Akkusativ: কোথায় যাচ্ছি)।"],
+["Ich bin ___ Kino.","im",["im","ins","zum","am"],"in + dem = im (Dativ: কোথায় আছি)।"],
+["Das Geschenk ist ___ dich.","für",["für","mit","von","zu"],"für + Akkusativ।"],
+["Ich warte ___ den Bus.","auf",["auf","für","an","bei"],"warten auf + Akkusativ।"],
+["Sie spricht ___ ihrer Mutter.","mit",["mit","von","für","zu"],"sprechen mit + Dativ।"],
+["Das ist ein Geschenk ___ meinem Bruder.","von",["von","aus","für","bei"],"von + Dativ (কারো কাছ থেকে)।"],
+["Ich gehe ___ Bahnhof.","zum",["zum","im","ins","beim"],"zu + dem = zum।"],
+["Wir fahren ___ Deutschland.","nach",["nach","in","zu","auf"],"দেশ/শহরে যেতে nach (article ছাড়া)।"],
+["Der Supermarkt ist ___ der Bank.","neben",["neben","über","für","aus"],"neben = পাশে।"]];
+function xgPrep(){ xgRunG('📍 Präpositionen',function(){ return xgMC(XG_PP,'Präposition',12,'সঠিক Präposition বাছো'); },5); }
+
+// ---- Trennbare Verben ----
+var XG_TV=[
+["Ich stehe um sieben Uhr auf.","aufstehen",'auf',1,"ঘুম থেকে ওঠা"],["Wir kaufen am Samstag im Supermarkt ein.","einkaufen",'ein',1,"বাজার করা"],["Ich rufe dich heute Abend an.","anrufen",'an',1,"ফোন করা"],["Kommst du heute mit?","mitkommen",'mit',0,"সাথে আসা"],["Er sieht jeden Abend fern.","fernsehen",'fern',1,"টিভি দেখা"],["Der Zug fährt um acht Uhr ab.","abfahren",'ab',2,"ছেড়ে যাওয়া"],["Wir kommen um zehn Uhr in Berlin an.","ankommen",'an',1,"পৌঁছানো"],["Sie macht die Tür auf.","aufmachen",'auf',1,"খোলা"],["Er macht das Fenster zu.","zumachen",'zu',1,"বন্ধ করা"],["Ich lade dich zur Party ein.","einladen",'ein',1,"নিমন্ত্রণ করা"],["Wir steigen am Bahnhof aus.","aussteigen",'aus',1,"নামা"],["Sie steigt in den Bus ein.","einsteigen",'ein',1,"ওঠা (যানে)"],["Der Kurs fängt um neun Uhr an.","anfangen",'an',2,"শুরু হওয়া"],["Ich bringe Kuchen mit.","mitbringen",'mit',1,"সাথে আনা"]];
+function xgTvBuild(){
+  var qs=[], ds=xsShuffle(XG_TV).slice(0,12);
+  ds.forEach(function(d,i){
+    var tk=d[0].replace(/\.$|\?$/,'').split(' '), q=d[0].slice(-1);
+    if(i<6){
+      var w1=tk.slice(0,-1); w1[d[3]]=d[2]+w1[d[3]].toLowerCase(); var wrong1=w1.join(' ')+q;
+      var w2=tk.slice(0,-1); w2.splice(d[3]+1,0,d[2]); w2.pop(); w2=tk.slice(0,-1); w2.splice(d[3]+1,0,d[2]); var wrong2=w2.join(' ')+q; 
+      var wrong3=tk.slice(0,-1).concat([]).join(' ')+q;
+      var o=xsShuffle([d[0],wrong1,wrong2].filter(function(x,j,a){return a.indexOf(x)===j;}));
+      qs.push({prompt:d[1]+' ('+d[4]+')', sub:'সঠিক বাক্য বাছো — Präfix কোথায় যাবে?', opts:o, ans:o.indexOf(d[0]), explain:d[0]+' — trennbar: prefix "'+d[2]+'" বাক্যের শেষে যায়।', cat:'trennbar', onAnswer:function(ok){ xsAct('s',1); }});
+    } else {
+      qs.push({kind:'order', prompt:d[4]+' ('+d[1]+')', sub:'শব্দ সাজাও', tokens:tk.concat(q==='?'?[]:[]), acc:[tk.join(' ')], opts:[tk.join(' ')], ans:0, cat:'trennbar', onAnswer:function(ok){ xsAct('s',1); }});
+    }
+  });
+  return xsShuffle(qs);
+}
+function xgTrenn(){ xgRunG('✂️ Trennbare Verben',xgTvBuild,5); }
+
+// ---- Pronomen ----
+var XG_PN=[
+["Ich sehe ___ (du) morgen.","dich",["dich","dir","du","dein"],"sehen + Akkusativ → dich।"],
+["Kannst du ___ (ich) helfen?","mir",["mir","mich","ich","mein"],"helfen + Dativ → mir।"],
+["Das ist mein Bruder. ___ heißt Tom.","Er",["Er","Ihn","Ihm","Sein"],"কর্তা (Nominativ) → Er।"],
+["Wir besuchen ___ (er).","ihn",["ihn","ihm","er","sein"],"besuchen + Akkusativ → ihn।"],
+["Er gibt ___ (ich) das Buch.","mir",["mir","mich","mein","ich"],"geben + Dativ (ব্যক্তি) → mir।"],
+["Ich liebe ___ (du).","dich",["dich","dir","dein","du"],"lieben + Akkusativ → dich।"],
+["Das Buch gehört ___ (sie, f).","ihr",["ihr","sie","ihre","ihn"],"gehören + Dativ → ihr।"],
+["Das ist ___ Tasche. (ich)","meine",["meine","mein","meiner","meinen"],"die Tasche (f) → meine।"],
+["Ist das ___ Auto? (du)","dein",["dein","deine","deinen","dir"],"das Auto (n) → dein।"],
+["Das ist ___ Bruder. (er)","sein",["sein","seine","ihr","ihm"],"er → sein (der Bruder, m)।"],
+["Das ist ___ Mutter. (sie, f)","ihre",["ihre","ihr","seine","sie"],"sie → ihr-; die Mutter (f) → ihre।"],
+["Wo ist ___ Handy? (wir)","unser",["unser","uns","unsere","euer"],"wir → unser; das Handy (n) → unser।"],
+["Wie geht es ___? (Sie)","Ihnen",["Ihnen","Sie","Ihr","Ihre"],"Wie geht es + Dativ → Ihnen।"],
+["Ich rufe ___ an. (sie, Pl.)","sie",["sie","ihnen","ihr","es"],"anrufen + Akkusativ → sie।"],
+["Er hilft ___ (wir).","uns",["uns","unser","wir","unsere"],"helfen + Dativ → uns।"],
+["Das Geschenk ist für ___ (ich).","mich",["mich","mir","mein","ich"],"für + Akkusativ → mich।"],
+["Ich gehe mit ___ (er) ins Kino.","ihm",["ihm","ihn","er","sein"],"mit + Dativ → ihm।"],
+["___ (ihr) habt viel Zeit.","Ihr",["Ihr","Euch","Euer","Eure"],"কর্তা, ihr-form → Ihr।"],
+["Das ist ___ Haus. (ihr, Pl.)","euer",["euer","eure","euch","ihr"],"ihr → euer; das Haus (n) → euer।"],
+["Ich danke ___ (Sie).","Ihnen",["Ihnen","Sie","Ihr","Ihre"],"danken + Dativ → Ihnen।"]];
+function xgPron(){ xgRunG('👤 Pronomen',function(){ return xgMC(XG_PN,'Pronomen',12,'সঠিক রূপ বাছো'); },5); }
+
+// ---- W-Fragen ----
+var XG_WF=[["Ich komme aus Bangladesch.","Woher"],["Ich wohne in Berlin.","Wo"],["Ich heiße Ali.","Wie"],["Ich bin 25 Jahre alt.","Wie alt"],["Das ist mein Bruder.","Wer"],["Das ist ein Buch.","Was"],["Der Kurs beginnt um neun Uhr.","Wann"],["Ich fahre nach Hamburg.","Wohin"],["Ich komme mit dem Bus.","Wie"],["Ich lerne Deutsch, weil ich in Deutschland arbeiten möchte.","Warum"],["Das kostet zehn Euro.","Wie viel"],["Ich habe zwei Brüder.","Wie viele"],["Ich spiele am Wochenende Fußball.","Wann"],["Das Buch liegt auf dem Tisch.","Wo"],["Ich esse einen Apfel.","Was"],["Sie ist meine Lehrerin.","Wer"]];
+function xgWfBuild(){
+  var W=['Wer','Was','Wo','Woher','Wohin','Wann','Wie','Warum','Wie viel','Wie viele','Wie alt'];
+  return xsShuffle(XG_WF).slice(0,12).map(function(d){ var o=xsShuffle([d[1]].concat(xsShuffle(W.filter(function(x){return x!==d[1];})).slice(0,3)));
+    return {prompt:d[0], sub:'এই উত্তরের প্রশ্ন-শব্দ কোনটা?', opts:o, ans:o.indexOf(d[1]), explain:d[1]+' … ? — প্রশ্ন-শব্দ + ক্রিয়া + কর্তা', cat:'W-Fragen', onAnswer:function(ok){ xsAct('s',1); }}; });
+}
+function xgWfrage(){ xgRunG('❓ W-Fragen',xgWfBuild,5); }
+
+// ---- Themen-Wortschatz ----
+var XG_TH={
+'🍎 Essen':'🍎|der Apfel|আপেল\n🍞|das Brot|রুটি\n🥛|die Milch|দুধ\n🧀|der Käse|পনির\n🥚|das Ei|ডিম\n🐟|der Fisch|মাছ\n💧|das Wasser|পানি\n🍌|die Banane|কলা\n🍚|der Reis|ভাত\n🍅|die Tomate|টমেটো\n🥔|die Kartoffel|আলু\n☕|der Kaffee|কফি',
+'👪 Familie':'👩|die Mutter|মা\n👨|der Vater|বাবা\n👦|der Bruder|ভাই\n👧|die Schwester|বোন\n👶|das Baby|শিশু\n👵|die Oma|দাদি/নানি\n👴|der Opa|দাদা/নানা\n🧒|das Kind|বাচ্চা\n👪|die Familie|পরিবার\n🤝|der Freund|বন্ধু',
+'🏠 Wohnung':'🏠|das Haus|বাড়ি\n🛏️|das Bett|বিছানা\n🪑|der Stuhl|চেয়ার\n🚪|die Tür|দরজা\n🪟|das Fenster|জানালা\n💡|die Lampe|বাতি\n🛁|das Bad|বাথরুম\n🍳|die Küche|রান্নাঘর\n🔑|der Schlüssel|চাবি\n🛋️|das Sofa|সোফা\n📺|der Fernseher|টিভি',
+'🧍 Körper':'👁️|das Auge|চোখ\n👂|das Ohr|কান\n👃|die Nase|নাক\n👄|der Mund|মুখ\n✋|die Hand|হাত\n🦶|der Fuß|পা (পাতা)\n❤️|das Herz|হৃদয়\n🦵|das Bein|পা\n💪|der Arm|বাহু\n🦷|der Zahn|দাঁত',
+'👕 Kleidung':'👖|die Hose|প্যান্ট\n👔|das Hemd|শার্ট\n👗|das Kleid|জামা\n👟|der Schuh|জুতো\n🧥|die Jacke|জ্যাকেট\n🧢|die Mütze|টুপি\n👓|die Brille|চশমা\n👜|die Tasche|ব্যাগ\n🧦|die Socke|মোজা\n🎩|der Hut|হ্যাট\n🧣|der Schal|স্কার্ফ\n🧤|der Handschuh|দস্তানা',
+'🚌 Verkehr & Orte':'🚗|das Auto|গাড়ি\n🚌|der Bus|বাস\n🚆|der Zug|ট্রেন\n🚲|das Fahrrad|সাইকেল\n✈️|das Flugzeug|বিমান\n🚢|das Schiff|জাহাজ\n🛣️|die Straße|রাস্তা\n🚉|der Bahnhof|স্টেশন\n🚦|die Ampel|ট্রাফিক বাতি\n🏫|die Schule|স্কুল\n🏥|das Krankenhaus|হাসপাতাল\n🏦|die Bank|ব্যাংক',
+'🐶 Tiere':'🐶|der Hund|কুকুর\n🐱|die Katze|বিড়াল\n🐴|das Pferd|ঘোড়া\n🐄|die Kuh|গরু\n🐦|der Vogel|পাখি\n🐭|die Maus|ইঁদুর\n🐑|das Schaf|ভেড়া\n🐘|der Elefant|হাতি\n🦁|der Löwe|সিংহ\n🐔|das Huhn|মুরগি\n🦆|die Ente|হাঁস'};
+function xgThParse(k){ return XG_TH[k].split('\n').map(function(l){ var p=l.split('|'); return {e:p[0],de:p[1],bn:p[2]}; }); }
+function xgThBuild(k){
+  var L=xgThParse(k), all=[]; Object.keys(XG_TH).forEach(function(t){ all=all.concat(xgThParse(t)); });
+  return xsShuffle(L).slice(0,10).map(function(w,i){ var o=xqOpts(w.de,L.map(function(x){return x.de;}));
+    var mark=function(ok){ xsMark('wp',w.de,ok,w.bn); xsAct('w',1); if(ok) xsSay(w.de); };
+    if(i%3===2){ var o2=xqOpts(w.bn,L.map(function(x){return x.bn;})); return {prompt:w.de, sub:'বাংলা অর্থ কী?', opts:o2.opts, ans:o2.ans, explain:w.e+' '+w.de+' = '+w.bn, cat:'Thema', onAnswer:mark}; }
+    return {prompt:w.e, sub:'জার্মানে এটা কী? (article সহ)', opts:o.opts, ans:o.ans, explain:w.de+' = '+w.bn, hint:w.bn, cat:'Thema', onAnswer:mark}; });
+}
+function xgThemen(){
+  var h='<div style="text-align:center;margin-bottom:10px;"><div style="font-size:19px;font-weight:900;color:var(--text);">🗂 Thema-Wortschatz</div><div style="font-size:12px;color:var(--sub);margin-top:4px;">বিষয় বাছো — emoji দেখে শব্দ চেনো</div></div><div style="max-height:56vh;overflow-y:auto;">';
+  Object.keys(XG_TH).forEach(function(k,i){ h+='<button class="btn btn-ghost btn-full" style="margin-bottom:7px;text-align:left;display:flex;justify-content:space-between;" onclick="xgThGo('+i+')"><span>'+esc(k)+'</span><span style="color:var(--sub);font-size:12px;">'+XG_TH[k].split('\n').length+'</span></button>'; });
+  h+='</div><button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="closeModal()">✕ বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function xgThGo(i){ var k=Object.keys(XG_TH)[i]; closeModal(); xgRunG('🗂 '+k,function(){ return xgThBuild(k); },7); }
+
+// ---- Wochentage / Monate / Farben ----
+var XG_CAL={
+'📅 Wochentage':{seq:1,w:[['Montag','সোমবার'],['Dienstag','মঙ্গলবার'],['Mittwoch','বুধবার'],['Donnerstag','বৃহস্পতিবার'],['Freitag','শুক্রবার'],['Samstag','শনিবার'],['Sonntag','রবিবার']]},
+'🗓 Monate':{seq:1,w:[['Januar','জানুয়ারি'],['Februar','ফেব্রুয়ারি'],['März','মার্চ'],['April','এপ্রিল'],['Mai','মে'],['Juni','জুন'],['Juli','জুলাই'],['August','আগস্ট'],['September','সেপ্টেম্বর'],['Oktober','অক্টোবর'],['November','নভেম্বর'],['Dezember','ডিসেম্বর']]},
+'🎨 Farben':{seq:0,w:[['rot','লাল'],['blau','নীল'],['grün','সবুজ'],['gelb','হলুদ'],['schwarz','কালো'],['weiß','সাদা'],['braun','বাদামি'],['grau','ধূসর'],['orange','কমলা'],['rosa','গোলাপি'],['lila','বেগুনি']]}};
+function xgCalBuild(k){
+  var d=XG_CAL[k], L=d.w, qs=[], mk=function(w){ return function(ok){ xsMark('wp',w[0],ok,w[1]); xsAct('w',1); }; };
+  xsShuffle(L).slice(0,4).forEach(function(w){ var o=xqOpts(w[1],L.map(function(x){return x[1];})); qs.push({prompt:w[0], sub:'বাংলা অর্থ কী?', opts:o.opts, ans:o.ans, explain:w[0]+' = '+w[1], cat:'অর্থ', onAnswer:mk(w)}); });
+  xsShuffle(L).slice(0,3).forEach(function(w){ var o=xqOpts(w[0],L.map(function(x){return x[0];})); qs.push({prompt:w[1], sub:'জার্মানে কী?', opts:o.opts, ans:o.ans, explain:w[0]+' = '+w[1], cat:'জার্মান', onAnswer:mk(w)}); });
+  xsShuffle(L).slice(0,3).forEach(function(w){ var o=xqOpts(w[0],L.map(function(x){return x[0];})); qs.push({prompt:'🎧', sub:'শুনে সঠিকটা বাছো', speak:w[0], hideText:true, opts:o.opts, ans:o.ans, explain:w[0]+' = '+w[1], cat:'শোনা', onAnswer:mk(w)}); });
+  if(d.seq){
+    xsShuffle(L.map(function(x,i){return i;})).slice(0,3).forEach(function(i){ var nx=L[(i+1)%L.length][0], o=xqOpts(nx,L.map(function(x){return x[0];}));
+      qs.push({prompt:'Nach '+L[i][0]+' kommt ___', sub:'এর পরেরটা কী?', opts:o.opts, ans:o.ans, explain:L[i][0]+' → '+nx, cat:'ক্রম', onAnswer:function(ok){ xsAct('w',1); }}); });
+  }
+  return xsShuffle(qs);
+}
+function xgKalender(){
+  var h='<div style="text-align:center;margin-bottom:10px;"><div style="font-size:19px;font-weight:900;color:var(--text);">📅 Tage, Monate, Farben</div></div>';
+  Object.keys(XG_CAL).forEach(function(k,i){ h+='<button class="btn btn-ghost btn-full" style="margin-bottom:7px;text-align:left;" onclick="xgCalGo('+i+')">'+esc(k)+'</button>'; });
+  h+='<button class="btn btn-ghost btn-full" style="margin-top:4px;" onclick="closeModal()">✕ বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function xgCalGo(i){ var k=Object.keys(XG_CAL)[i]; closeModal(); xgRunG(k,function(){ return xgCalBuild(k); },7); }
+
+// ---- ভুল খাতা ----
+xs.mb=xs.mb||[]; xs.dc=xs.dc||{};
+function xgIsDe(s){ return /[A-Za-zÄÖÜäöüß]/.test(s)&&!/[ঀ-৿]/.test(s); }
+var _xqNext8=xqNext;
+xqNext=function(){
+  try{
+    var n=xq.wrong.length, p0=xq._wl||0;
+    if(n>p0){ var q=xq.wrong[n-1];
+      if(q && q.kind!=='own' && !q.nomb){
+        var p=q.kind==='dlg'?q.aline:(q.hideText?q.speak:q.prompt), a=q.opts&&(q.kind?q.opts[0]:q.opts[q.ans]);
+        if(p&&a&&!/^\(/.test(a)){ var id=p+'|'+a; xs.mb=xs.mb.filter(function(x){return x.id!==id;});
+          xs.mb.unshift({id:id,p:p,a:a,e:q.explain||q.hint||'',c:xq.title,t:Date.now()}); if(xs.mb.length>200) xs.mb.length=200; xsSave(); } } }
+    xq._wl=n;
+  }catch(e){}
+  _xqNext8();
+};
+var _xqRW8=xqRetryWrong; xqRetryWrong=function(){ _xqRW8(); xq._wl=0; };
+var _xgDC=null;
+var _xqStart8=xqStart;
+xqStart=function(t,qs,b){ var dc=_xgDC; _xgDC=null; _xqStart8(t,qs,b); if(qs&&qs.length){ xq._wl=0; xq.dc=dc; xq.rec8=0; } };
+function xgMb(){
+  var l=xs.mb;
+  var h='<div style="text-align:center;margin-bottom:10px;"><div style="font-size:19px;font-weight:900;color:var(--text);">📓 ভুল খাতা</div><div style="font-size:12px;color:var(--sub);margin-top:4px;">যে প্রশ্নে ভুল করেছ সব এখানে জমে</div></div>';
+  if(!l.length){ h+='<div class="empty-box"><div class="ico">🎉</div><div class="txt">ভুল খাতা খালি! কোনো practice-এ ভুল করলে এখানে জমবে।</div></div>'; }
+  else {
+    h+='<div style="display:flex;gap:8px;margin-bottom:10px;"><button class="btn btn-blue btn-sm" style="flex:2;" onclick="xgMbPractice()">🔁 এগুলো practice ('+l.length+')</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgMbClear()">🗑 সব মুছো</button></div><div style="max-height:52vh;overflow-y:auto;">';
+    l.slice(0,60).forEach(function(x,i){ h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:7px;"><div style="display:flex;justify-content:space-between;gap:8px;"><div style="font-size:14px;color:var(--text);font-weight:800;overflow-wrap:anywhere;">'+esc(x.p)+'</div><button class="sp-ib" onclick="xgMbDel('+i+')">✕</button></div><div style="font-size:13px;color:var(--green);margin-top:4px;overflow-wrap:anywhere;">✔ '+esc(x.a)+(xgIsDe(x.a)?' <span class="xgmbs" data-s="'+esc(x.a)+'" style="cursor:pointer;">🔊</span>':'')+'</div>'+(x.e?'<div style="font-size:12px;color:var(--sub);margin-top:3px;line-height:1.5;">'+esc(x.e)+'</div>':'')+'</div>'; });
+    h+='</div>';
+  }
+  h+='<button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="closeModal()">✕ বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+  document.querySelectorAll('.xgmbs').forEach(function(e){ e.addEventListener('click',function(){ xsSay(e.getAttribute('data-s')); }); });
+}
+function xgMbDel(i){ xs.mb.splice(i,1); xsSave(); xgMb(); }
+function xgMbClear(){ if(confirm('ভুল খাতার সব এন্ট্রি মুছবে?')){ xs.mb=[]; xsSave(); xgMb(); } }
+function xgMbPractice(){
+  closeModal(); var l=xs.mb.slice(0,30); if(l.length<2){ showToast('অন্তত ২টি এন্ট্রি লাগবে'); return; }
+  xgRunG('📓 ভুল খাতা practice',function(){
+    var pool=xs.mb.map(function(x){return x.a;});
+    return xsShuffle(l).slice(0,10).map(function(x){ var o=xqOpts(x.a,pool);
+      if(o.opts.length<2) o=xqOpts(x.a,pool.concat(['…']));
+      return {prompt:x.p, sub:'আগে ভুল করেছিলে — সঠিক উত্তর?', opts:o.opts, ans:o.ans, explain:x.e, cat:'ভুল খাতা', onAnswer:function(ok){ if(ok){ xs.mb=xs.mb.filter(function(y){return y.id!==x.id;}); xsSave(); } xsAct('s',1); }}; });
+  },7);
+}
+
+// ---- Daily Challenge ----
+function xgDcDone(){ return xs.dc[xpYmd(new Date())]; }
+function xgDcBuild(){
+  var qs=[], W=xpWords({t:'all'}), tag=function(a,c){ a.forEach(function(q){ q.cat=c; qs.push(q); }); };
+  if(W.length>=8){
+    var P=W.map(function(w){return {de:w.de,bn:w.bn,k:'w'};});
+    tag(xsItemQs(xsShuffle(P).slice(0,3),P,'de2bn',3),'শব্দ');
+    tag(xsItemQs(xsShuffle(P).slice(0,1),P,'listen',1),'শোনা');
+    var nn=xsShuffle(W.filter(xpIsNoun)).slice(0,1), AR=['der','die','das'];
+    tag(nn.map(function(w){ var m=w.lem.match(/^(der|die|das)\s+(.+)$/); return {prompt:m[2],sub:'der, die না das?',hint:'অর্থ: '+xsFirstBn(w.bn),opts:AR.slice(),ans:AR.indexOf(m[1]),explain:w.lem,onAnswer:function(ok){ xsMark('wp',w.de,ok,w.bn); }}; }),'Article');
+  }
+  tag(xgDS().slice(0,1),'Du/Sie'); tag(xgNK().slice(0,1),'nicht/kein'); tag(xgAkBuild().slice(0,1),'Akkusativ');
+  tag(xgPfBuild().filter(function(q){return !q.kind;}).slice(0,1),'Perfekt'); tag(xgMC(XG_PP,'Präposition',1,'Präposition'),'Präposition');
+  return xsShuffle(qs);
+}
+function xgDaily(){ _xgDC=1; xgRunG('🔥 Daily Challenge',function(){ _xgDC=1; return xgDcBuild(); },7); }
+var _xqDraw8=xqDraw;
+xqDraw=function(){
+  _xqDraw8();
+  if(xq.done && xq.dc && !xq.retry && !xq.rec8){
+    xq.rec8=1; var k=xpYmd(new Date()), first=!xs.dc[k], n=xq.qs.length;
+    if(first){ xs.dc[k]={s:xq.score,n:n}; xsAct('s',3); } else if(xq.score>xs.dc[k].s){ xs.dc[k]={s:xq.score,n:n}; } xsSave();
+    var h='<div style="margin:0 16px 12px;padding:12px;border-radius:14px;text-align:center;background:#ffb80022;border:1.5px solid var(--gold);"><div style="font-size:26px;">🔥</div><div style="font-weight:900;color:var(--text);">'+(first?'আজকের Daily Challenge শেষ!':'আবার চেষ্টা করেছ')+' — '+xq.score+'/'+n+'</div>'+(first?'<div style="font-size:12px;color:var(--sub);margin-top:3px;">+৩ practice পয়েন্ট</div>':'')+'</div>';
+    document.getElementById('xqBody').insertAdjacentHTML('afterbegin',h);
+  }
+};
+var _xpRP8=xpRenderProgress;
+xpRenderProgress=function(){
+  _xpRP8(); var el=document.getElementById('tabProgress'); if(!el) return;
+  var d=xgDcDone();
+  var b='<div onclick="xgDaily()" style="cursor:pointer;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid '+(d?'var(--green)':'var(--gold)')+';border-radius:16px;padding:13px 14px;margin-bottom:12px;"><div style="font-size:26px;">🔥</div><div style="flex:1;"><div style="font-weight:900;color:var(--text);">Daily Challenge</div><div style="font-size:12px;color:var(--sub);">'+(d?'✅ আজ শেষ: '+d.s+'/'+d.n+' (আবার দিতে পারো)':'আজকের ~১০টি প্রশ্ন — ৫ মিনিট')+'</div></div><div style="color:var(--muted);">›</div></div>';
+  var first=el.children[1]||el.children[0]; if(first) first.insertAdjacentHTML('beforebegin',b);
+};
+
+// ---- Shadowing ----
+var xgSh={list:[],i:0,run:0};
+function xgShadow(){
+  var h='<div style="text-align:center;margin-bottom:10px;"><div style="font-size:19px;font-weight:900;color:var(--text);">🎧 Shadowing</div><div style="font-size:12px;color:var(--sub);margin-top:4px;">শুনে শুনে সাথে সাথে বলো — কোথা থেকে বাক্য?</div></div><div style="max-height:52vh;overflow-y:auto;">';
+  var srcs=[{t:'all',name:'🌐 সব'}]; sfiles.forEach(function(f){ srcs.push({t:'file',id:f.id,name:'📄 '+f.name}); });
+  xgShSrcs=[]; srcs.forEach(function(s){ var c=xgShList(s).length; if(c<3) return; xgShSrcs.push(s); h+='<button class="btn btn-ghost btn-full" style="margin-bottom:7px;text-align:left;display:flex;justify-content:space-between;gap:8px;" onclick="xgShGo('+(xgShSrcs.length-1)+')"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(s.name)+'</span><span style="color:var(--sub);font-size:12px;">'+c+'</span></button>'; });
+  if(!xgShSrcs.length) h+='<div class="empty-box"><div class="ico">📭</div><div class="txt">বাক্য নেই। Story বা Sentence file যোগ করো।</div></div>';
+  h+='</div><button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="closeModal()">✕ বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+var xgShSrcs=[];
+function xgShList(s){ return xpSents(s).filter(function(x){ var n=x.de.split(/\s+/).length; return n>=3&&n<=14; }); }
+function xgShGo(i){ xgSh.list=xsShuffle(xgShList(xgShSrcs[i])).slice(0,15); xgSh.i=0; xgShDraw(); }
+function xgShStop(){ xgSh.run++; _storyStop(); }
+function xgShDraw(){
+  xgShStop(); var s=xgSh.list[xgSh.i];
+  var h='<div style="text-align:center;font-size:12px;color:var(--sub);">'+(xgSh.i+1)+' / '+xgSh.list.length+'</div><div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 14px;margin:10px 0;text-align:center;"><div style="font-size:21px;font-weight:900;color:var(--text);line-height:1.5;overflow-wrap:anywhere;">'+esc(s.de)+'</div>'+(s.bn?'<div style="font-size:13px;color:var(--sub);margin-top:8px;">'+esc(s.bn)+'</div>':'')+'</div><div id="xgShSt" style="text-align:center;font-size:13px;color:var(--gold);min-height:20px;margin-bottom:8px;"></div>';
+  h+='<div style="display:flex;gap:8px;"><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgShPlay(0)">▶ স্বাভাবিক</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgShPlay(1)">🐢 ধীরে</button></div><button class="btn btn-blue btn-full" style="margin-top:8px;" onclick="xgShLoop()">🔁 Shadow loop (ধীরে → স্বাভাবিক ×২)</button>';
+  h+='<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgShNav(-1)">‹ আগের</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgShNav(1)">পরের ›</button></div><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="xgShStop();closeModal()">✕ বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function xgShNav(d){ var n=xgSh.list.length; xgSh.i=(xgSh.i+d+n)%n; xgShDraw(); }
+function xgShSet(t){ var e=document.getElementById('xgShSt'); if(e) e.textContent=t||''; }
+function xgShPlay(slow,cb){ var id=++xgSh.run, s=xgSh.list[xgSh.i]; _storyStop(); _ttsSlow=!!slow; speak(s.de,'de-DE',function(){ _ttsSlow=false; if(cb&&xgSh.run===id) cb(); }); }
+function xgShLoop(){
+  var s=xgSh.list[xgSh.i], steps=[1,0,0], id=++xgSh.run;
+  (function go(k){
+    if(xgSh.run!==id||!document.getElementById('modalOverlay').classList.contains('open')) return;
+    if(k>=steps.length){ xgShSet('✅ হয়ে গেছে'); return; }
+    xgShSet((steps[k]?'🐢 শোনো':'▶ শোনো')+' ('+(k+1)+'/'+steps.length+')');
+    _storyStop(); _ttsSlow=!!steps[k];
+    speak(s.de,'de-DE',function(){ _ttsSlow=false; if(xgSh.run!==id) return; xgShSet('🗣 এবার তুমি বলো…'); setTimeout(function(){ go(k+1); }, Math.max(2500, s.de.length*110)); });
+  })(0);
+}
+
+</script>
+<script>
+// ===== Lesen, Hören, Schreiben (Formular) =====
+var XG_RF=['✅ Richtig','❌ Falsch'];
+var XG_LS=[
+["Anzeige","Zimmer frei!\n2-Zimmer-Wohnung, 45 m², Miete 450 Euro, ab 1. Dezember.\nTel. 0151 2345678",[["Wie viel kostet die Wohnung?","450 Euro",["450 Euro","45 Euro","1. Dezember"],"Miete 450 Euro।"],["Die Wohnung ist ab sofort frei.","❌ Falsch",XG_RF,"ab 1. Dezember — এখনই নয়।"]]],
+["Schild","Bäckerei Müller\nÖffnungszeiten: Mo–Fr 6:30–18:00 Uhr, Sa 7:00–13:00 Uhr, So geschlossen",[["Wann ist die Bäckerei am Sonntag offen?","Gar nicht, sie ist geschlossen",["Gar nicht, sie ist geschlossen","Bis 13 Uhr","Ab 7 Uhr"],"So geschlossen = রবিবার বন্ধ।"],["Am Samstag ist die Bäckerei bis 13 Uhr offen.","✅ Richtig",XG_RF,"Sa 7:00–13:00 Uhr।"]]],
+["E-Mail","Hallo Lena,\nich komme am Freitag um 18 Uhr mit dem Zug an. Kannst du mich vom Bahnhof abholen?\nDanke! Tom",[["Was möchte Tom?","Lena soll ihn abholen",["Lena soll ihn abholen","Lena soll kochen","Lena soll anrufen"],"Kannst du mich abholen? = তুলে নিতে পারবে?"],["Tom kommt mit dem Auto.","❌ Falsch",XG_RF,"mit dem Zug — ট্রেনে।"]]],
+["Notiz","Liebe Frau Weber,\nIhr Paket ist heute gekommen. Ich habe es bei mir (Wohnung 3). Bitte holen Sie es nach 17 Uhr ab.\nSchmidt",[["Wo ist das Paket?","Bei Schmidt in Wohnung 3",["Bei Schmidt in Wohnung 3","Bei Frau Weber","Bei der Post"],"Ich habe es bei mir (Wohnung 3)।"],["Frau Weber soll das Paket vor 17 Uhr abholen.","❌ Falsch",XG_RF,"nach 17 Uhr — ১৭টার পরে।"]]],
+["Kursplan","Deutschkurs A1\nMontag und Mittwoch, 18:00–20:30 Uhr, Raum 12\nBeginn: 4. Januar · Preis: 180 Euro",[["An welchen Tagen ist der Kurs?","Montag und Mittwoch",["Montag und Mittwoch","Dienstag und Donnerstag","Jeden Tag"],"Montag und Mittwoch।"],["Der Kurs kostet 18 Euro.","❌ Falsch",XG_RF,"Preis: 180 Euro।"]]],
+["Speisekarte","Tagesmenü heute:\nSuppe, Hähnchen mit Reis und Salat – 8,50 €\nGetränke nicht inklusive.",[["Was kostet das Menü?","8,50 €",["8,50 €","18,50 €","5,80 €"],"8,50 €।"],["Getränke sind im Preis enthalten.","❌ Falsch",XG_RF,"nicht inklusive = অন্তর্ভুক্ত নয়।"]]],
+["Bibliothek","Bibliothek\nBücher bitte nach 4 Wochen zurückgeben.\nPro Woche zu spät: 1 Euro.\nBitte leise sein!",[["Wie lange darf man ein Buch behalten?","4 Wochen",["4 Wochen","1 Woche","4 Tage"],"nach 4 Wochen zurückgeben।"],["In der Bibliothek darf man laut sprechen.","❌ Falsch",XG_RF,"Bitte leise sein! = চুপ থাকুন।"]]],
+["Postkarte","Liebe Oma,\nviele Grüße aus Hamburg! Das Wetter ist schlecht, es regnet. Aber das Hotel ist schön und das Essen ist super.\nBis bald, Ali",[["Wie ist das Wetter?","Es regnet",["Es regnet","Die Sonne scheint","Es ist sehr warm"],"Das Wetter ist schlecht, es regnet।"],["Das Essen ist schlecht.","❌ Falsch",XG_RF,"das Essen ist super।"]]]
+];
+var XG_HR=[
+["Bahnhof","Achtung auf Gleis drei: Der Zug nach München hat zehn Minuten Verspätung.",[["Welcher Zug hat Verspätung?","Der Zug nach München",["Der Zug nach München","Der Zug nach Berlin","Der Zug nach Hamburg"],"nach München।"],["Wie viel Verspätung hat der Zug?","10 Minuten",["10 Minuten","20 Minuten","30 Minuten"],"zehn Minuten।"]]],
+["Praxis","Praxis Doktor Braun. Unsere Sprechzeiten sind Montag bis Freitag von acht bis zwölf Uhr. Am Mittwochnachmittag ist die Praxis geschlossen.",[["Wann sind die Sprechzeiten?","8 bis 12 Uhr",["8 bis 12 Uhr","12 bis 18 Uhr","18 bis 20 Uhr"],"von acht bis zwölf Uhr।"],["Wann ist die Praxis geschlossen?","Mittwochnachmittag",["Mittwochnachmittag","Freitagvormittag","Montagabend"],"Am Mittwochnachmittag।"]]],
+["Supermarkt","Sonderangebot heute: Äpfel, ein Kilo nur zwei Euro neunzig. Milch, ein Liter, neunundsiebzig Cent.",[["Was kostet ein Kilo Äpfel?","2,90 Euro",["2,90 Euro","2,19 Euro","9,20 Euro"],"zwei Euro neunzig = 2,90 €।"],["Was kostet ein Liter Milch?","79 Cent",["79 Cent","97 Cent","70 Cent"],"neunundsiebzig = 79।"]]],
+["Mailbox","Hallo Anna, hier ist Peter. Wir treffen uns morgen um halb sieben vor dem Kino. Bring bitte deine Freundin mit. Bis morgen!",[["Wann treffen sie sich?","Um 18:30 Uhr",["Um 18:30 Uhr","Um 7:30 Uhr","Um 17:00 Uhr"],"halb sieben = ৬:৩০ (৭টার আধ ঘণ্টা আগে)।"],["Wo treffen sie sich?","Vor dem Kino",["Vor dem Kino","Im Café","Am Bahnhof"],"vor dem Kino।"]]],
+["Flughafen","Fluggäste nach Istanbul, bitte gehen Sie zum Ausgang B zwölf.",[["Wohin fliegen die Fluggäste?","Nach Istanbul",["Nach Istanbul","Nach Paris","Nach Rom"],"nach Istanbul।"],["Zu welchem Ausgang sollen sie gehen?","Ausgang B12",["Ausgang B12","Ausgang A2","Ausgang B2"],"B zwölf = B12।"]]],
+["Wetter","Das Wetter morgen: Im Norden regnet es, im Süden scheint die Sonne bei fünfundzwanzig Grad.",[["Wie ist das Wetter im Süden?","Sonnig, 25 Grad",["Sonnig, 25 Grad","Regnerisch, 15 Grad","Kalt, 5 Grad"],"im Süden scheint die Sonne, 25 Grad।"],["Wo regnet es?","Im Norden",["Im Norden","Im Süden","Überall"],"Im Norden regnet es।"]]]
+];
+function xgRhBuild(list,mode){
+  var qs=[];
+  xsShuffle(list).slice(0,5).forEach(function(t){
+    t[2].forEach(function(d){
+      var isRF=d[2]===XG_RF, ch=isRF?XG_RF.slice():xsShuffle(d[2].slice());
+      qs.push({kind:mode, prompt:d[0], sub:(mode==='rd'?'📖 ':'🎧 ')+t[0], text:t[1], choices:ch, cans:ch.indexOf(d[1]), opts:[d[1]], ans:0, explain:d[3], cat:mode==='rd'?'Lesen':'Hören', onAnswer:function(ok){ xsAct('s',1); }});
+    });
+  });
+  return xsShuffle(qs);
+}
+function xgLesen(){ xgRunG('📖 Lesen',function(){ return xgRhBuild(XG_LS,'rd'); },6); }
+function xgHoeren(){ xgRunG('🎧 Hören',function(){ return xgRhBuild(XG_HR,'hr'); },6); }
+var _xpDC9=xpDrawCustom;
+xpDrawCustom=function(q){
+  if(q.kind!=='rd'&&q.kind!=='hr') return _xpDC9(q);
+  var n=xq.qs.length; xq.locked=false;
+  document.getElementById('xqTitle').textContent=xq.title;
+  document.getElementById('xqCounter').textContent=(xq.i+1)+'/'+n;
+  document.getElementById('xqProg').style.width=(xq.i/n*100)+'%';
+  var h='<div class="qcard" style="text-align:left;"><div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;">'+esc(q.sub)+'</div>';
+  if(q.kind==='rd') h+='<div style="white-space:pre-line;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px;font-size:15px;line-height:1.6;color:var(--text);margin-bottom:12px;overflow-wrap:anywhere;">'+esc(q.text)+'</div>';
+  else h+='<div style="display:flex;gap:12px;justify-content:center;margin-bottom:12px;"><button id="xgP1" style="width:74px;height:74px;border-radius:50%;background:#4361ee22;border:2px solid #4361ee55;font-size:30px;cursor:pointer;color:var(--blue);">🔊</button><button id="xgP2" style="width:74px;height:74px;border-radius:50%;background:#2dd4a022;border:2px solid #2dd4a055;font-size:30px;cursor:pointer;">🐢</button></div>';
+  h+='<div style="font-size:18px;font-weight:900;color:var(--text);line-height:1.5;overflow-wrap:anywhere;">'+esc(q.prompt)+'</div></div><div style="padding:0 16px 30px;" id="xgCh">';
+  q.choices.forEach(function(c,i){ h+='<button class="btn btn-ghost btn-full" style="margin-bottom:8px;text-align:left;white-space:normal;" data-i="'+i+'">'+esc(c)+'</button>'; });
+  h+='<div id="xqNext" style="margin-top:10px;display:none;"><div id="xqExp" style="font-size:13px;color:var(--sub);margin-bottom:10px;line-height:1.6;"></div><button class="btn btn-blue btn-full" onclick="xqNext()">'+(xq.i<n-1?'পরের প্রশ্ন →':'ফলাফল ✅')+'</button></div></div>';
+  document.getElementById('xqBody').innerHTML=h;
+  if(q.kind==='hr'){ document.getElementById('xgP1').addEventListener('click',function(){ xsSay(q.text); }); document.getElementById('xgP2').addEventListener('click',function(){ xsSay(q.text,true); }); setTimeout(function(){ xsSay(q.text); },250); }
+  document.querySelectorAll('#xgCh button[data-i]').forEach(function(b){ b.addEventListener('click',function(){
+    if(xq.locked) return; var i=+b.getAttribute('data-i'), ok=i===q.cans;
+    document.querySelectorAll('#xgCh button[data-i]').forEach(function(x){ var j=+x.getAttribute('data-i'); x.disabled=true; if(j===q.cans){ x.style.borderColor='var(--green)'; x.style.background='#2dd4a022'; } else if(j===i){ x.style.borderColor='var(--red,#ff4d6d)'; x.style.background='#ff4d6d22'; } });
+    xpFinish(ok,'<br><span style="color:var(--sub);">'+esc(q.explain)+'</span>'+(q.kind==='hr'?'<br><span style="color:var(--text);">📝 '+esc(q.text)+'</span>':''));
+  }); });
+  window.scrollTo(0,0);
+};
+
+// ---- Schreiben: Formular ----
+var XG_FM=[
+{t:'Anmeldung (Ali)',tx:'Ich heiße Ali Khan. Ich bin am 12. März 1998 in Dhaka geboren. Ich wohne in Berlin, Hauptstraße 5. Meine Telefonnummer ist 0151 234567. Ich bin Student.',f:[['Familienname','Khan'],['Vorname','Ali'],['Geburtsdatum','12.03.1998'],['Geburtsort','Dhaka'],['Wohnort','Berlin'],['Straße, Hausnummer','Hauptstraße 5|Hauptstr. 5'],['Telefon','0151 234567'],['Beruf','Student']]},
+{t:'Kursformular (Maria)',tx:'Mein Name ist Maria Silva. Ich komme aus Brasilien und wohne jetzt in Köln, Bahnhofstraße 12. Ich bin geboren am 5. Mai 2002. Ich arbeite als Krankenschwester. Meine E-Mail: maria.silva@mail.de. Ich spreche Portugiesisch, Englisch und ein bisschen Deutsch.',f:[['Nachname','Silva'],['Vorname','Maria'],['Herkunftsland','Brasilien'],['Wohnort','Köln'],['Straße, Hausnummer','Bahnhofstraße 12|Bahnhofstr. 12'],['Geburtsdatum','05.05.2002'],['Beruf','Krankenschwester'],['E-Mail','maria.silva@mail.de'],['Sprachen','has:portugiesisch,englisch']]},
+{t:'Fitnessstudio (Tom)',tx:'Hallo, ich bin Tom Berger, geboren am 30. August 1990 in Wien. Ich wohne in Graz, Parkweg 7. Ich bin verheiratet und habe zwei Kinder. Ich möchte im Januar anfangen.',f:[['Familienname','Berger'],['Vorname','Tom'],['Geburtsdatum','30.08.1990'],['Geburtsort','Wien'],['Wohnort','Graz'],['Straße, Hausnummer','Parkweg 7'],['Familienstand','verheiratet'],['Kinder','2|zwei'],['Beginn','Januar']]}
+];
+var XG_MON={januar:1,februar:2,märz:3,maerz:3,april:4,mai:5,juni:6,juli:7,august:8,september:9,oktober:10,november:11,dezember:12};
+function xgFmNorm(s){
+  s=String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+  var m=s.match(/^(\d{1,2})\.?\s*(\d{1,2}|[a-zäö]+)\.?\s*(\d{4})$/);
+  if(m){ var mo=/^\d+$/.test(m[2])?+m[2]:XG_MON[m[2]]; if(mo) return ('0'+m[1]).slice(-2)+'.'+('0'+mo).slice(-2)+'.'+m[3]; }
+  return xpAlt(s).replace(/\./g,'').replace(/straße|strasse|str$/,'str').replace(/\s/g,'');
+}
+var xgFmI=0;
+function xgFormular(){
+  var h='<div style="text-align:center;margin-bottom:10px;"><div style="font-size:19px;font-weight:900;color:var(--text);">✍️ Schreiben: Formular</div><div style="font-size:12px;color:var(--sub);margin-top:4px;">টেক্সট পড়ে ফর্ম পূরণ করো</div></div>';
+  XG_FM.forEach(function(d,i){ h+='<button class="btn btn-ghost btn-full" style="margin-bottom:8px;text-align:left;" onclick="xgFmGo('+i+')">'+esc(d.t)+'</button>'; });
+  h+='<button class="btn btn-ghost btn-full" style="margin-top:4px;" onclick="closeModal()">✕ বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function xgFmGo(i){
+  xgFmI=i; var d=XG_FM[i];
+  var h='<div style="font-size:17px;font-weight:900;color:var(--text);">'+esc(d.t)+'</div><div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px;margin:8px 0 10px;font-size:14px;line-height:1.6;color:var(--text);">'+esc(d.tx)+' <span id="xgFmS" style="cursor:pointer;">🔊</span></div><div style="max-height:44vh;overflow-y:auto;">';
+  d.f.forEach(function(f,k){ h+='<div style="margin-bottom:8px;"><div style="font-size:11px;color:var(--sub);margin-bottom:3px;">'+esc(f[0])+'</div><input id="xgFm'+k+'" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:15px;font-family:inherit;outline:none;"/><div id="xgFr'+k+'" style="font-size:12px;margin-top:2px;"></div></div>'; });
+  h+='</div><button class="btn btn-blue btn-full" onclick="xgFmCheck()">✓ Prüfen</button><div id="xgFmRes" style="text-align:center;margin-top:8px;font-weight:800;color:var(--text);"></div><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="xgFormular()">← তালিকা</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('xgFmS').addEventListener('click',function(){ xsSay(d.tx); });
+}
+function xgFmCheck(){
+  var d=XG_FM[xgFmI], ok=0;
+  d.f.forEach(function(f,k){
+    var v=document.getElementById('xgFm'+k).value, good=false, ans=f[1];
+    if(ans.indexOf('has:')===0){ var ws=ans.slice(4).split(','), lv=xpAlt(v); good=ws.every(function(w){ return lv.indexOf(xpAlt(w))>=0; }); ans=ws.join(', '); }
+    else good=ans.split('|').some(function(a){ return xgFmNorm(a)===xgFmNorm(v); });
+    if(good) ok++;
+    document.getElementById('xgFr'+k).innerHTML=good?'<span style="color:var(--green);">✅</span>':'<span style="color:var(--red,#ff4d6d);">❌ সঠিক: <b>'+esc(ans.split('|')[0])+'</b></span>';
+  });
+  document.getElementById('xgFmRes').textContent=ok+'/'+d.f.length+(ok===d.f.length?' 🎉 চমৎকার!':'');
+  xsAct('s',2);
+}
+
+</script>
+<script>
+// ===== A1 Sprechen Kurs: video lock/unlock + transcript practice =====
+xs.course = xs.course || {vids:[], lock:true};
+(function(){ var st=document.createElement('style'); st.textContent='#xgYtW{position:relative;padding-top:56.25%;background:#000;border-radius:12px;overflow:hidden}#xgYtW iframe,#xgYt{position:absolute;top:0;left:0;width:100%;height:100%;border:0}'; document.head.appendChild(st); })();
+function xgCs(){ return xs.course; }
+function xgYtId(u){ u=String(u||'').trim(); var m=u.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([A-Za-z0-9_-]{11})/); if(m) return m[1]; return /^[A-Za-z0-9_-]{11}$/.test(u)?u:''; }
+function xgVid(id){ return xgCs().vids.filter(function(v){return v.id===id;})[0]; }
+function xgOpen(i){ var c=xgCs(); return !c.lock || i===0 || !!c.vids[i-1].w; }
+var xgPc={};
+function xgParse(v){
+  var key=(v.tr||'')+'##'+(v.vk||''); if(xgPc.id===v.id&&xgPc.key===key) return xgPc.val;
+  var sents=[], seen={};
+  String(v.tr||'').split(/\n+/).forEach(function(line){
+    line=line.replace(/^\s*\[?\d{1,2}:\d{2}(?::\d{2})?\]?\s*/,'').trim(); if(!line) return;
+    var m=line.match(/^(.*?)\s*(?:\||=>|\t)\s*(.+)$/), parts;
+    if(m && /[ঀ-৿]/.test(m[2]) && !/[ঀ-৿]/.test(m[1])) parts=[{de:m[1].trim(),bn:m[2].trim()}];
+    else parts=line.split(/(?<=[.!?])\s+/).map(function(x){ return {de:x.trim(),bn:''}; });
+    parts.forEach(function(p){ var n=p.de.split(/\s+/).length; if(n<2||n>18||!/[A-Za-zÄÖÜäöüß]/.test(p.de)) return; var k=p.de.toLowerCase(); if(seen[k]) return; seen[k]=1; sents.push(p); });
+  });
+  var vocab=[]; String(v.vk||'').split(/\n+/).forEach(function(line){ var m=line.trim().match(/^(.+?)\s*(?:=|\||\t|–|—| - )\s*(.+)$/); if(m) vocab.push({de:m[1].trim(),bn:m[2].trim(),k:'w'}); });
+  xgPc={id:v.id,key:key,val:{sents:sents,vocab:vocab}}; return xgPc.val;
+}
+// ---- builders ----
+function xgQsDict(S,n){ return xsShuffle(S).slice(0,n).map(function(s){ return {kind:'dict',rows:2,prompt:'🎧 Dictation',sub:'শুনে বাক্য লেখো',acc:[s.de],opts:[s.de],ans:0,speak:s.de,hint:s.bn?'অর্থ: '+s.bn:'',cat:'Dictation',onAnswer:function(ok){ xsMark('sp',s.de,ok,s.bn); xsAct('s',1); }}; }); }
+function xgQsOrder(S,n){ return xsShuffle(xpFilterOrder(S)).slice(0,n).map(function(s){ return {kind:'order',prompt:s.bn||'শব্দগুলো সাজিয়ে বাক্য বানাও',sub:'শব্দ সাজাও',tokens:s.de.split(/\s+/),acc:[s.de],opts:[s.de],ans:0,cat:'বাক্য সাজানো',onAnswer:function(ok){ xsMark('sp',s.de,ok,s.bn); xsAct('s',1); }}; }); }
+function xgQsCloze(S,n){ var q=[]; try{ q=xpQsCloze(S,n); }catch(e){} q.forEach(function(x){ x.cat='Lückentext'; }); return q; }
+function xgQsType(S,n){ return xsShuffle(S.filter(function(s){return s.bn;})).slice(0,n).map(function(s){ return {kind:'type',rows:2,prompt:s.bn,sub:'জার্মানে লেখো',acc:[s.de],opts:[s.de],ans:0,cat:'অনুবাদ লেখা',onAnswer:function(ok){ xsMark('sp',s.de,ok,s.bn); xsAct('s',1); }}; }); }
+function xgQsWords(V,n){ if(V.length<4) return []; var q=[], per=Math.ceil(n/3); q=q.concat(xsItemQs(V,V,'de2bn',per)).concat(xsItemQs(V,V,'bn2de',per)).concat(xsItemQs(V,V,'listen',per)); q.forEach(function(x){ x.cat='Wörter'; }); return xsShuffle(q).slice(0,n); }
+function xgQsSay(S,n){ return xsShuffle(S).slice(0,n).map(function(s){ return {kind:'say',say:1,nomb:1,prompt:'🗣 জোরে ৩ বার বলো',sub:'Sprechen',text:s.de+(s.bn?'\n'+s.bn:''),speakText:s.de,choices:['✅ বলেছি','🔁 আবার দরকার'],cans:0,opts:['✅ বলেছি'],ans:0,explain:'বারবার জোরে বললে মুখে বসে যায়।',cat:'Sprechen',onAnswer:function(ok){ xsAct('s',1); }}; }); }
+function xgBuildMix(P,n){
+  var q=[].concat(xgQsDict(P.sents,3),xgQsOrder(P.sents,3),xgQsCloze(P.sents,3),xgQsType(P.sents,2),xgQsWords(P.vocab,3),xgQsSay(P.sents,2));
+  return xsShuffle(q).slice(0,n||14);
+}
+var XG_PM={dict:['🎧 Dictation',function(P){return xgQsDict(P.sents,12);},3],order:['🧩 বাক্য সাজানো',function(P){return xgQsOrder(P.sents,12);},3],cloze:['✏️ Lückentext',function(P){return xgQsCloze(P.sents,12);},4],type:['⌨️ অনুবাদ লেখা',function(P){return xgQsType(P.sents,10);},1,'bn'],words:['🔤 Wörter',function(P){return xgQsWords(P.vocab,12);},0,'vocab'],say:['🗣 Sprechen',function(P){return xgQsSay(P.sents,12);},1],mix:['🔀 মিশ্র',function(P){return xgBuildMix(P,16);},3]};
+function xgPracOk(P,k){ var m=XG_PM[k]; if(m[3]==='bn') return P.sents.filter(function(s){return s.bn;}).length>=3; if(m[3]==='vocab') return P.vocab.length>=4; return P.sents.length>=(m[2]||1); }
+function xgRunV(title,builder,vid){ _xpG={k:'menu',g:8,vid:vid}; _xgCV=vid; xqRun(title,function(){ _xgCV=vid; _xpG={k:'menu',g:8,vid:vid}; return builder(); },'pgApp'); }
+var _xgCV=null;
+function xgPrac(vid,k){
+  var v=xgVid(vid); if(!v) return; var P=xgParse(v); if(!xgPracOk(P,k)){ showToast('এর জন্য transcript-এ যথেষ্ট data নেই'); return; }
+  closeModal(); xgRunV(XG_PM[k][0]+' · '+v.title,function(){ return XG_PM[k][1](xgParse(v)); },vid);
+}
+function xgPracAll(){
+  var vs=xgCs().vids.filter(function(v){ return xgParse(v).sents.length>=2; });
+  if(!vs.length){ showWarn('আগে কোনো video-তে transcript যোগ করো।'); return; }
+  closeModal(); _xpG={k:'menu',g:8}; _xgCV=null;
+  xqRun('🔀 সব video মিশ্র',function(){ _xpG={k:'menu',g:8}; var P={sents:[],vocab:[]}; vs.forEach(function(v){ var p=xgParse(v); P.sents=P.sents.concat(p.sents); P.vocab=P.vocab.concat(p.vocab); }); return xgBuildMix(P,20); },'pgApp');
+}
+// 'say' question reuses the reading screen + audio buttons
+var _xpDC10=xpDrawCustom;
+xpDrawCustom=function(q){
+  if(q.kind!=='say') return _xpDC10(q);
+  q.kind='rd'; _xpDC10(q); q.kind='say';
+  var c=document.querySelector('#xqBody .qcard'); if(c){ c.insertAdjacentHTML('beforeend','<div style="display:flex;gap:10px;margin-top:12px;"><button class="btn btn-ghost btn-sm" style="flex:1;" id="xgSy1">🔊 শোনো</button><button class="btn btn-ghost btn-sm" style="flex:1;" id="xgSy2">🐢 ধীরে</button></div>');
+    document.getElementById('xgSy1').addEventListener('click',function(){ xsSay(q.speakText); }); document.getElementById('xgSy2').addEventListener('click',function(){ xsSay(q.speakText,true); }); setTimeout(function(){ xsSay(q.speakText); },250); }
+};
+// count practice sessions
+var _xqStart10=xqStart;
+xqStart=function(t,qs,b){ var cv=_xgCV; _xgCV=null; _xqStart10(t,qs,b); if(qs&&qs.length){ xq.cv=cv; xq.rec10=0; } };
+var _xqDraw10=xqDraw;
+xqDraw=function(){ _xqDraw10(); if(xq.done&&xq.cv&&!xq.retry&&!xq.rec10){ xq.rec10=1; var v=xgVid(xq.cv); if(v){ v.pc=(v.pc||0)+1; xsSave(); } } };
+var _xqBack10=xqBack;
+xqBack=function(){ var g=xq.game; if(g&&g.k==='menu'&&g.vid){ xq.game=null; _xqBack1(); xgOpenVid(g.vid); return; } _xqBack10(); };
+
+// ---- course list ----
+function xgCourse(){
+  if(!_mg) _mg={g:8};
+  var c=xgCs(), h='<div style="text-align:center;margin-bottom:10px;"><div style="font-size:19px;font-weight:900;color:var(--text);">🎬 A1 Sprechen Kurs</div><div style="font-size:12px;color:var(--sub);margin-top:4px;">video পুরো দেখলে পরেরটা খুলবে</div></div>';
+  h+='<div style="display:flex;gap:8px;margin-bottom:10px;"><button class="btn btn-blue btn-sm" style="flex:1;" onclick="xgVidEdit(null)">➕ Video</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgBulk()">📦 অনেক link</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPracAll()">🔀 মিশ্র</button></div>';
+  if(!c.vids.length) h+='<div class="empty-box"><div class="ico">🎬</div><div class="txt">এখনো কোনো video নেই।<br>➕ Video বা 📦 অনেক link চাপো।</div></div>';
+  h+='<div style="max-height:54vh;overflow-y:auto;">';
+  c.vids.forEach(function(v,i){
+    var op=xgOpen(i), P=xgParse(v), ico=v.w?'✅':(op?'▶️':'🔒');
+    h+='<div style="display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid '+(v.w?'var(--green)':'var(--border)')+';border-radius:12px;padding:10px 11px;margin-bottom:7px;'+(op?'':'opacity:.6;')+'"><div style="font-size:22px;">'+ico+'</div><div style="flex:1;min-width:0;cursor:pointer;" onclick="'+(op?'xgOpenVid(\''+v.id+'\')':'showToast(\'আগের video পুরো দেখো\')')+'"><div style="font-weight:800;color:var(--text);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(i+1)+'. '+esc(v.title||'Video')+'</div><div style="font-size:11px;color:var(--sub);">'+P.sents.length+' বাক্য'+(P.vocab.length?' · '+P.vocab.length+' শব্দ':'')+(v.pc?' · practice '+v.pc+'×':'')+(!v.w&&v.acc&&v.dur?' · '+Math.min(99,Math.round(v.acc/v.dur*100))+'% দেখা':'')+'</div></div>'+(op?'':'<button class="sp-ib" title="জোর করে unlock" onclick="xgForce('+i+')">🔓</button>')+'<button class="sp-ib" onclick="xgVidEdit(\''+v.id+'\')">✏️</button></div>';
+  });
+  h+='</div><label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);margin-top:8px;"><input type="checkbox" '+(c.lock?'checked':'')+' onchange="xgCs().lock=this.checked;xsSave();xgCourse()"/> Lock চালু (আগের video শেষ না হলে পরেরটা বন্ধ)</label><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="closeModal()">✕ বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function xgForce(i){ if(confirm('আগের video শেষ না করেই এটা unlock করবে?')){ var v=xgCs().vids[i-1]; if(v){ v.w=1; v.forced=1; xsSave(); } xgCourse(); } }
+// ---- editor ----
+function xgVidEdit(id){
+  var v=id?xgVid(id):{title:'',yt:'',tr:'',vk:''};
+  var inp='width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:14px;font-family:inherit;outline:none;';
+  var h='<div style="font-size:17px;font-weight:900;color:var(--text);margin-bottom:8px;">'+(id?'✏️ Video edit':'➕ নতুন video')+'</div>';
+  h+='<div style="max-height:60vh;overflow-y:auto;"><div style="font-size:11px;color:var(--sub);margin:6px 0 3px;">নাম</div><input id="xgVT" type="text" style="'+inp+'" value="'+esc(v.title)+'"/>';
+  h+='<div style="font-size:11px;color:var(--sub);margin:8px 0 3px;">YouTube link</div><input id="xgVU" type="text" style="'+inp+'" placeholder="https://youtu.be/…" value="'+esc(v.yt?('https://youtu.be/'+v.yt):'')+'"/>';
+  h+='<div style="font-size:11px;color:var(--sub);margin:8px 0 3px;">video-র দৈর্ঘ্য (মিনিট, ঐচ্ছিক — YouTube-এ খুলে দেখলে "পুরো দেখেছি" যাচাইয়ে লাগে)</div><input id="xgVL" type="number" min="0" step="0.5" style="'+inp+'" value="'+(v.len||'')+'"/><div style="font-size:11px;color:var(--sub);margin:8px 0 3px;">Transcript — এক লাইনে একটা বাক্য। বাংলাসহ হলে: <b>জার্মান | বাংলা</b></div><textarea id="xgVR" rows="8" style="'+inp+'resize:vertical;" spellcheck="false">'+esc(v.tr)+'</textarea>';
+  h+='<div style="font-size:11px;color:var(--sub);margin:8px 0 3px;">শব্দ তালিকা (ঐচ্ছিক) — এক লাইনে: <b>der Tisch = টেবিল</b></div><textarea id="xgVK" rows="4" style="'+inp+'resize:vertical;" spellcheck="false">'+esc(v.vk)+'</textarea></div>';
+  h+='<div style="display:flex;gap:8px;margin-top:10px;"><button class="btn btn-blue btn-sm" style="flex:2;" onclick="xgVidSave('+(id?'\''+id+'\'':'null')+')">💾 Save</button>'+(id?'<button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgVidMove(\''+id+'\',-1)">⬆</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgVidMove(\''+id+'\',1)">⬇</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgVidDel(\''+id+'\')">🗑</button>':'')+'</div><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="xgCourse()">← তালিকা</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function xgVidSave(id){
+  var yt=xgYtId(document.getElementById('xgVU').value); if(!yt){ showToast('সঠিক YouTube link দাও'); return; }
+  var t=document.getElementById('xgVT').value.trim()||'Video', tr=document.getElementById('xgVR').value, vk=document.getElementById('xgVK').value, c=xgCs();
+  if(id){ var v=xgVid(id); if(v.yt!==yt){ v.acc=0; v.dur=0; } v.title=t; v.yt=yt; v.tr=tr; v.vk=vk; v.len=parseFloat(document.getElementById('xgVL').value)||0; }
+  else c.vids.push({id:'v'+Date.now()+Math.floor(Math.random()*999),title:t,yt:yt,tr:tr,vk:vk,w:0,acc:0,pc:0,len:parseFloat(document.getElementById('xgVL').value)||0});
+  xsSave(); showToast('✅ Save হয়েছে'); xgCourse();
+}
+function xgVidDel(id){ if(confirm('এই video মুছবে?')){ xgCs().vids=xgCs().vids.filter(function(v){return v.id!==id;}); xsSave(); xgCourse(); } }
+function xgVidMove(id,d){ var a=xgCs().vids, i=a.findIndex(function(v){return v.id===id;}), j=i+d; if(j<0||j>=a.length) return; var t=a[i]; a[i]=a[j]; a[j]=t; xsSave(); xgVidEdit(id); }
+function xgBulk(){
+  var h='<div style="font-size:17px;font-weight:900;color:var(--text);margin-bottom:6px;">📦 অনেক link একসাথে</div><div style="font-size:12px;color:var(--sub);margin-bottom:8px;line-height:1.6;">এক লাইনে একটা link। নাম দিতে চাইলে: <b>link | নাম</b>। transcript পরে প্রতিটায় যোগ করবে।</div><textarea id="xgBk" rows="9" spellcheck="false" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;"></textarea><button class="btn btn-blue btn-full" style="margin-top:8px;" onclick="xgBulkSave()">➕ যোগ করো</button><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="xgCourse()">← তালিকা</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function xgBulkSave(){
+  var n=0, c=xgCs(); document.getElementById('xgBk').value.split(/\n+/).forEach(function(l){ l=l.trim(); if(!l) return; var p=l.split('|'), yt=xgYtId(p[0]); if(!yt) return; c.vids.push({id:'v'+Date.now()+Math.floor(Math.random()*99999)+n,title:(p[1]||'').trim()||('Video '+(c.vids.length+1)),yt:yt,tr:'',vk:'',w:0,acc:0,pc:0}); n++; });
+  if(!n){ showToast('কোনো সঠিক link পাওয়া যায়নি'); return; } xsSave(); showToast('✅ '+n+'টি video যোগ হয়েছে'); xgCourse();
+}
+// ---- video screen + tracking ----
+var xgP=null, xgTm=null, xgTick=0;
+function xgOpenVid(id){
+  var v=xgVid(id); if(!v) return; if(!_mg) _mg={g:8}; var P=xgParse(v);
+  var h='<div style="font-size:16px;font-weight:900;color:var(--text);margin-bottom:8px;">'+esc(v.title)+'</div><div id="xgYtW"><div id="xgYt"></div></div>';
+  h+='<div id="xgPr" style="font-size:12px;color:var(--sub);margin:8px 0;text-align:center;"></div><button class="btn btn-ghost btn-sm btn-full" style="margin-bottom:8px;" onclick="xgExt(\''+id+'\')">▶ YouTube-এ খোলো</button>';
+  h+='<div style="max-height:44vh;overflow-y:auto;"><div style="font-size:12px;font-weight:800;color:var(--sub);margin:4px 0 6px;">🎯 Practice ('+P.sents.length+' বাক্য'+(P.vocab.length?', '+P.vocab.length+' শব্দ':'')+')'+(v.pc?' · '+v.pc+'× করেছ':'')+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">';
+  Object.keys(XG_PM).forEach(function(k){ var ok=xgPracOk(P,k); h+='<button class="btn '+(k==='mix'?'btn-blue':'btn-ghost')+' btn-sm" '+(ok?'':'disabled style="opacity:.45;"')+' onclick="xgPrac(\''+id+'\',\''+k+'\')">'+XG_PM[k][0]+'</button>'; });
+  h+='<button class="btn btn-ghost btn-sm" '+(P.sents.length>=3?'':'disabled style="opacity:.45;"')+' onclick="xgShVid(\''+id+'\')">🐢 Shadowing</button><button class="btn btn-ghost btn-sm" onclick="xgTrToggle()">📄 Transcript</button></div><div id="xgTr" style="display:none;margin-top:8px;"></div>';
+  if(!P.sents.length) h+='<div style="font-size:12px;color:var(--gold);margin-top:8px;">⚠️ Transcript নেই — ✏️ edit করে যোগ করলে practice খুলবে।</div>';
+  h+='</div><div style="display:flex;gap:8px;margin-top:8px;"><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgVidEdit(\''+id+'\')">✏️ Edit</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgMarkManual(\''+id+'\')">✅ পুরো দেখেছি</button></div><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="xgStopTrack();xgCourse()">← তালিকা</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+  xgPlayer(v); xgShowPr(v);
+}
+function xgTrToggle(){ var e=document.getElementById('xgTr'); if(!e) return; if(e.style.display==='block'){ e.style.display='none'; return; } var v=xgCurV, P=xgParse(v);
+  e.innerHTML=P.sents.map(function(s,i){ return '<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);"><span class="xgts" data-i="'+i+'" style="cursor:pointer;">🔊</span> '+esc(s.de)+(s.bn?'<div style="color:var(--sub);font-size:12px;">'+esc(s.bn)+'</div>':'')+'</div>'; }).join('')||'<div style="color:var(--sub);">Transcript নেই</div>';
+  e.style.display='block'; e.querySelectorAll('.xgts').forEach(function(b){ b.addEventListener('click',function(){ xsSay(P.sents[+b.getAttribute('data-i')].de); }); }); }
+var xgCurV=null;
+function xgShowPr(v){ var e=document.getElementById('xgPr'); if(!e) return; if(location.protocol==='file:'&&!v.w){ e.innerHTML='ℹ️ YouTube-এ দেখে এখানে ফিরে "✅ পুরো দেখেছি" চাপো'+(v.len?' (দৈর্ঘ্য '+v.len+' মিনিট — সময় যাচাই হবে)':''); return; } e.innerHTML=v.w?'✅ পুরো দেখা হয়েছে'+(v.forced?' (হাতে)':''):(v.dur?'👁 দেখা: <b style="color:var(--text);">'+Math.min(99,Math.round(v.acc/v.dur*100))+'%</b> — পুরো দেখলে পরের video খুলবে':'পুরো video দেখলে পরের video খুলবে'); }
+function xgMarkDone(v,manual){
+  if(v.w) return; v.w=1; v.wt=Date.now(); if(manual) v.forced=1; xsSave(); xsAct('s',2);
+  var nx=xgCs().vids[xgCs().vids.indexOf(v)+1]; showToast(nx?'🎉 পরের video খুলে গেছে!':'🎉 কোর্স শেষ!'); xgShowPr(v);
+}
+function xgExt(id){ var v=xgVid(id); v.ext=Date.now(); xsSave(); window.open('https://www.youtube.com/watch?v='+v.yt,'_blank'); }
+function xgMarkManual(id){ var v=xgVid(id); if(v.w){ showToast('আগেই শেষ হয়েছে'); return; }
+  if(v.len && !(v.acc>=0.85*v.len*60)){ var need=Math.ceil(v.len*0.85); if(!v.ext){ showToast('আগে "▶ YouTube-এ খোলো" চাপো'); return; } var el=(Date.now()-v.ext)/60000; if(el<v.len*0.85){ showToast('আরও ~'+Math.ceil(v.len*0.85-el)+' মিনিট দেখো (video '+v.len+' মিনিটের)'); return; } }
+  if(confirm('সত্যিই পুরো video দেখেছ?')) xgMarkDone(v,true); }
+function xgStopTrack(){ if(xgTm){ clearInterval(xgTm); xgTm=null; } xgP=null; }
+function xgPlayer(v){
+  xgStopTrack(); xgCurV=v; var done=false;
+  if(location.protocol==='file:'){ var w0=document.getElementById('xgYtW'); if(w0){ w0.innerHTML='<div onclick="xgExt(\''+v.id+'\')" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#000 url(https://i.ytimg.com/vi/'+v.yt+'/hqdefault.jpg) center/cover;display:flex;align-items:center;justify-content:center;cursor:pointer;"><div style="background:#000a;border-radius:14px;padding:12px 18px;color:#fff;font-weight:800;text-align:center;">▶ YouTube-এ খোলো<div style="font-size:11px;font-weight:400;margin-top:4px;">file হিসেবে খুললে app-এর ভেতরে চলে না</div></div></div>'; } var e0=document.getElementById('xgPr'); if(e0) e0.innerHTML='ℹ️ দেখা শেষে এখানে ফিরে "✅ পুরো দেখেছি" চাপো (video-র দৈর্ঘ্য দেওয়া থাকলে সময় যাচাই হবে)'; return; }
+  function fallback(){ if(done) return; done=true; var w=document.getElementById('xgYtW'); if(!w) return; w.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+v.yt+'?rel=0&playsinline=1" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>'; var e=document.getElementById('xgPr'); if(e) e.innerHTML='ℹ️ player লোড হয়নি বা চলছে না — নিচের "▶ YouTube-এ খোলো" চাপো, দেখা শেষে "✅ পুরো দেখেছি"'; }
+  function make(){ if(done||!document.getElementById('xgYt')) return; done=true;
+    try{ xgP=new YT.Player('xgYt',{videoId:v.yt,playerVars:(/^https?:/.test(location.protocol)?{rel:0,modestbranding:1,playsinline:1,origin:location.origin}:{rel:0,modestbranding:1,playsinline:1}),events:{onError:function(ev){ var e=document.getElementById('xgPr'); if(e) e.innerHTML='⚠️ video এখানে চালানো যাচ্ছে না (error '+(ev&&ev.data)+'). নিচের "▶ YouTube-এ খোলো" চাপো।'; }}}); }catch(e){ done=false; fallback(); return; }
+    xgTm=setInterval(function(){
+      if(!document.getElementById('xgYtW')){ xgStopTrack(); return; }
+      try{ if(v.w) return; if(xgP.getPlayerState()===1){ var d=xgP.getDuration()||0; if(d>0){ v.dur=d; v.acc=(v.acc||0)+(xgP.getPlaybackRate()||1); xgTick++; if(xgTick%5===0){ xsSave(); xgShowPr(v); } if(v.acc>=0.85*d){ xgMarkDone(v); } } } }catch(e){}
+    },1000);
+  }
+  if(window.YT&&YT.Player) make();
+  else { if(!document.getElementById('ytApiJs')){ var s=document.createElement('script'); s.id='ytApiJs'; s.src='https://www.youtube.com/iframe_api'; s.onerror=fallback; document.head.appendChild(s); }
+    var prev=window.onYouTubeIframeAPIReady; window.onYouTubeIframeAPIReady=function(){ try{ prev&&prev(); }catch(e){} make(); };
+    setTimeout(function(){ if(!(window.YT&&YT.Player)) fallback(); },6000); }
+}
+var _cm10=closeModal; closeModal=function(){ xgStopTrack(); _cm10.apply(this,arguments); };
+function xgShVid(id){ var v=xgVid(id), P=xgParse(v); xgStopTrack(); xgSh.list=xsShuffle(P.sents).slice(0,15); xgSh.i=0; xgShDraw(); }
+
 </script>
 </body>
 </html>
