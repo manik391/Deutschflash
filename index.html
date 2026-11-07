@@ -831,6 +831,7 @@ input,select,textarea,button{font-family:var(--font);}
     <div class="dr-sub" id="drS8" style="display:none;margin:0 0 4px 22px;padding-left:10px;border-left:2px solid var(--border);">
       <button class="dr-item" onclick="drGo('xgCourse()',8)"><span class="dr-ico">🎬</span><span>Video কোর্স<small>তালিকা, দেখা ও practice</small></span></button>
       <button class="dr-item" onclick="drGo('xgVidEdit(null)',8)"><span class="dr-ico">➕</span><span>Video যোগ করো<small>link + transcript</small></span></button>
+      <button class="dr-item" onclick="drGo('xgPlaylist()',8)"><span class="dr-ico">🎞</span><span>Playlist import<small>playlist লিংক থেকে সব video</small></span></button>
       <button class="dr-item" onclick="drGo('xgPracAll()',8)"><span class="dr-ico">🔀</span><span>সব video মিশ্র<small>সব transcript থেকে practice</small></span></button>
     </div>
     <button class="dr-item dr-grp" id="drG3" onclick="drToggle(3)" aria-expanded="false"><span class="dr-ico">📥</span><span style="flex:1;">তৈরি Data<small>এক চাপে Story ও Card যোগ করো</small></span><span class="dr-arr" style="font-size:13px;color:var(--muted);transition:transform .2s;">▼</span></button>
@@ -6790,7 +6791,7 @@ xqBack=function(){ var g=xq.game; if(g&&g.k==='menu'&&g.vid){ xq.game=null; _xqB
 function xgCourse(){
   if(!_mg) _mg={g:8};
   var c=xgCs(), h='<div style="text-align:center;margin-bottom:10px;"><div style="font-size:19px;font-weight:900;color:var(--text);">🎬 A1 Sprechen Kurs</div><div style="font-size:12px;color:var(--sub);margin-top:4px;">video পুরো দেখলে পরেরটা খুলবে</div></div>';
-  h+='<div style="display:flex;gap:8px;margin-bottom:10px;"><button class="btn btn-blue btn-sm" style="flex:1;" onclick="xgVidEdit(null)">➕ Video</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgBulk()">📦 অনেক link</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPracAll()">🔀 মিশ্র</button></div>';
+  h+='<div style="display:flex;gap:8px;margin-bottom:10px;"><button class="btn btn-blue btn-sm" style="flex:1;" onclick="xgVidEdit(null)">➕ Video</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgBulk()">📦 অনেক link</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPlaylist()">🎞 Playlist</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPracAll()">🔀 মিশ্র</button></div>';
   if(!c.vids.length) h+='<div class="empty-box"><div class="ico">🎬</div><div class="txt">এখনো কোনো video নেই।<br>➕ Video বা 📦 অনেক link চাপো।</div></div>';
   h+='<div style="max-height:54vh;overflow-y:auto;">';
   c.vids.forEach(function(v,i){
@@ -6835,7 +6836,7 @@ var xgP=null, xgTm=null, xgTick=0;
 function xgOpenVid(id){
   var v=xgVid(id); if(!v) return; if(!_mg) _mg={g:8}; var P=xgParse(v);
   var h='<div style="font-size:16px;font-weight:900;color:var(--text);margin-bottom:8px;">'+esc(v.title)+'</div><div id="xgYtW"><div id="xgYt"></div></div>';
-  h+='<div id="xgPr" style="font-size:12px;color:var(--sub);margin:8px 0;text-align:center;"></div><button class="btn btn-ghost btn-sm btn-full" style="margin-bottom:8px;" onclick="xgExt(\''+id+'\')">▶ YouTube-এ খোলো</button>';
+  h+='<div id="xgPr" style="font-size:12px;color:var(--sub);margin:8px 0;text-align:center;"></div>';
   h+='<div style="max-height:44vh;overflow-y:auto;"><div style="font-size:12px;font-weight:800;color:var(--sub);margin:4px 0 6px;">🎯 Practice ('+P.sents.length+' বাক্য'+(P.vocab.length?', '+P.vocab.length+' শব্দ':'')+')'+(v.pc?' · '+v.pc+'× করেছ':'')+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">';
   Object.keys(XG_PM).forEach(function(k){ var ok=xgPracOk(P,k); h+='<button class="btn '+(k==='mix'?'btn-blue':'btn-ghost')+' btn-sm" '+(ok?'':'disabled style="opacity:.45;"')+' onclick="xgPrac(\''+id+'\',\''+k+'\')">'+XG_PM[k][0]+'</button>'; });
   h+='<button class="btn btn-ghost btn-sm" '+(P.sents.length>=3?'':'disabled style="opacity:.45;"')+' onclick="xgShVid(\''+id+'\')">🐢 Shadowing</button><button class="btn btn-ghost btn-sm" onclick="xgTrToggle()">📄 Transcript</button></div><div id="xgTr" style="display:none;margin-top:8px;"></div>';
@@ -6848,25 +6849,22 @@ function xgTrToggle(){ var e=document.getElementById('xgTr'); if(!e) return; if(
   e.innerHTML=P.sents.map(function(s,i){ return '<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);"><span class="xgts" data-i="'+i+'" style="cursor:pointer;">🔊</span> '+esc(s.de)+(s.bn?'<div style="color:var(--sub);font-size:12px;">'+esc(s.bn)+'</div>':'')+'</div>'; }).join('')||'<div style="color:var(--sub);">Transcript নেই</div>';
   e.style.display='block'; e.querySelectorAll('.xgts').forEach(function(b){ b.addEventListener('click',function(){ xsSay(P.sents[+b.getAttribute('data-i')].de); }); }); }
 var xgCurV=null;
-function xgShowPr(v){ var e=document.getElementById('xgPr'); if(!e) return; if(location.protocol==='file:'&&!v.w){ e.innerHTML='ℹ️ YouTube-এ দেখে এখানে ফিরে "✅ পুরো দেখেছি" চাপো'+(v.len?' (দৈর্ঘ্য '+v.len+' মিনিট — সময় যাচাই হবে)':''); return; } e.innerHTML=v.w?'✅ পুরো দেখা হয়েছে'+(v.forced?' (হাতে)':''):(v.dur?'👁 দেখা: <b style="color:var(--text);">'+Math.min(99,Math.round(v.acc/v.dur*100))+'%</b> — পুরো দেখলে পরের video খুলবে':'পুরো video দেখলে পরের video খুলবে'); }
+function xgShowPr(v){ var e=document.getElementById('xgPr'); if(!e) return; e.innerHTML=v.w?'✅ পুরো দেখা হয়েছে'+(v.forced?' (হাতে)':''):(v.dur?'👁 দেখা: <b style="color:var(--text);">'+Math.min(99,Math.round(v.acc/v.dur*100))+'%</b> — পুরো দেখলে পরের video খুলবে':'পুরো video দেখলে পরের video খুলবে'); }
 function xgMarkDone(v,manual){
   if(v.w) return; v.w=1; v.wt=Date.now(); if(manual) v.forced=1; xsSave(); xsAct('s',2);
   var nx=xgCs().vids[xgCs().vids.indexOf(v)+1]; showToast(nx?'🎉 পরের video খুলে গেছে!':'🎉 কোর্স শেষ!'); xgShowPr(v);
 }
-function xgExt(id){ var v=xgVid(id); v.ext=Date.now(); xsSave(); window.open('https://www.youtube.com/watch?v='+v.yt,'_blank'); }
 function xgMarkManual(id){ var v=xgVid(id); if(v.w){ showToast('আগেই শেষ হয়েছে'); return; }
-  if(v.len && !(v.acc>=0.85*v.len*60)){ var need=Math.ceil(v.len*0.85); if(!v.ext){ showToast('আগে "▶ YouTube-এ খোলো" চাপো'); return; } var el=(Date.now()-v.ext)/60000; if(el<v.len*0.85){ showToast('আরও ~'+Math.ceil(v.len*0.85-el)+' মিনিট দেখো (video '+v.len+' মিনিটের)'); return; } }
   if(confirm('সত্যিই পুরো video দেখেছ?')) xgMarkDone(v,true); }
 function xgStopTrack(){ if(xgTm){ clearInterval(xgTm); xgTm=null; } xgP=null; }
 function xgPlayer(v){
   xgStopTrack(); xgCurV=v; var done=false;
-  if(location.protocol==='file:'){ var w0=document.getElementById('xgYtW'); if(w0){ w0.innerHTML='<div onclick="xgExt(\''+v.id+'\')" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#000 url(https://i.ytimg.com/vi/'+v.yt+'/hqdefault.jpg) center/cover;display:flex;align-items:center;justify-content:center;cursor:pointer;"><div style="background:#000a;border-radius:14px;padding:12px 18px;color:#fff;font-weight:800;text-align:center;">▶ YouTube-এ খোলো<div style="font-size:11px;font-weight:400;margin-top:4px;">file হিসেবে খুললে app-এর ভেতরে চলে না</div></div></div>'; } var e0=document.getElementById('xgPr'); if(e0) e0.innerHTML='ℹ️ দেখা শেষে এখানে ফিরে "✅ পুরো দেখেছি" চাপো (video-র দৈর্ঘ্য দেওয়া থাকলে সময় যাচাই হবে)'; return; }
-  function fallback(){ if(done) return; done=true; var w=document.getElementById('xgYtW'); if(!w) return; w.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+v.yt+'?rel=0&playsinline=1" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>'; var e=document.getElementById('xgPr'); if(e) e.innerHTML='ℹ️ player লোড হয়নি বা চলছে না — নিচের "▶ YouTube-এ খোলো" চাপো, দেখা শেষে "✅ পুরো দেখেছি"'; }
+  function fallback(){ if(done) return; done=true; var w=document.getElementById('xgYtW'); if(!w) return; w.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+v.yt+'?rel=0&playsinline=1" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>'; var e=document.getElementById('xgPr'); if(e) e.innerHTML='ℹ️ player লোড হয়নি বা চলছে না — ইন্টারনেট দেখে আবার খোলো'; }
   function make(){ if(done||!document.getElementById('xgYt')) return; done=true;
-    try{ xgP=new YT.Player('xgYt',{videoId:v.yt,playerVars:(/^https?:/.test(location.protocol)?{rel:0,modestbranding:1,playsinline:1,origin:location.origin}:{rel:0,modestbranding:1,playsinline:1}),events:{onError:function(ev){ var e=document.getElementById('xgPr'); if(e) e.innerHTML='⚠️ video এখানে চালানো যাচ্ছে না (error '+(ev&&ev.data)+'). নিচের "▶ YouTube-এ খোলো" চাপো।'; }}}); }catch(e){ done=false; fallback(); return; }
+    try{ xgP=new YT.Player('xgYt',{videoId:v.yt,playerVars:(/^https?:/.test(location.protocol)?{rel:0,modestbranding:1,playsinline:1,origin:location.origin}:{rel:0,modestbranding:1,playsinline:1}),events:{onError:function(ev){ var e=document.getElementById('xgPr'); if(e) e.innerHTML='⚠️ video এখানে চালানো যাচ্ছে না (error '+(ev&&ev.data)+'). পরে আবার চেষ্টা করো।'; }}}); }catch(e){ done=false; fallback(); return; }
     xgTm=setInterval(function(){
       if(!document.getElementById('xgYtW')){ xgStopTrack(); return; }
-      try{ if(v.w) return; if(xgP.getPlayerState()===1){ var d=xgP.getDuration()||0; if(d>0){ v.dur=d; v.acc=(v.acc||0)+(xgP.getPlaybackRate()||1); xgTick++; if(xgTick%5===0){ xsSave(); xgShowPr(v); } if(v.acc>=0.85*d){ xgMarkDone(v); } } } }catch(e){}
+      try{ if(v.w) return; var st=xgP.getPlayerState(), d=xgP.getDuration()||0; if(d>0) v.dur=d; if(st===1&&d>0){ v.acc=Math.min(d,(v.acc||0)+(xgP.getPlaybackRate()||1)); xgTick++; if(xgTick%5===0) xsSave(); xgShowPr(v); } if(d>0&&((st===0&&(v.acc||0)>=0.95*d)||(v.acc||0)>=0.99*d)){ v.acc=d; xgMarkDone(v); } }catch(e){}
     },1000);
   }
   if(window.YT&&YT.Player) make();
@@ -6874,8 +6872,132 @@ function xgPlayer(v){
     var prev=window.onYouTubeIframeAPIReady; window.onYouTubeIframeAPIReady=function(){ try{ prev&&prev(); }catch(e){} make(); };
     setTimeout(function(){ if(!(window.YT&&YT.Player)) fallback(); },6000); }
 }
-var _cm10=closeModal; closeModal=function(){ xgStopTrack(); _cm10.apply(this,arguments); };
 function xgShVid(id){ var v=xgVid(id), P=xgParse(v); xgStopTrack(); xgSh.list=xsShuffle(P.sents).slice(0,15); xgSh.i=0; xgShDraw(); }
+
+</script>
+<script>
+// ===== Course redesign: strict lock (first open, rest locked), 100% rule =====
+function xgOpen(i){ var a=xgCs().vids; return i===0 || !!a[i-1].w; }
+function xgPct(v){ if(v.w) return 100; if(!v.dur) return 0; return Math.min(99,Math.round((v.acc||0)/v.dur*100)); }
+function xgThumb(v){ return 'https://i.ytimg.com/vi/'+v.yt+'/mqdefault.jpg'; }
+xgShowPr=function(v){
+  var e=document.getElementById('xgPr'); if(!e) return; var p=xgPct(v);
+  e.innerHTML='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;"><span style="color:var(--sub);">'+(v.w?'✅ সম্পন্ন':'👁 দেখা হয়েছে')+'</span><b style="color:'+(v.w?'var(--green)':'var(--text)')+';">'+p+'%</b></div><div style="height:9px;background:var(--border);border-radius:9px;overflow:hidden;"><div style="height:100%;width:'+p+'%;background:'+(v.w?'var(--green)':'linear-gradient(90deg,#4361ee,#22d3ee)')+';border-radius:9px;transition:width .6s;"></div></div><div style="font-size:11px;color:var(--muted);margin-top:6px;">'+(v.w?'🔓 পরের video unlock হয়েছে':'পুরো (১০০%) দেখলে পরের video খুলবে — আগে এগিয়ে গেলে গোনা হবে না')+'</div>';
+};
+function xgCourse(){
+  if(!_mg) _mg={g:8};
+  var c=xgCs(), V=c.vids, done=V.filter(function(v){return v.w;}).length, tp=V.length?Math.round(done/V.length*100):0;
+  var h='<div style="background:linear-gradient(135deg,#1a1f6e,#0d1040);border:1px solid var(--borderL,#3a3f8a);border-radius:18px;padding:15px;margin-bottom:12px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:34px;">🎬</div><div style="flex:1;"><div style="font-size:18px;font-weight:900;color:#fff;">A1 Sprechen Kurs</div><div style="font-size:12px;color:#c7cbff;margin-top:2px;">'+(V.length?done+' / '+V.length+' video সম্পন্ন':'video যোগ করে শুরু করো')+'</div></div><div style="font-size:20px;font-weight:900;color:#fff;">'+tp+'%</div></div><div style="height:8px;background:#ffffff22;border-radius:9px;margin-top:11px;overflow:hidden;"><div style="height:100%;width:'+tp+'%;background:linear-gradient(90deg,#2dd4a0,#22d3ee);border-radius:9px;"></div></div></div>';
+  h+='<div style="display:flex;gap:8px;margin-bottom:12px;"><button class="btn btn-blue btn-sm" style="flex:1;" onclick="xgVidEdit(null)">➕ Video</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgBulk()">📦 একসাথে</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPlaylist()">🎞 Playlist</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPracAll()">🔀 মিশ্র</button></div>';
+  if(!V.length) h+='<div class="empty-box"><div class="ico">🎬</div><div class="txt">এখনো কোনো video নেই।<br>➕ Video বা 📦 একসাথে চাপো।</div></div>';
+  h+='<div style="padding:2px;">';
+  var cur=-1; V.forEach(function(v,i){ if(cur<0&&!v.w) cur=i; });
+  V.forEach(function(v,i){
+    var op=xgOpen(i), P=xgParse(v), p=xgPct(v), isCur=(i===cur);
+    var st=v.w?'<span style="color:var(--green);">✅ সম্পন্ন</span>':(op?'<span style="color:var(--blue);">'+(p?'▶ চালিয়ে যাও · '+p+'%':'▶ শুরু করো')+'</span>':'<span style="color:var(--muted);">🔒 আগের video শেষ করো</span>');
+    h+='<div style="display:flex;gap:11px;background:var(--card);border:1.5px solid '+(isCur?'var(--blue)':v.w?'#2dd4a066':'var(--border)')+';'+(isCur?'box-shadow:0 0 0 3px #4361ee22;':'')+'border-radius:16px;padding:9px;margin-bottom:10px;">';
+    h+='<div onclick="'+(op?'xgOpenVid(\''+v.id+'\')':'showToast(\'🔒 আগের video ১০০% দেখো\')')+'" style="position:relative;width:118px;min-width:118px;height:70px;border-radius:11px;overflow:hidden;background:#111 center/cover url('+xgThumb(v)+');cursor:pointer;">';
+    h+='<div style="position:absolute;left:5px;top:5px;background:#000a;color:#fff;font-size:11px;font-weight:900;border-radius:7px;padding:1px 7px;">'+(i+1)+'</div>';
+    if(!op) h+='<div style="position:absolute;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;font-size:26px;">🔒</div>';
+    else if(v.w) h+='<div style="position:absolute;inset:0;background:#0a3d2a99;display:flex;align-items:center;justify-content:center;font-size:26px;">✅</div>';
+    else h+='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;"><div style="width:30px;height:30px;border-radius:50%;background:#000a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;">▶</div></div>';
+    h+='</div><div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between;"><div style="display:flex;gap:6px;"><div style="flex:1;font-weight:800;font-size:14px;color:var(--text);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">'+esc(v.title||'Video')+'</div><button class="sp-ib" style="align-self:flex-start;" onclick="xgVidEdit(\''+v.id+'\')">✏️</button></div>';
+    h+='<div style="font-size:11px;color:var(--sub);">'+P.sents.length+' বাক্য'+(P.vocab.length?' · '+P.vocab.length+' শব্দ':'')+(v.pc?' · '+v.pc+'× practice':'')+'</div>';
+    h+='<div style="font-size:12px;font-weight:800;">'+st+'</div>';
+    if(op&&!v.w&&p) h+='<div style="height:4px;background:var(--border);border-radius:4px;margin-top:3px;"><div style="height:100%;width:'+p+'%;background:var(--blue);border-radius:4px;"></div></div>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+  xgMount('pgCourse',h);
+}
+var XG_TILE={dict:['🎧','Dictation','শুনে লেখো'],order:['🧩','সাজাও','শব্দ সাজিয়ে বাক্য'],cloze:['✏️','Lückentext','শূন্যস্থান পূরণ'],type:['⌨️','অনুবাদ','বাংলা → জার্মান'],words:['🔤','Wörter','শব্দ quiz'],say:['🗣','Sprechen','জোরে বলো']};
+function xgOpenVid(id){
+  var V=xgCs().vids, v=xgVid(id); if(!v) return; if(!_mg) _mg={g:8}; var P=xgParse(v), idx=V.indexOf(v);
+  var h='';
+  h+='<div id="xgYtW" style="box-shadow:0 6px 18px #0006;"><div id="xgYt"></div></div><div id="xgPr" style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 12px;margin:10px 0;"></div>';
+  h+='<div><div style="display:flex;justify-content:space-between;align-items:baseline;margin:4px 2px 8px;"><div style="font-size:13px;font-weight:900;color:var(--text);">🎯 Practice</div><div style="font-size:11px;color:var(--sub);">'+P.sents.length+' বাক্য'+(P.vocab.length?' · '+P.vocab.length+' শব্দ':'')+(v.pc?' · '+v.pc+'× করেছ':'')+'</div></div>';
+  var mx=xgPracOk(P,'mix');
+  h+='<button '+(mx?'':'disabled ')+'onclick="xgPrac(\''+id+'\',\'mix\')" style="width:100%;border:0;border-radius:14px;padding:13px;margin-bottom:8px;background:linear-gradient(135deg,#4361ee,#7c3aed);color:#fff;font-weight:900;font-size:15px;cursor:pointer;'+(mx?'':'opacity:.45;')+'">🔀 মিশ্র practice <span style="font-weight:500;font-size:12px;">· ১৬টি প্রশ্ন</span></button><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+  Object.keys(XG_TILE).forEach(function(k){ var ok=xgPracOk(P,k), t=XG_TILE[k]; h+='<button '+(ok?'':'disabled ')+'onclick="xgPrac(\''+id+'\',\''+k+'\')" style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 11px;color:var(--text);cursor:pointer;'+(ok?'':'opacity:.4;')+'"><div style="font-size:21px;">'+t[0]+'</div><div style="font-weight:800;font-size:13px;margin-top:2px;">'+t[1]+'</div><div style="font-size:10px;color:var(--sub);">'+(ok?t[2]:(k==='type'?'বাংলাসহ transcript লাগবে':k==='words'?'৪টি শব্দ লাগবে':'transcript লাগবে'))+'</div></button>'; });
+  h+='<button '+(P.sents.length>=3?'':'disabled ')+'onclick="xgShVid(\''+id+'\')" style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 11px;color:var(--text);cursor:pointer;'+(P.sents.length>=3?'':'opacity:.4;')+'"><div style="font-size:21px;">🐢</div><div style="font-weight:800;font-size:13px;margin-top:2px;">Shadowing</div><div style="font-size:10px;color:var(--sub);">শুনে সাথে বলো</div></button><button onclick="xgTrToggle()" style="text-align:left;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 11px;color:var(--text);cursor:pointer;"><div style="font-size:21px;">📄</div><div style="font-weight:800;font-size:13px;margin-top:2px;">Transcript</div><div style="font-size:10px;color:var(--sub);">পড়ো ও 🔊 শোনো</div></button></div><div id="xgTr" style="display:none;margin-top:10px;"></div>';
+  if(!P.sents.length) h+='<div style="font-size:12px;color:var(--gold);margin-top:10px;text-align:center;">⚠️ Transcript নেই — ✏️ চেপে যোগ করলে practice খুলবে</div>';
+  h+='</div>';
+  xgMount('pgVid',h,'🎬 Video '+(idx+1)+' / '+V.length); document.getElementById('pgVidEdit').onclick=function(){ xgVidEdit(id); };
+  xgPlayer(v); xgShowPr(v);
+}
+
+</script>
+<script>
+// ===== Course as full pages =====
+(function(){
+  function mk(id,title,backFn,extra){ var d=document.createElement('div'); d.id=id; d.className='page';
+    d.innerHTML='<div class="inner-page-bar"><button class="back-btn" onclick="'+backFn+'">←</button><span class="ipb-title" id="'+id+'T">'+title+'</span>'+(extra||'')+'</div><div id="'+id+'Body" style="flex:1;overflow-y:auto;padding:14px 16px 40px;max-width:560px;width:100%;margin:0 auto;"></div>';
+    document.body.appendChild(d); }
+  mk('pgCourse','🎬 A1 Sprechen Kurs','xgCourseBack()');
+  mk('pgVid','Video','xgVidBack()','<button class="sp-ib" id="pgVidEdit" style="font-size:15px;">✏️</button>');
+})();
+function xgMount(pg,h,title){
+  closeModal(); document.getElementById(pg+'Body').innerHTML=h; if(title) document.getElementById(pg+'T').textContent=title;
+  if(pg!=='pgVid') document.getElementById('pgVidBody').innerHTML='';
+  showPage(pg); document.getElementById(pg+'Body').scrollTop=0;
+}
+function xgCourseBack(){ xgLeaveVid(); showPage('pgApp'); openDrawer(); drCollapse(); drToggle(8); }
+function xgVidBack(){ xgLeaveVid(); xgCourse(); }
+function xgLeaveVid(){ xgStopTrack(); var b=document.getElementById('pgVidBody'); if(b) b.innerHTML=''; }
+function xgPause(){ try{ xgP.pauseVideo(); }catch(e){} }
+var _xgPrac12=xgPrac; xgPrac=function(vid,k){ var v=xgVid(vid), P=v&&xgParse(v); if(!v||!xgPracOk(P,k)){ showToast('এর জন্য transcript-এ যথেষ্ট data নেই'); return; } xgLeaveVid(); _xgPrac12(vid,k); };
+var _xgPA12=xgPracAll; xgPracAll=function(){ var n=xgCs().vids.filter(function(v){ return xgParse(v).sents.length>=2; }).length; if(n) xgLeaveVid(); _xgPA12(); };
+var _xgShVid12=xgShVid; xgShVid=function(id){ xgPause(); _xgShVid12(id); };
+var _xqBack12=xqBack;
+xqBack=function(){ var g=xq.game; if(g&&g.k==='menu'&&g.g===8&&!g.vid){ xq.game=null; _xqBack1(); xgCourse(); return; } _xqBack12(); };
+
+</script>
+<script>
+// ===== Playlist import =====
+function xgPlaylist(){
+  var h='<div style="font-size:17px;font-weight:900;color:var(--text);margin-bottom:6px;">🎞 Playlist import</div><div style="font-size:12px;color:var(--sub);margin-bottom:8px;line-height:1.6;">YouTube playlist-এর লিংক paste করো। সব video ক্রম অনুযায়ী কোর্সে যোগ হবে। (ইন্টারনেট লাগবে; app hosted লিংক থেকে খুললে ভালো কাজ করে)</div><input id="xgPl" type="text" placeholder="https://youtube.com/playlist?list=PL…" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px;color:var(--text);font-size:14px;font-family:inherit;outline:none;"/><button class="btn btn-blue btn-full" style="margin-top:10px;" onclick="xgPlGo()">⬇ Import করো</button><div id="xgPlSt" style="font-size:13px;color:var(--sub);margin-top:10px;line-height:1.6;text-align:center;"></div><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="closeModal()">✕ বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function xgPlSt(t){ var e=document.getElementById('xgPlSt'); if(e) e.innerHTML=t; }
+var xgPlP=null;
+function xgPlGo(){
+  var u=document.getElementById('xgPl').value, m=u.match(/[?&]list=([A-Za-z0-9_-]+)/)||(/^[A-Za-z0-9_-]{12,}$/.test(u.trim())?[0,u.trim()]:null);
+  if(!m){ xgPlSt('❌ সঠিক playlist লিংক দাও'); return; }
+  var id=m[1]; xgPlSt('⏳ playlist লোড হচ্ছে…');
+  var done=false, tries=0;
+  function ensureApi(cb){
+    if(window.YT&&YT.Player){ cb(); return; }
+    if(!document.getElementById('ytApiJs')){ var s=document.createElement('script'); s.id='ytApiJs'; s.src='https://www.youtube.com/iframe_api'; s.onerror=function(){ xgPlSt('❌ YouTube API লোড হয়নি — ইন্টারনেট দেখো'); }; document.head.appendChild(s); }
+    var prev=window.onYouTubeIframeAPIReady; window.onYouTubeIframeAPIReady=function(){ try{ prev&&prev(); }catch(e){} cb(); };
+  }
+  ensureApi(function(){
+    var host=document.getElementById('xgPlHost'); if(host) host.remove();
+    host=document.createElement('div'); host.id='xgPlHost'; host.style.cssText='position:fixed;left:-9999px;top:0;width:200px;height:120px;'; var inner=document.createElement('div'); inner.id='xgPlHostIn'; host.appendChild(inner); document.body.appendChild(host);
+    try{ xgPlP=new YT.Player('xgPlHostIn',{height:'120',width:'200',playerVars:{listType:'playlist',list:id},events:{onReady:function(){ poll(); },onError:function(e){ if(!done){ done=true; xgPlSt('❌ playlist খোলা যায়নি (error '+(e&&e.data)+') — private হলে বা embed বন্ধ থাকলে হয় না'); cleanup(); } }}}); }catch(e){ xgPlSt('❌ '+e.message); }
+  });
+  function cleanup(){ try{ xgPlP.destroy(); }catch(e){} var h=document.getElementById('xgPlHost'); if(h) h.remove(); xgPlP=null; }
+  function poll(){
+    if(done) return; var ids=null; try{ ids=xgPlP.getPlaylist(); }catch(e){}
+    if(ids&&ids.length){ done=true; cleanup(); xgPlAdd(ids); return; }
+    if(++tries>25){ done=true; cleanup(); xgPlSt('❌ playlist-এর তালিকা পাওয়া যায়নি। 📦 "একসাথে" দিয়ে link paste করো।'); return; }
+    setTimeout(poll,400);
+  }
+}
+function xgPlAdd(ids){
+  var c=xgCs(), have={}; c.vids.forEach(function(v){ have[v.yt]=1; });
+  var fresh=ids.filter(function(x,i,a){ return a.indexOf(x)===i && !have[x]; });
+  if(!fresh.length){ xgPlSt('ℹ️ সবগুলো video আগেই যোগ করা আছে'); return; }
+  var base=c.vids.length, added=[];
+  fresh.forEach(function(yt,i){ var v={id:'v'+Date.now()+'_'+i,title:'Video '+(base+i+1),yt:yt,tr:'',vk:'',w:0,acc:0,pc:0}; c.vids.push(v); added.push(v); });
+  xsSave(); xgPlSt('✅ '+added.length+'টি video যোগ হয়েছে। নাম আনা হচ্ছে…');
+  var k=0, ok=0;
+  function next(){
+    if(k>=added.length){ xsSave(); xgPlSt('✅ '+added.length+'টি video যোগ হয়েছে'+(ok?' (নামসহ '+ok+'টি)':' (নাম পাওয়া যায়নি — ✏️ দিয়ে বদলাতে পারো)')+'<br><button class="btn btn-blue btn-sm" style="margin-top:8px;" onclick="xgCourse()">🎬 কোর্সে যাও</button>'); return; }
+    var v=added[k++]; var t=setTimeout(next,4000), fin=false;
+    try{ fetch('https://noembed.com/embed?url='+encodeURIComponent('https://www.youtube.com/watch?v='+v.yt)).then(function(r){ return r.json(); }).then(function(j){ if(fin) return; fin=true; clearTimeout(t); if(j&&j.title){ v.title=j.title; ok++; } xgPlSt('⏳ নাম আনা হচ্ছে '+k+'/'+added.length); next(); }).catch(function(){ if(fin) return; fin=true; clearTimeout(t); next(); }); }catch(e){ clearTimeout(t); next(); }
+  }
+  next();
+}
 
 </script>
 </body>
