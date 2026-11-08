@@ -831,7 +831,7 @@ input,select,textarea,button{font-family:var(--font);}
     <div class="dr-sub" id="drS8" style="display:none;margin:0 0 4px 22px;padding-left:10px;border-left:2px solid var(--border);">
       <button class="dr-item" onclick="drGo('xgCourse()',8)"><span class="dr-ico">🎬</span><span>Video কোর্স<small>তালিকা, দেখা ও practice</small></span></button>
       <button class="dr-item" onclick="drGo('xgVidEdit(null)',8)"><span class="dr-ico">➕</span><span>Video যোগ করো<small>link + transcript</small></span></button>
-      <button class="dr-item" onclick="drGo('xgPlaylist()',8)"><span class="dr-ico">🎞</span><span>Playlist import<small>playlist লিংক থেকে সব video</small></span></button>
+      <button class="dr-item" onclick="drGo('xgPlaylist()',8)"><span class="dr-ico">🎞</span><span>নতুন Playlist<small>খালি বা YouTube লিংক থেকে</small></span></button>
       <button class="dr-item" onclick="drGo('xgPracAll()',8)"><span class="dr-ico">🔀</span><span>সব video মিশ্র<small>সব transcript থেকে practice</small></span></button>
     </div>
     <button class="dr-item dr-grp" id="drG3" onclick="drToggle(3)" aria-expanded="false"><span class="dr-ico">📥</span><span style="flex:1;">তৈরি Data<small>এক চাপে Story ও Card যোগ করো</small></span><span class="dr-arr" style="font-size:13px;color:var(--muted);transition:transform .2s;">▼</span></button>
@@ -6809,27 +6809,27 @@ function xgVidEdit(id){
   var h='<div style="font-size:17px;font-weight:900;color:var(--text);margin-bottom:8px;">'+(id?'✏️ Video edit':'➕ নতুন video')+'</div>';
   h+='<div style="max-height:60vh;overflow-y:auto;"><div style="font-size:11px;color:var(--sub);margin:6px 0 3px;">নাম</div><input id="xgVT" type="text" style="'+inp+'" value="'+esc(v.title)+'"/>';
   h+='<div style="font-size:11px;color:var(--sub);margin:8px 0 3px;">YouTube link</div><input id="xgVU" type="text" style="'+inp+'" placeholder="https://youtu.be/…" value="'+esc(v.yt?('https://youtu.be/'+v.yt):'')+'"/>';
-  h+='<div style="font-size:11px;color:var(--sub);margin:8px 0 3px;">video-র দৈর্ঘ্য (মিনিট, ঐচ্ছিক — YouTube-এ খুলে দেখলে "পুরো দেখেছি" যাচাইয়ে লাগে)</div><input id="xgVL" type="number" min="0" step="0.5" style="'+inp+'" value="'+(v.len||'')+'"/><div style="font-size:11px;color:var(--sub);margin:8px 0 3px;">Transcript — এক লাইনে একটা বাক্য। বাংলাসহ হলে: <b>জার্মান | বাংলা</b></div><textarea id="xgVR" rows="8" style="'+inp+'resize:vertical;" spellcheck="false">'+esc(v.tr)+'</textarea>';
+  h+='<div style="font-size:11px;color:var(--sub);margin:8px 0 3px;">video-র দৈর্ঘ্য (মিনিট, ঐচ্ছিক — YouTube-এ খুলে দেখলে "পুরো দেখেছি" যাচাইয়ে লাগে)</div><input id="xgVL" type="number" min="0" step="0.5" style="'+inp+'" value="'+(v.len||'')+'"/><div style="font-size:11px;color:var(--sub);margin:8px 0 3px;">Transcript — YouTube-এ <b>⋮ → Transcript দেখান</b> থেকে সব কপি করে paste করলেই চলবে। নিজে লিখলে এক লাইনে একটা বাক্য (শেষে . দিয়ো); বাংলাসহ: <b>জার্মান | বাংলা</b></div><textarea id="xgVR" rows="8" style="'+inp+'resize:vertical;" spellcheck="false">'+esc(v.tr)+'</textarea>';
   h+='<div style="font-size:11px;color:var(--sub);margin:8px 0 3px;">শব্দ তালিকা (ঐচ্ছিক) — এক লাইনে: <b>der Tisch = টেবিল</b></div><textarea id="xgVK" rows="4" style="'+inp+'resize:vertical;" spellcheck="false">'+esc(v.vk)+'</textarea></div>';
-  h+='<div style="display:flex;gap:8px;margin-top:10px;"><button class="btn btn-blue btn-sm" style="flex:2;" onclick="xgVidSave('+(id?'\''+id+'\'':'null')+')">💾 Save</button>'+(id?'<button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgVidMove(\''+id+'\',-1)">⬆</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgVidMove(\''+id+'\',1)">⬇</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgVidDel(\''+id+'\')">🗑</button>':'')+'</div><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="xgCourse()">← তালিকা</button>';
+  h+='<div style="display:flex;gap:8px;margin-top:10px;"><button class="btn btn-blue btn-sm" style="flex:2;" onclick="xgVidSave('+(id?'\''+id+'\'':'null')+')">💾 Save</button>'+(id?'<button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgVidMove(\''+id+'\',-1)">⬆</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgVidMove(\''+id+'\',1)">⬇</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgVidDel(\''+id+'\')">🗑</button>':'')+'</div><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="xgBack2List()">← তালিকা</button>';
   document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
 }
 function xgVidSave(id){
   var yt=xgYtId(document.getElementById('xgVU').value); if(!yt){ showToast('সঠিক YouTube link দাও'); return; }
   var t=document.getElementById('xgVT').value.trim()||'Video', tr=document.getElementById('xgVR').value, vk=document.getElementById('xgVK').value, c=xgCs();
   if(id){ var v=xgVid(id); if(v.yt!==yt){ v.acc=0; v.dur=0; } v.title=t; v.yt=yt; v.tr=tr; v.vk=vk; v.len=parseFloat(document.getElementById('xgVL').value)||0; }
-  else c.vids.push({id:'v'+Date.now()+Math.floor(Math.random()*999),title:t,yt:yt,tr:tr,vk:vk,w:0,acc:0,pc:0,len:parseFloat(document.getElementById('xgVL').value)||0});
-  xsSave(); showToast('✅ Save হয়েছে'); xgCourse();
+  else c.vids.push({pl:xgCurPl||xgEnsurePl(),id:'v'+Date.now()+Math.floor(Math.random()*999),title:t,yt:yt,tr:tr,vk:vk,w:0,acc:0,pc:0,len:parseFloat(document.getElementById('xgVL').value)||0});
+  xsSave(); showToast('✅ Save হয়েছে'); xgBack2List();
 }
-function xgVidDel(id){ if(confirm('এই video মুছবে?')){ xgCs().vids=xgCs().vids.filter(function(v){return v.id!==id;}); xsSave(); xgCourse(); } }
+function xgVidDel(id){ if(confirm('এই video মুছবে?')){ xgCs().vids=xgCs().vids.filter(function(v){return v.id!==id;}); xsSave(); xgBack2List(); } }
 function xgVidMove(id,d){ var a=xgCs().vids, i=a.findIndex(function(v){return v.id===id;}), j=i+d; if(j<0||j>=a.length) return; var t=a[i]; a[i]=a[j]; a[j]=t; xsSave(); xgVidEdit(id); }
 function xgBulk(){
-  var h='<div style="font-size:17px;font-weight:900;color:var(--text);margin-bottom:6px;">📦 অনেক link একসাথে</div><div style="font-size:12px;color:var(--sub);margin-bottom:8px;line-height:1.6;">এক লাইনে একটা link। নাম দিতে চাইলে: <b>link | নাম</b>। transcript পরে প্রতিটায় যোগ করবে।</div><textarea id="xgBk" rows="9" spellcheck="false" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;"></textarea><button class="btn btn-blue btn-full" style="margin-top:8px;" onclick="xgBulkSave()">➕ যোগ করো</button><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="xgCourse()">← তালিকা</button>';
+  var h='<div style="font-size:17px;font-weight:900;color:var(--text);margin-bottom:6px;">📦 অনেক link একসাথে</div><div style="font-size:12px;color:var(--sub);margin-bottom:8px;line-height:1.6;">এক লাইনে একটা link। নাম দিতে চাইলে: <b>link | নাম</b>। transcript পরে প্রতিটায় যোগ করবে।</div><textarea id="xgBk" rows="9" spellcheck="false" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;"></textarea><button class="btn btn-blue btn-full" style="margin-top:8px;" onclick="xgBulkSave()">➕ যোগ করো</button><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="xgBack2List()">← তালিকা</button>';
   document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
 }
 function xgBulkSave(){
-  var n=0, c=xgCs(); document.getElementById('xgBk').value.split(/\n+/).forEach(function(l){ l=l.trim(); if(!l) return; var p=l.split('|'), yt=xgYtId(p[0]); if(!yt) return; c.vids.push({id:'v'+Date.now()+Math.floor(Math.random()*99999)+n,title:(p[1]||'').trim()||('Video '+(c.vids.length+1)),yt:yt,tr:'',vk:'',w:0,acc:0,pc:0}); n++; });
-  if(!n){ showToast('কোনো সঠিক link পাওয়া যায়নি'); return; } xsSave(); showToast('✅ '+n+'টি video যোগ হয়েছে'); xgCourse();
+  var n=0, c=xgCs(); document.getElementById('xgBk').value.split(/\n+/).forEach(function(l){ l=l.trim(); if(!l) return; var p=l.split('|'), yt=xgYtId(p[0]); if(!yt) return; c.vids.push({pl:xgCurPl||xgEnsurePl(),id:'v'+Date.now()+Math.floor(Math.random()*99999)+n,title:(p[1]||'').trim()||('Video '+(c.vids.length+1)),yt:yt,tr:'',vk:'',w:0,acc:0,pc:0}); n++; });
+  if(!n){ showToast('কোনো সঠিক link পাওয়া যায়নি'); return; } xsSave(); showToast('✅ '+n+'টি video যোগ হয়েছে'); xgBack2List();
 }
 // ---- video screen + tracking ----
 var xgP=null, xgTm=null, xgTick=0;
@@ -6852,7 +6852,7 @@ var xgCurV=null;
 function xgShowPr(v){ var e=document.getElementById('xgPr'); if(!e) return; e.innerHTML=v.w?'✅ পুরো দেখা হয়েছে'+(v.forced?' (হাতে)':''):(v.dur?'👁 দেখা: <b style="color:var(--text);">'+Math.min(99,Math.round(v.acc/v.dur*100))+'%</b> — পুরো দেখলে পরের video খুলবে':'পুরো video দেখলে পরের video খুলবে'); }
 function xgMarkDone(v,manual){
   if(v.w) return; v.w=1; v.wt=Date.now(); if(manual) v.forced=1; xsSave(); xsAct('s',2);
-  var nx=xgCs().vids[xgCs().vids.indexOf(v)+1]; showToast(nx?'🎉 পরের video খুলে গেছে!':'🎉 কোর্স শেষ!'); xgShowPr(v);
+  var VL=xgVidsOf(xgPlOf(v)), nx=VL[VL.indexOf(v)+1]; showToast(nx?'🎉 পরের video খুলে গেছে!':'🎉 কোর্স শেষ!'); xgShowPr(v);
 }
 function xgMarkManual(id){ var v=xgVid(id); if(v.w){ showToast('আগেই শেষ হয়েছে'); return; }
   if(confirm('সত্যিই পুরো video দেখেছ?')) xgMarkDone(v,true); }
@@ -6888,7 +6888,7 @@ function xgCourse(){
   if(!_mg) _mg={g:8};
   var c=xgCs(), V=c.vids, done=V.filter(function(v){return v.w;}).length, tp=V.length?Math.round(done/V.length*100):0;
   var h='<div style="background:linear-gradient(135deg,#1a1f6e,#0d1040);border:1px solid var(--borderL,#3a3f8a);border-radius:18px;padding:15px;margin-bottom:12px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:34px;">🎬</div><div style="flex:1;"><div style="font-size:18px;font-weight:900;color:#fff;">A1 Sprechen Kurs</div><div style="font-size:12px;color:#c7cbff;margin-top:2px;">'+(V.length?done+' / '+V.length+' video সম্পন্ন':'video যোগ করে শুরু করো')+'</div></div><div style="font-size:20px;font-weight:900;color:#fff;">'+tp+'%</div></div><div style="height:8px;background:#ffffff22;border-radius:9px;margin-top:11px;overflow:hidden;"><div style="height:100%;width:'+tp+'%;background:linear-gradient(90deg,#2dd4a0,#22d3ee);border-radius:9px;"></div></div></div>';
-  h+='<div style="display:flex;gap:8px;margin-bottom:12px;"><button class="btn btn-blue btn-sm" style="flex:1;" onclick="xgVidEdit(null)">➕ Video</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgBulk()">📦 একসাথে</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPlaylist()">🎞 Playlist</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPracAll()">🔀 মিশ্র</button></div>';
+  h+='<div style="display:flex;gap:8px;margin-bottom:12px;"><button class="btn btn-blue btn-sm" style="flex:1;" onclick="xgVidEdit(null)">➕ Video</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgBulk()">📦 একসাথে</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPlaylist()">🎞 Playlist</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgTitles(true)">🏷 নাম</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPracAll()">🔀 মিশ্র</button></div>';
   if(!V.length) h+='<div class="empty-box"><div class="ico">🎬</div><div class="txt">এখনো কোনো video নেই।<br>➕ Video বা 📦 একসাথে চাপো।</div></div>';
   h+='<div style="padding:2px;">';
   var cur=-1; V.forEach(function(v,i){ if(cur<0&&!v.w) cur=i; });
@@ -6912,7 +6912,7 @@ function xgCourse(){
 }
 var XG_TILE={dict:['🎧','Dictation','শুনে লেখো'],order:['🧩','সাজাও','শব্দ সাজিয়ে বাক্য'],cloze:['✏️','Lückentext','শূন্যস্থান পূরণ'],type:['⌨️','অনুবাদ','বাংলা → জার্মান'],words:['🔤','Wörter','শব্দ quiz'],say:['🗣','Sprechen','জোরে বলো']};
 function xgOpenVid(id){
-  var V=xgCs().vids, v=xgVid(id); if(!v) return; if(!_mg) _mg={g:8}; var P=xgParse(v), idx=V.indexOf(v);
+  var v=xgVid(id); if(!v) return; var V=xgVidsOf(xgPlOf(v)); if(!_mg) _mg={g:8}; var P=xgParse(v), idx=V.indexOf(v);
   var h='';
   h+='<div id="xgYtW" style="box-shadow:0 6px 18px #0006;"><div id="xgYt"></div></div><div id="xgPr" style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 12px;margin:10px 0;"></div>';
   h+='<div><div style="display:flex;justify-content:space-between;align-items:baseline;margin:4px 2px 8px;"><div style="font-size:13px;font-weight:900;color:var(--text);">🎯 Practice</div><div style="font-size:11px;color:var(--sub);">'+P.sents.length+' বাক্য'+(P.vocab.length?' · '+P.vocab.length+' শব্দ':'')+(v.pc?' · '+v.pc+'× করেছ':'')+'</div></div>';
@@ -6949,7 +6949,7 @@ var _xgPrac12=xgPrac; xgPrac=function(vid,k){ var v=xgVid(vid), P=v&&xgParse(v);
 var _xgPA12=xgPracAll; xgPracAll=function(){ var n=xgCs().vids.filter(function(v){ return xgParse(v).sents.length>=2; }).length; if(n) xgLeaveVid(); _xgPA12(); };
 var _xgShVid12=xgShVid; xgShVid=function(id){ xgPause(); _xgShVid12(id); };
 var _xqBack12=xqBack;
-xqBack=function(){ var g=xq.game; if(g&&g.k==='menu'&&g.g===8&&!g.vid){ xq.game=null; _xqBack1(); xgCourse(); return; } _xqBack12(); };
+xqBack=function(){ var g=xq.game; if(g&&g.k==='menu'&&g.g===8&&!g.vid){ xq.game=null; _xqBack1(); xgBack2List(); return; } _xqBack12(); };
 
 </script>
 <script>
@@ -6998,6 +6998,218 @@ function xgPlAdd(ids){
   }
   next();
 }
+
+</script>
+<script type="application/json" id="plData">[{"name": "A1 Videos", "videos": [{"yt": "PSvABZV9GW4", "title": "Video 1"}, {"yt": "TlVG0ORnkZQ", "title": "Video 2"}, {"yt": "CdoqrkS0sMY", "title": "Video 3"}, {"yt": "yekbqC8mdFY", "title": "Video 4"}, {"yt": "MzkDLa0TWy4", "title": "Video 5"}, {"yt": "5-coQCLlxe0", "title": "Video 6"}, {"yt": "XJSu-DzbQkY", "title": "Video 7"}, {"yt": "adPlB3MhbAs", "title": "Video 8"}, {"yt": "Wz83ixu2cxk", "title": "Video 9"}, {"yt": "THwuFPTWWz0", "title": "Video 10"}, {"yt": "wzhwAC_G7Y4", "title": "Video 11"}, {"yt": "9KzUFTLJMco", "title": "Video 12"}, {"yt": "KOQtdj7kI7o", "title": "Video 13"}, {"yt": "mumUZX6k1Fc", "title": "Video 14"}, {"yt": "_HRlrifQ-kY", "title": "Video 15"}, {"yt": "lTQGA_kZTuI", "title": "Video 16"}, {"yt": "16slasJCyuw", "title": "Video 17"}, {"yt": "EDfZDnyK4tc", "title": "Video 18"}, {"yt": "WGSX7tpJ840", "title": "Video 19"}, {"yt": "z6bdOVplDU0", "title": "Video 20"}, {"yt": "MEa22As8fzk", "title": "Video 21"}, {"yt": "N078y7i1Gfk", "title": "Video 22"}, {"yt": "LLJkzJnQp0M", "title": "Video 23"}, {"yt": "Lm-JHvuA134", "title": "Video 24"}, {"yt": "Q8ulAI-1w8c", "title": "Video 25"}, {"yt": "ZSAb89OdvVo", "title": "Video 26"}, {"yt": "8PZaPQBnwDc", "title": "Video 27"}, {"yt": "tfRiTNiLSAA", "title": "Video 28"}, {"yt": "dIsRaTgF6HA", "title": "Video 29"}, {"yt": "5qvpKWp-LVc", "title": "Video 30"}, {"yt": "qhAQ8R8RvfU", "title": "Video 31"}, {"yt": "uDJ3rN7hO1s", "title": "Video 32"}, {"yt": "E-izrCzHpCY", "title": "Video 33"}, {"yt": "xmg--Tl9bx0", "title": "Video 34"}, {"yt": "FMloKoYBCvo", "title": "Video 35"}, {"yt": "Yu5QuiGjm6c", "title": "Video 36"}, {"yt": "eStqLk1PuXc", "title": "Video 37"}, {"yt": "nnW0Cw1sEAA", "title": "Video 38"}]}, {"name": "Playlist 2", "videos": [{"yt": "B2X5a5MJ5b0", "title": "Video 1"}, {"yt": "avhKwATDNyA", "title": "Video 2"}, {"yt": "e_0YH1wc5Tc", "title": "Video 3"}, {"yt": "ETVbNQr28M0", "title": "Video 4"}, {"yt": "PIFk2kLsc80", "title": "Video 5"}]}, {"name": "Playlist 3", "videos": [{"yt": "qykzCSTfUFE", "title": "Video 1"}, {"yt": "avhKwATDNyA", "title": "Video 2"}, {"yt": "e_0YH1wc5Tc", "title": "Video 3"}, {"yt": "mGLVDjqs4-8", "title": "Video 4"}]}, {"name": "Playlist 4", "videos": [{"yt": "N078y7i1Gfk", "title": "Video 1"}, {"yt": "nwFa00hV86k", "title": "Video 2"}, {"yt": "vy7qp49h8v8", "title": "Video 3"}, {"yt": "Q8ulAI-1w8c", "title": "Video 4"}, {"yt": "uzCnZ4j52EY", "title": "Video 5"}]}, {"name": "Playlist 5", "videos": [{"yt": "0T_OYYc9_hI", "title": "Video 1"}, {"yt": "cUC3t75xBgM", "title": "Video 2"}, {"yt": "f5K7iV6bYUY", "title": "Video 3"}, {"yt": "IKZeRzWRpvU", "title": "Video 4"}]}, {"name": "Playlist 6", "videos": [{"yt": "Ip1cQZhBqto", "title": "Video 1"}, {"yt": "BoDAqwSIcf4", "title": "Video 2"}, {"yt": "FZ5IR_67yL8", "title": "Video 3"}, {"yt": "6WEn1Qgqv-o", "title": "Video 4"}, {"yt": "06eRu5YjJ1o", "title": "Video 5"}, {"yt": "vg5CU8ZdeUs", "title": "Video 6"}, {"yt": "8BjRFjBBkVA", "title": "Video 7"}, {"yt": "fLwuQmPEhwM", "title": "Video 8"}, {"yt": "pwPZsYuDFe0", "title": "Video 9"}, {"yt": "HrohwrVNkNg", "title": "Video 10"}, {"yt": "-RrL_rbmS1w", "title": "Video 11"}, {"yt": "G11QWZumfzo", "title": "Video 12"}, {"yt": "XJndBpddLwU", "title": "Video 13"}, {"yt": "R3ut2M3f2Ro", "title": "Video 14"}, {"yt": "PSvABZV9GW4", "title": "Video 15"}, {"yt": "TlVG0ORnkZQ", "title": "Video 16"}, {"yt": "CdoqrkS0sMY", "title": "Video 17"}, {"yt": "yekbqC8mdFY", "title": "Video 18"}, {"yt": "MzkDLa0TWy4", "title": "Video 19"}, {"yt": "5-coQCLlxe0", "title": "Video 20"}, {"yt": "XJSu-DzbQkY", "title": "Video 21"}, {"yt": "adPlB3MhbAs", "title": "Video 22"}, {"yt": "Wz83ixu2cxk", "title": "Video 23"}, {"yt": "THwuFPTWWz0", "title": "Video 24"}, {"yt": "fdF9OoQV05k", "title": "Video 25"}, {"yt": "wzhwAC_G7Y4", "title": "Video 26"}, {"yt": "9KzUFTLJMco", "title": "Video 27"}, {"yt": "KOQtdj7kI7o", "title": "Video 28"}, {"yt": "mumUZX6k1Fc", "title": "Video 29"}, {"yt": "_HRlrifQ-kY", "title": "Video 30"}, {"yt": "lTQGA_kZTuI", "title": "Video 31"}, {"yt": "16slasJCyuw", "title": "Video 32"}, {"yt": "EDfZDnyK4tc", "title": "Video 33"}, {"yt": "ZIDVIf6RcXM", "title": "Video 34"}, {"yt": "eKLjZjm7caQ", "title": "Video 35"}, {"yt": "p9Fd4y7XsQs", "title": "Video 36"}, {"yt": "-oFq1ocljNQ", "title": "Video 37"}, {"yt": "vPViNKLvpXM", "title": "Video 38"}, {"yt": "9ELoZ5hsDok", "title": "Video 39"}, {"yt": "aUi56o5nnCU", "title": "Video 40"}, {"yt": "fqL9sdYQBLA", "title": "Video 41"}, {"yt": "-2WO_FXmnPI", "title": "Video 42"}, {"yt": "z0JCDNpQ3uo", "title": "Video 43"}, {"yt": "KHhLQDZKw94", "title": "Video 44"}, {"yt": "ZjAQQQa2WjY", "title": "Video 45"}, {"yt": "aRMsdLjUd6g", "title": "Video 46"}, {"yt": "Q4wz-0oQlMQ", "title": "Video 47"}, {"yt": "Fswbz4tUO70", "title": "Video 48"}, {"yt": "xBYd0C9_0ck", "title": "Video 49"}, {"yt": "TWcjV9VveDE", "title": "Video 50"}, {"yt": "7CQ4lMJn4Z0", "title": "Video 51"}, {"yt": "e519GBPwLbM", "title": "Video 52"}, {"yt": "QxJACd0W-3o", "title": "Video 53"}, {"yt": "T9SU6JDJ0pA", "title": "Video 54"}, {"yt": "p0GSsF9y3Fc", "title": "Video 55"}, {"yt": "GIwCKE8OmC0", "title": "Video 56"}, {"yt": "hwGZN7mY66k", "title": "Video 57"}, {"yt": "1hYkDuXm8KE", "title": "Video 58"}, {"yt": "CYHB3I_baT8", "title": "Video 59"}, {"yt": "T1NXbxnnxKE", "title": "Video 60"}, {"yt": "y6-iSJ-gHJA", "title": "Video 61"}, {"yt": "g7BKjVssLF8", "title": "Video 62"}, {"yt": "KEND-lnGFXM", "title": "Video 63"}, {"yt": "hvv73q3FNfQ", "title": "Video 64"}, {"yt": "p75HCZKW_B4", "title": "Video 65"}, {"yt": "8HIm6WaS53Q", "title": "Video 66"}, {"yt": "Pker8-5XZEQ", "title": "Video 67"}, {"yt": "h3RaiRxKa5E", "title": "Video 68"}, {"yt": "hEn7LzaCvCw", "title": "Video 69"}, {"yt": "xZF3Qyv4nnw", "title": "Video 70"}, {"yt": "hCDlNy7AlLQ", "title": "Video 71"}, {"yt": "Xl01hFOuz8I", "title": "Video 72"}, {"yt": "w3TTJIGVf_Y", "title": "Video 73"}, {"yt": "O9z_DCs8EKI", "title": "Video 74"}, {"yt": "cW7jThk5pzs", "title": "Video 75"}, {"yt": "pvarLH7xHxk", "title": "Video 76"}, {"yt": "BXUqE5pOw9o", "title": "Video 77"}, {"yt": "yAbhJt7F6WQ", "title": "Video 78"}, {"yt": "_B-88KgjYu8", "title": "Video 79"}, {"yt": "ni8p4GktE4M", "title": "Video 80"}, {"yt": "mA7f5siPAoM", "title": "Video 81"}, {"yt": "va11RfdlewE", "title": "Video 82"}, {"yt": "3L4EmmAsePQ", "title": "Video 83"}, {"yt": "XLvTUHBqaB4", "title": "Video 84"}, {"yt": "C91aA4peEpg", "title": "Video 85"}, {"yt": "_2pze2p4BgQ", "title": "Video 86"}, {"yt": "lJPOv8K-a0k", "title": "Video 87"}, {"yt": "8NJDe1d-h74", "title": "Video 88"}, {"yt": "e03uSWy1H9I", "title": "Video 89"}, {"yt": "1j4mW0n0J7c", "title": "Video 90"}, {"yt": "eIaA7fnPHLA", "title": "Video 91"}, {"yt": "JDMw_-pAvmc", "title": "Video 92"}, {"yt": "VdVVsTVkhUI", "title": "Video 93"}, {"yt": "SgiyezOGELU", "title": "Video 94"}, {"yt": "JTIBFdaSCC8", "title": "Video 95"}, {"yt": "IuCouSEDut8", "title": "Video 96"}, {"yt": "FMloKoYBCvo", "title": "Video 97"}, {"yt": "Yu5QuiGjm6c", "title": "Video 98"}, {"yt": "eStqLk1PuXc", "title": "Video 99"}, {"yt": "nnW0Cw1sEAA", "title": "Video 100"}]}, {"name": "Playlist 7", "videos": [{"yt": "CdoqrkS0sMY", "title": "Video 1"}, {"yt": "y6-iSJ-gHJA", "title": "Video 2"}, {"yt": "p75HCZKW_B4", "title": "Video 3"}, {"yt": "h3RaiRxKa5E", "title": "Video 4"}, {"yt": "O9z_DCs8EKI", "title": "Video 5"}]}, {"name": "Playlist 8", "videos": [{"yt": "fqL9sdYQBLA", "title": "Video 1"}, {"yt": "3IJAFSrjjac", "title": "Video 2"}, {"yt": "5g4yby73Aqs", "title": "Video 3"}, {"yt": "p9Fd4y7XsQs", "title": "Video 4"}, {"yt": "9ELoZ5hsDok", "title": "Video 5"}]}, {"name": "Playlist 9", "videos": [{"yt": "zpSUI-p7-z4", "title": "Video 1"}, {"yt": "gELfQGv-wyw", "title": "Video 2"}, {"yt": "w3TTJIGVf_Y", "title": "Video 3"}, {"yt": "ibLEW1Aeabc", "title": "Video 4"}, {"yt": "_fWu3PUgPC4", "title": "Video 5"}, {"yt": "8zxMiezQUr0", "title": "Video 6"}, {"yt": "IgCd_6x5TzY", "title": "Video 7"}, {"yt": "P2rbat3lhLU", "title": "Video 8"}, {"yt": "it8M3KWzLgM", "title": "Video 9"}]}, {"name": "Playlist 10", "videos": [{"yt": "dsFAHd38PhE", "title": "Video 1"}, {"yt": "mnmyPZR5ix4", "title": "Video 2"}, {"yt": "YEsYjNVD2Js", "title": "Video 3"}, {"yt": "JNe1GJb9zIA", "title": "Video 4"}, {"yt": "cflGH2xp3FQ", "title": "Video 5"}, {"yt": "9-R4b24AlmU", "title": "Video 6"}, {"yt": "N8FvvpPAoso", "title": "Video 7"}, {"yt": "IG0qvp5MZ1g", "title": "Video 8"}, {"yt": "BOL1HLXR4-Q", "title": "Video 9"}, {"yt": "fZYQKHJVFP4", "title": "Video 10"}]}]</script>
+<script>
+// ── Default Playlists: bundled in the file. Videos auto-appear in A1 Sprechen Kurs for every user (no backup import needed). Format: [{"name":"নাম","videos":[{"yt":"11-char-id","title":"Video নাম"}]}]
+function plLoad(){ try{ return JSON.parse(document.getElementById('plData').textContent)||[]; }catch(e){ return []; } }
+function plSeed(force){
+  var c = xgCs(), added = 0, k = 0; xs.plSeed = xs.plSeed || {};
+  if(!c.pls) c.pls = [{id:'p0', name:'আমার Video'}];
+  plLoad().forEach(function(pl, i){
+    var key = 'b:' + (pl.name || i); if(xs.plSeed[key] && !force) return; xs.plSeed[key] = 1;
+    var P = c.pls.filter(function(x){ return x.key === key; })[0];
+    if(!P){ P = {id:'pb'+i+'_'+Date.now(), name:pl.name||('Playlist '+(c.pls.length+1)), key:key}; c.pls.push(P); }
+    var have = {}, n = 0; c.vids.forEach(function(v){ if(v.pl === P.id){ have[v.yt] = 1; n++; } });
+    (pl.videos||[]).forEach(function(v){ var yt = xgYtId(v.yt); if(!yt || have[yt]) return; have[yt] = 1; n++;
+      c.vids.push({id:'v'+Date.now()+'_'+i+'_'+(k++), pl:P.id, title:v.title||('Video '+n), yt:yt, tr:v.tr||'', vk:v.vk||'', w:0, acc:0, pc:0}); added++; });
+  });
+  xsSave(); return added;
+}
+function importPL(){
+  var n = plSeed(true);
+  showToast(n ? '✅ '+n+'টি video যোগ হয়েছে' : 'ℹ️ সব video আগে থেকেই আছে');
+  if(n) xgCourse();
+}
+plSeed(false);
+// one-time cleanup: remove the 10 old bundled videos from saved course
+(function(){ if(xs.rm10) return; var rm=["09tVL27ufRA", "ljCKB6nd2SU", "ZR8YWPPAEm0", "wYGBe2M3G_Y", "B9viXkQ77LU", "UX0GTjfkLvc", "9K94oIX-rIY", "knAwX9SDpsc", "8wodim3BCUM", "cL9-V7KTYEY"], c=xgCs(), n=c.vids.length; c.vids=c.vids.filter(function(v){ return rm.indexOf(v.yt)<0; }); xs.rm10=1; xsSave(); })();
+
+// Auto-fetch real video titles (noembed) for videos still named "Video N". Thumbnails come from the video ID (xgThumb) automatically.
+function xgTitles(manual){
+  var todo = xgCs().vids.filter(function(v){ return /^Video \d+$/.test(v.title||''); });
+  if(!todo.length){ if(manual) showToast('ℹ️ সব নাম আগে থেকেই আছে'); return; }
+  if(manual) showToast('⏳ '+todo.length+'টি নাম আনা হচ্ছে…');
+  var k = 0, ok = 0;
+  (function next(){
+    if(k >= todo.length){ if(ok) xsSave(); if(manual){ showToast(ok ? '✅ '+ok+'টি নাম এসেছে' : '❗ নাম আনা যায়নি — ইন্টারনেট দেখো'); if(ok) xgCourse(); } return; }
+    var v = todo[k++], fin = false, t = setTimeout(function(){ if(!fin){ fin = true; next(); } }, 4000);
+    try{ fetch('https://noembed.com/embed?url='+encodeURIComponent('https://www.youtube.com/watch?v='+v.yt)).then(function(r){ return r.json(); }).then(function(j){ if(fin) return; fin = true; clearTimeout(t); if(j && j.title){ v.title = j.title; ok++; } next(); }).catch(function(){ if(!fin){ fin = true; clearTimeout(t); next(); } }); }catch(e){ if(!fin){ fin = true; clearTimeout(t); next(); } }
+  })();
+}
+setTimeout(function(){ if(navigator.onLine) xgTitles(false); }, 2000);
+</script>
+<script>
+// ===== Smarter transcript parser (handles YouTube "Show transcript" paste) =====
+xgParse=function(v){
+  var key=(v.tr||'')+'##'+(v.vk||''); if(xgPc.id===v.id&&xgPc.key===key) return xgPc.val;
+  var raw=String(v.tr||'').split(/\n+/).map(function(t){ return t.replace(/^\s*\[?\d{1,2}:\d{2}(?::\d{2})?\]?\s*/,'').trim(); }).filter(function(t){ return t && !/^\[[^\]]*\]$/.test(t) && t.indexOf('♪')<0 && !/^(transcript|chapters|kapitel)$/i.test(t); });
+  var pairs=raw.some(function(l){ return /[ঀ-৿]/.test(l)&&/\||=>|\t/.test(l); });
+  var punct=raw.filter(function(l){ return /[.!?…]$/.test(l); }).length, avg=raw.reduce(function(a,l){ return a+l.split(/\s+/).length; },0)/Math.max(1,raw.length);
+  var frag=!pairs&&raw.length>=6&&punct/raw.length<0.4&&avg>=4, items=[];
+  if(frag){
+    raw.join(' ').replace(/\s+/g,' ').split(/(?<=[.!?])\s+/).forEach(function(s){ var w=s.split(' '); if(w.length<=14) items.push({de:s.trim(),bn:''}); else for(var i=0;i<w.length;i+=10){ var part=w.slice(i,i+10); if(part.length>=3) items.push({de:part.join(' '),bn:''}); } });
+  } else raw.forEach(function(line){
+    var m=line.match(/^(.*?)\s*(?:\||=>|\t)\s*(.+)$/);
+    if(m && /[ঀ-৿]/.test(m[2]) && !/[ঀ-৿]/.test(m[1])) items.push({de:m[1].trim(),bn:m[2].trim()});
+    else line.split(/(?<=[.!?])\s+/).forEach(function(x){ items.push({de:x.trim(),bn:''}); });
+  });
+  var sents=[], seen={}; items.forEach(function(p){ var n=p.de.split(/\s+/).length; if(n<2||n>18||!/[A-Za-zÄÖÜäöüß]/.test(p.de)) return; var k=p.de.toLowerCase(); if(seen[k]) return; seen[k]=1; sents.push(p); });
+  var vocab=[]; String(v.vk||'').split(/\n+/).forEach(function(line){ var m=line.trim().match(/^(.+?)\s*(?:=|\||\t|–|—| - )\s*(.+)$/); if(m) vocab.push({de:m[1].trim(),bn:m[2].trim(),k:'w'}); });
+  xgPc={id:v.id,key:key,val:{sents:sents,vocab:vocab}}; return xgPc.val;
+};
+
+</script>
+<script>
+// ===== Multiple playlists =====
+(function(){ var c=xgCs(); if(!c.pls) c.pls=[{id:'p0',name:'আমার Video'}]; var d=false; c.vids.forEach(function(v){ if(!v.pl){ if(!c.pls.length) c.pls.push({id:'p0',name:'আমার Video'}); v.pl=c.pls[0].id; d=true; } }); if(d) xsSave(); })();
+function xgEnsurePl(){ var c=xgCs(); if(!c.pls.length){ c.pls.push({id:'p'+Date.now(),name:'আমার Video'}); xsSave(); } return c.pls[0].id; }
+var xgCurPl=null, xgCurView='home', xgImpPl=null;
+function xgPls(){ return xgCs().pls; }
+function xgPlOf(v){ return v.pl||xgEnsurePl(); }
+function xgVidsOf(pl){ return xgCs().vids.filter(function(v){ return xgPlOf(v)===pl; }); }
+function xgPlById(id){ return xgPls().filter(function(p){return p.id===id;})[0]; }
+function xgOpenV(v){ var L=xgVidsOf(xgPlOf(v)), i=L.indexOf(v); return i<=0 || !!L[i-1].w; }
+xgOpen=function(i){ var v=xgCs().vids[i]; return v?xgOpenV(v):false; };
+function xgBack2List(){ if(xgCurPl&&xgPlById(xgCurPl)) xgPlView(xgCurPl); else xgCourse(); }
+// ---- home: playlists ----
+xgCourse=function(){
+  if(!_mg) _mg={g:8}; xgCurView='home'; xgCurPl=null;
+  var P=xgPls(), V=xgCs().vids, done=V.filter(function(v){return v.w;}).length;
+  var h='<div style="background:linear-gradient(135deg,#1a1f6e,#0d1040);border:1px solid var(--borderL,#3a3f8a);border-radius:18px;padding:15px;margin-bottom:12px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:34px;">🎬</div><div style="flex:1;"><div style="font-size:18px;font-weight:900;color:#fff;">A1 Sprechen Kurs</div><div style="font-size:12px;color:#c7cbff;margin-top:2px;">'+P.length+' playlist · '+V.length+' video · '+done+' সম্পন্ন</div></div></div></div>';
+  h+='<div style="display:flex;gap:8px;margin-bottom:12px;"><button class="btn btn-blue btn-sm" style="flex:2;" onclick="xgPlNew()">➕ নতুন Playlist</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPracAll()">🔀 সব মিশ্র</button></div>';
+  if(!P.length) h+='<div class="empty-box"><div class="ico">📁</div><div class="txt">কোনো playlist নেই।<br>➕ নতুন Playlist চাপো।</div></div>';
+  P.forEach(function(p){
+    var L=xgVidsOf(p.id), d=L.filter(function(v){return v.w;}).length, pc=L.length?Math.round(d/L.length*100):0, nx=L.filter(function(v){return !v.w;})[0], th=(nx||L[0]);
+    h+='<div style="display:flex;gap:11px;background:var(--card);border:1.5px solid '+(L.length&&d===L.length?'#2dd4a066':'var(--border)')+';border-radius:16px;padding:10px;margin-bottom:10px;">';
+    h+='<div onclick="xgPlView(\''+p.id+'\')" style="width:96px;min-width:96px;height:64px;border-radius:11px;background:#1a1f3a '+(th?'center/cover url('+xgThumb(th)+')':'')+';display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;position:relative;">'+(th?'':'📁')+'<div style="position:absolute;right:4px;bottom:4px;background:#000b;color:#fff;font-size:10px;font-weight:900;border-radius:6px;padding:1px 6px;">'+L.length+' video</div></div>';
+    h+='<div onclick="xgPlView(\''+p.id+'\')" style="flex:1;min-width:0;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;"><div style="font-weight:900;font-size:15px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">'+esc(p.name)+'</div><div style="font-size:11px;color:var(--sub);">'+(L.length?(d+' / '+L.length+' সম্পন্ন'+(nx?' · পরের: '+esc((nx.title||'').slice(0,22)):' · ✅ শেষ')):'খালি — video যোগ করো')+'</div><div style="height:5px;background:var(--border);border-radius:5px;"><div style="height:100%;width:'+pc+'%;background:'+(pc===100?'var(--green)':'var(--blue)')+';border-radius:5px;"></div></div></div>';
+    h+='<div style="display:flex;flex-direction:column;gap:6px;"><button class="sp-ib" onclick="xgPlEdit(\''+p.id+'\')">✏️</button><button class="sp-ib" style="color:#ff4d6d;" onclick="xgPlDel(\''+p.id+'\')">🗑</button></div></div>';
+  });
+  xgMount('pgCourse',h,'🎬 Playlists');
+};
+xgCourseBack=function(){ if(xgCurView==='pl'){ xgCourse(); return; } xgLeaveVid(); showPage('pgApp'); openDrawer(); drCollapse(); drToggle(8); };
+// ---- playlist view: videos ----
+function xgPlView(pl){
+  var p=xgPlById(pl); if(!p){ xgCourse(); return; } if(!_mg) _mg={g:8}; xgCurPl=pl; xgCurView='pl';
+  var V=xgVidsOf(pl), done=V.filter(function(v){return v.w;}).length, tp=V.length?Math.round(done/V.length*100):0;
+  var h='<div style="background:linear-gradient(135deg,#1a1f6e,#0d1040);border:1px solid var(--borderL,#3a3f8a);border-radius:18px;padding:15px;margin-bottom:12px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:30px;">🎞</div><div style="flex:1;min-width:0;"><div style="font-size:17px;font-weight:900;color:#fff;">'+esc(p.name)+'</div><div style="font-size:12px;color:#c7cbff;margin-top:2px;">'+(V.length?done+' / '+V.length+' video সম্পন্ন':'video যোগ করে শুরু করো')+'</div></div><div style="font-size:20px;font-weight:900;color:#fff;">'+tp+'%</div></div><div style="height:8px;background:#ffffff22;border-radius:9px;margin-top:11px;overflow:hidden;"><div style="height:100%;width:'+tp+'%;background:linear-gradient(90deg,#2dd4a0,#22d3ee);border-radius:9px;"></div></div></div>';
+  h+='<div style="display:flex;gap:8px;margin-bottom:12px;"><button class="btn btn-blue btn-sm" style="flex:1;" onclick="xgVidEdit(null)">➕ Video</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgBulk()">📦 একসাথে</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPracPl(\''+pl+'\')">🔀 মিশ্র</button></div>';
+  if(!V.length) h+='<div class="empty-box"><div class="ico">🎬</div><div class="txt">এই playlist-এ এখনো video নেই।<br>➕ Video বা 📦 একসাথে চাপো।</div></div>';
+  var cur=-1; V.forEach(function(v,i){ if(cur<0&&!v.w) cur=i; });
+  V.forEach(function(v,i){
+    var op=xgOpenV(v), P=xgParse(v), pc=xgPct(v), isCur=(i===cur);
+    var st=v.w?'<span style="color:var(--green);">✅ সম্পন্ন</span>':(op?'<span style="color:var(--blue);">'+(pc?'▶ চালিয়ে যাও · '+pc+'%':'▶ শুরু করো')+'</span>':'<span style="color:var(--muted);">🔒 আগের video শেষ করো</span>');
+    h+='<div style="display:flex;gap:11px;background:var(--card);border:1.5px solid '+(isCur?'var(--blue)':v.w?'#2dd4a066':'var(--border)')+';'+(isCur?'box-shadow:0 0 0 3px #4361ee22;':'')+'border-radius:16px;padding:9px;margin-bottom:10px;">';
+    h+='<div onclick="'+(op?'xgOpenVid(\''+v.id+'\')':'showToast(\'🔒 আগের video ১০০% দেখো\')')+'" style="position:relative;width:118px;min-width:118px;height:70px;border-radius:11px;overflow:hidden;background:#111 center/cover url('+xgThumb(v)+');cursor:pointer;"><div style="position:absolute;left:5px;top:5px;background:#000a;color:#fff;font-size:11px;font-weight:900;border-radius:7px;padding:1px 7px;">'+(i+1)+'</div>';
+    if(!op) h+='<div style="position:absolute;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;font-size:26px;">🔒</div>';
+    else if(v.w) h+='<div style="position:absolute;inset:0;background:#0a3d2a99;display:flex;align-items:center;justify-content:center;font-size:26px;">✅</div>';
+    else h+='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;"><div style="width:30px;height:30px;border-radius:50%;background:#000a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;">▶</div></div>';
+    h+='</div><div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between;"><div style="display:flex;gap:6px;"><div style="flex:1;font-weight:800;font-size:14px;color:var(--text);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">'+esc(v.title||'Video')+'</div><button class="sp-ib" style="align-self:flex-start;" onclick="xgVidEdit(\''+v.id+'\')">✏️</button></div><div style="font-size:11px;color:var(--sub);">'+P.sents.length+' বাক্য'+(P.vocab.length?' · '+P.vocab.length+' শব্দ':'')+(v.pc?' · '+v.pc+'× practice':'')+'</div><div style="font-size:12px;font-weight:800;">'+st+'</div>'+(op&&!v.w&&pc?'<div style="height:4px;background:var(--border);border-radius:4px;margin-top:3px;"><div style="height:100%;width:'+pc+'%;background:var(--blue);border-radius:4px;"></div></div>':'')+'</div></div>';
+  });
+  xgMount('pgCourse',h,'🎞 '+p.name);
+}
+function xgPracPl(pl){
+  var vs=xgVidsOf(pl).filter(function(v){ return xgParse(v).sents.length>=2; });
+  if(!vs.length){ showWarn('এই playlist-এর কোনো video-তে transcript নেই।'); return; }
+  xgLeaveVid(); _xpG={k:'menu',g:8}; _xgCV=null;
+  xqRun('🔀 '+xgPlById(pl).name,function(){ _xpG={k:'menu',g:8}; var P={sents:[],vocab:[]}; vs.forEach(function(v){ var p=xgParse(v); P.sents=P.sents.concat(p.sents); P.vocab=P.vocab.concat(p.vocab); }); return xgBuildMix(P,20); },'pgApp');
+}
+xgVidBack=function(){ var v=xgCurV; xgLeaveVid(); if(v) xgPlView(xgPlOf(v)); else xgCourse(); };
+// ---- playlist create / edit ----
+function xgPlNew(){
+  var inp='width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px;color:var(--text);font-size:14px;font-family:inherit;outline:none;';
+  var h='<div style="font-size:17px;font-weight:900;color:var(--text);margin-bottom:8px;">➕ নতুন Playlist</div><div style="font-size:11px;color:var(--sub);margin:4px 0 3px;">নাম</div><input id="xgPlName" type="text" style="'+inp+'" placeholder="যেমন: A1 Stories"/><div style="font-size:11px;color:var(--sub);margin:10px 0 3px;">YouTube playlist লিংক (ঐচ্ছিক — দিলে সব video import হবে, না দিলে খালি playlist হবে)</div><input id="xgPl" type="text" style="'+inp+'" placeholder="https://youtube.com/playlist?list=PL…"/><button class="btn btn-blue btn-full" style="margin-top:12px;" onclick="xgPlNewGo()">✓ তৈরি করো</button><div id="xgPlSt" style="font-size:13px;color:var(--sub);margin-top:10px;line-height:1.6;text-align:center;"></div><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="closeModal()">✕ বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+xgPlaylist=xgPlNew;
+function xgPlNewGo(){
+  var name=document.getElementById('xgPlName').value.trim()||('Playlist '+(xgPls().length+1)), link=document.getElementById('xgPl').value.trim();
+  if(link&&!/[?&]list=|^[A-Za-z0-9_-]{12,}$/.test(link)){ xgPlSt('❌ সঠিক playlist লিংক দাও'); return; }
+  var id='p'+Date.now(); xgPls().push({id:id,name:name}); xsSave(); xgCurPl=id; xgImpPl=id;
+  if(!link){ xgPlView(id); return; }
+  xgPlGo();
+}
+xgPlAdd=function(ids){
+  var c=xgCs(), pl=xgImpPl||xgCurPl||xgEnsurePl(), have={}; xgVidsOf(pl).forEach(function(v){ have[v.yt]=1; });
+  var fresh=ids.filter(function(x,i,a){ return a.indexOf(x)===i && !have[x]; });
+  if(!fresh.length){ xgPlSt('ℹ️ সবগুলো video এই playlist-এ আগেই আছে'); return; }
+  var base=xgVidsOf(pl).length, added=[];
+  fresh.forEach(function(yt,i){ var v={id:'v'+Date.now()+'_'+i,title:'Video '+(base+i+1),yt:yt,tr:'',vk:'',w:0,acc:0,pc:0,pl:pl}; c.vids.push(v); added.push(v); });
+  xsSave(); xgPlSt('✅ '+added.length+'টি video যোগ হয়েছে। নাম আনা হচ্ছে…');
+  var k=0, ok=0;
+  function next(){
+    if(k>=added.length){ xsSave(); xgPlSt('✅ '+added.length+'টি video যোগ হয়েছে'+(ok?' (নামসহ '+ok+'টি)':' (নাম পাওয়া যায়নি — ✏️ দিয়ে বদলাতে পারো)')+'<br><button class="btn btn-blue btn-sm" style="margin-top:8px;" onclick="xgPlView(\''+pl+'\')">🎬 Playlist-এ যাও</button>'); return; }
+    var v=added[k++]; var t=setTimeout(next,4000), fin=false;
+    try{ fetch('https://noembed.com/embed?url='+encodeURIComponent('https://www.youtube.com/watch?v='+v.yt)).then(function(r){ return r.json(); }).then(function(j){ if(fin) return; fin=true; clearTimeout(t); if(j&&j.title){ v.title=j.title; ok++; } xgPlSt('⏳ নাম আনা হচ্ছে '+k+'/'+added.length); next(); }).catch(function(){ if(fin) return; fin=true; clearTimeout(t); next(); }); }catch(e){ clearTimeout(t); next(); }
+  }
+  next();
+};
+function xgPlEdit(id){
+  var p=xgPlById(id), n=xgVidsOf(id).length;
+  var h='<div style="font-size:17px;font-weight:900;color:var(--text);margin-bottom:8px;">✏️ Playlist</div><div style="font-size:11px;color:var(--sub);margin:4px 0 3px;">নাম</div><input id="xgPlN2" type="text" value="'+esc(p.name)+'" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:11px;color:var(--text);font-size:14px;font-family:inherit;outline:none;"/><div style="display:flex;gap:8px;margin-top:12px;"><button class="btn btn-blue btn-sm" style="flex:2;" onclick="xgPlRename(\''+id+'\')">💾 Save</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPlDel(\''+id+'\')">🗑 মুছো</button></div><div style="font-size:11px;color:var(--muted);margin-top:8px;">মুছলে এর '+n+'টি video ও এগুলোর দেখার অগ্রগতি মুছে যাবে।</div><button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="closeModal()">✕ বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function xgPlRename(id){ var v=document.getElementById('xgPlN2').value.trim(); if(!v){ showToast('নাম দাও'); return; } xgPlById(id).name=v; xsSave(); xgCourse(); }
+function xgPlDel(id){
+  var nn=xgVidsOf(id).length; if(!confirm('"'+xgPlById(id).name+'" playlist ও এর '+nn+'টি video মুছবে? এটা ফেরানো যাবে না।')) return;
+  var c=xgCs(); c.vids=c.vids.filter(function(v){ return xgPlOf(v)!==id; }); c.pls=c.pls.filter(function(p){ return p.id!==id; }); xsSave(); xgCourse();
+}
+// moving up/down only inside the same playlist
+xgVidMove=function(id,d){ var a=xgCs().vids, v=xgVid(id), L=xgVidsOf(xgPlOf(v)), i=L.indexOf(v), j=i+d; if(j<0||j>=L.length) return; var ia=a.indexOf(L[i]), ib=a.indexOf(L[j]), t=a[ia]; a[ia]=a[ib]; a[ib]=t; xsSave(); xgVidEdit(id); };
+// adding from the menu without a playlist chosen
+var _xgVE15=xgVidEdit; xgVidEdit=function(id){ if(!id&&!(xgCurPl&&xgPlById(xgCurPl))) xgCurPl=xgEnsurePl(); _xgVE15(id); };
+
+</script>
+<script>
+// ===== In-app confirm (browser confirm() is blocked in some viewers) =====
+var xgAskFn=null;
+function xgAsk(msg,fn,yes){
+  xgAskFn=fn;
+  document.getElementById('modalBody').innerHTML='<div style="text-align:center;padding:6px 2px;"><div style="font-size:34px;">🗑</div><div style="font-size:15px;color:var(--text);line-height:1.6;margin:8px 0 16px;overflow-wrap:anywhere;">'+esc(msg)+'</div><div style="display:flex;gap:10px;"><button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">বাতিল</button><button class="btn" style="flex:1;background:#ff4d6d;color:#fff;font-weight:900;" onclick="xgAskYes()">'+esc(yes||'হ্যাঁ, মুছো')+'</button></div></div>';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function xgAskYes(){ var f=xgAskFn; xgAskFn=null; closeModal(); if(f) f(); }
+xgPlDel=function(id){
+  var p=xgPlById(id); if(!p) return; var nn=xgVidsOf(id).length;
+  xgAsk('"'+p.name+'" playlist ও এর '+nn+'টি video মুছবে? এটা ফেরানো যাবে না।',function(){
+    var c=xgCs(); c.vids=c.vids.filter(function(v){ return xgPlOf(v)!==id; }); c.pls=c.pls.filter(function(x){ return x.id!==id; }); xsSave(); showToast('🗑 Playlist মুছে গেছে'); xgCourse();
+  });
+};
+xgVidDel=function(id){
+  var v=xgVid(id); if(!v) return;
+  xgAsk('"'+(v.title||'Video')+'" মুছবে?',function(){ xgCs().vids=xgCs().vids.filter(function(x){ return x.id!==id; }); xsSave(); showToast('🗑 মুছে গেছে'); xgBack2List(); });
+};
+xgMbClear=function(){ xgAsk('ভুল খাতার সব এন্ট্রি মুছবে?',function(){ xs.mb=[]; xsSave(); xgMb(); }); };
+
+</script>
+<script>
+// ===== Undo for deletes =====
+var xgSnT=null;
+function xgSnack(msg,undoFn){
+  var e=document.getElementById('xgSnack'); if(!e){ e=document.createElement('div'); e.id='xgSnack'; e.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:100000;background:#1f2547;color:#fff;border:1px solid #4a5090;border-radius:14px;padding:10px 12px 10px 16px;display:none;align-items:center;gap:14px;font-size:14px;box-shadow:0 8px 24px #0008;max-width:92vw;'; document.body.appendChild(e); }
+  e.innerHTML='<span>'+esc(msg)+'</span><button id="xgSnU" style="background:#4361ee;color:#fff;border:0;border-radius:10px;padding:7px 14px;font-weight:900;font-size:14px;cursor:pointer;">↩ Undo</button>';
+  e.style.display='flex'; clearTimeout(xgSnT); xgSnT=setTimeout(function(){ e.style.display='none'; },10000);
+  document.getElementById('xgSnU').onclick=function(){ clearTimeout(xgSnT); e.style.display='none'; undoFn(); };
+}
+xgPlDel=function(id){
+  var p=xgPlById(id); if(!p) return; var nn=xgVidsOf(id).length;
+  xgAsk('"'+p.name+'" playlist ও এর '+nn+'টি video মুছবে?',function(){
+    var c=xgCs(), pIdx=c.pls.indexOf(p), rem=[];
+    c.vids.forEach(function(v,i){ if(xgPlOf(v)===id) rem.push({v:v,i:i}); });
+    c.vids=c.vids.filter(function(v){ return xgPlOf(v)!==id; }); c.pls=c.pls.filter(function(x){ return x.id!==id; }); xsSave(); xgCourse();
+    xgSnack('🗑 "'+p.name+'" মুছে গেছে',function(){ var c2=xgCs(); c2.pls.splice(Math.min(pIdx,c2.pls.length),0,p); rem.forEach(function(r){ c2.vids.splice(Math.min(r.i,c2.vids.length),0,r.v); }); xsSave(); xgCourse(); showToast('↩ ফিরে এসেছে'); });
+  },'হ্যাঁ, মুছো');
+};
+xgVidDel=function(id){
+  var v=xgVid(id); if(!v) return;
+  xgAsk('"'+(v.title||'Video')+'" মুছবে?',function(){
+    var c=xgCs(), idx=c.vids.indexOf(v); c.vids=c.vids.filter(function(x){ return x.id!==id; }); xsSave(); xgBack2List();
+    xgSnack('🗑 Video মুছে গেছে',function(){ var c2=xgCs(); c2.vids.splice(Math.min(idx,c2.vids.length),0,v); xsSave(); xgBack2List(); showToast('↩ ফিরে এসেছে'); });
+  });
+};
+xgMbClear=function(){ xgAsk('ভুল খাতার সব এন্ট্রি মুছবে?',function(){ var old=xs.mb; xs.mb=[]; xsSave(); xgMb(); xgSnack('🗑 ভুল খাতা খালি',function(){ xs.mb=old; xsSave(); xgMb(); }); }); };
 
 </script>
 </body>
