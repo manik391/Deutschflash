@@ -821,6 +821,7 @@ input,select,textarea,button{font-family:var(--font);}
     </div>
     <button class="dr-item dr-grp" id="drG7" onclick="drToggle(7)" aria-expanded="false"><span class="dr-ico">🌱</span><span style="flex:1;">শব্দভান্ডার &amp; অভ্যাস<small>Thema-Wortschatz, Daily Challenge, ভুল খাতা</small></span><span class="dr-arr" style="font-size:13px;color:var(--muted);transition:transform .2s;">▼</span></button>
     <div class="dr-sub" id="drS7" style="display:none;margin:0 0 4px 22px;padding-left:10px;border-left:2px solid var(--border);">
+      <button class="dr-item" onclick="drGo('pfPosOpen()',7)"><span class="dr-ico">🏷</span><span>Wortarten<small>Nomen, Verb, Adjektiv, Präposition…</small></span></button>
       <button class="dr-item" onclick="drGo('xgDaily()',7)"><span class="dr-ico">🔥</span><span>Daily Challenge<small>রোজ ~১০টি মিশ্র প্রশ্ন</small></span></button>
       <button class="dr-item" onclick="drGo('xgThemen()',7)"><span class="dr-ico">🗂</span><span>Thema-Wortschatz<small>Essen, Familie, Körper…</small></span></button>
       <button class="dr-item" onclick="drGo('xgKalender()',7)"><span class="dr-ico">📅</span><span>Tage, Monate, Farben<small>শুনে ও দেখে শেখো</small></span></button>
@@ -1057,7 +1058,7 @@ window.addEventListener('load', function() {
     var tb = document.getElementById('themeLbl');
     if(tb) tb.textContent = document.body.classList.contains('light-theme') ? '☀️ Light Mode' : '🌙 Dark Mode';
     showPage('pgApp');
-    if(!loadLS('df_onboarded', false)) openOnboarding();
+    if(!loadLS('df_ob_hide', false)) openOnboarding();
   }, 2500);
 });
 
@@ -4031,13 +4032,19 @@ function spSubmitBulk(){
 // ONBOARDING + HELP
 // ════════════════════════════════
 var OB_SLIDES = [
-  {ico:'🗂️', title:'Card দিয়ে শব্দ শেখো', txt:'<b>Create</b> ট্যাবে Deck বেছে German শব্দ ও বাংলা অর্থ যোগ করো। তারপর <b>Flashcards, Learn, Test, Match</b> দিয়ে practice করো। অনেক শব্দ একসাথে দিতে <b>Bulk Add</b> আছে।'},
-  {ico:'💬', title:'বাক্য ও Story', txt:'<b>Create → Sentence</b>-এ একটি File বেছে German ও বাংলা বাক্য বা পুরো Story যোগ করো — নিজে নিজেই Library-র <b>Sentences</b> অংশে Save হবে। সেখান থেকে <b>Practice</b> করো, বাক্য শুনো, আর <b>PDF</b> বানাও।'},
-  {ico:'🔥', title:'প্রতিদিন একটু একটু', txt:'প্রোফাইলে <b>দৈনিক লক্ষ্য</b> ঠিক করো — রোজ সেটা পূরণ করলে <b>streak</b> বাড়বে। ভুল হওয়া card আবার আগে আসবে, তাই কম সময়েই বেশি মনে থাকবে। যেকোনো জায়গায় আটকে গেলে <b>❓</b> চাপো।'}
+  {ico:'👋', title:'DeutschFlash-এ স্বাগতম', txt:'নিচের বারে ৪টা মূল ট্যাব: <b>🏠 Home</b>, <b>🗂️ My Card</b> (শব্দ যোগ ও practice), <b>📂 Library</b> (সব deck ও বাক্য), <b>📈 Progress</b>। আর উপরের <b>☰ মেনুতে</b> বাকি সব option আছে — একে একে দেখাই।'},
+  {ico:'🗂️', title:'Card ও বাক্য যোগ করো', txt:'<b>☰ → ➕ Create</b>-এ German শব্দ + বাংলা অর্থ দিয়ে <b>Card</b> বানাও, বা <b>Sentence / Story</b> যোগ করো। অনেক একসাথে দিতে <b>Bulk Add</b> আছে। তারপর <b>Flashcards, Learn, Test, Match</b> দিয়ে practice।'},
+  {ico:'🎮', title:'Practice ও Game', txt:'<b>☰ → 🎮 Practice</b>-এ আছে Typing test, Der/Die/Das, বাক্য সাজানো, Dictation, আজকের শব্দ, Verb তালিকা। আর <b>📝 Grammar & Dialog</b>-এ Dialog practice, Du/Sie, nicht/kein, Akkusativ, Modalverb ইত্যাদি।'},
+  {ico:'🧪', title:'পরীক্ষা ও Review', txt:'<b>☰ → 🧪 পরীক্ষা ও Review</b>: <b>আজকের Review</b>, সময়সহ <b>Kapitel পরীক্ষা</b>, <b>Lesen</b>, <b>Hören</b>, <b>Schreiben (Formular)</b> আর পুরো <b>A1 Mock test</b>। নিজের অবস্থা যাচাই করতে দারুণ।'},
+  {ico:'🌱', title:'শব্দভান্ডার ও অভ্যাস', txt:'<b>☰ → 🌱 শব্দভান্ডার & অভ্যাস</b>: রোজ ~১০টি প্রশ্নের <b>🔥 Daily Challenge</b>, <b>Thema-Wortschatz</b> (Essen, Familie…), Tage/Monate/Farben, <b>📓 ভুল খাতা</b> (ভুলগুলো আবার practice) আর <b>Shadowing</b>।'},
+  {ico:'🎬', title:'A1 Sprechen Kurs', txt:'<b>☰ → 🎬 A1 Sprechen Kurs</b>: Playlist অনুযায়ী video। প্রথম video খোলা, বাকিগুলো 🔒 — <b>১০০% দেখলে</b> পরেরটা খুলবে। প্রতিটা video-র transcript থেকে practice, আর নিজের নতুন Playlist বা video যোগ করা যায়।'},
+  {ico:'📥', title:'তৈরি Data ও সেটিংস', txt:'<b>☰ → 📥 তৈরি Data</b>-এ এক চাপে Story ও Glossar card যোগ হয়। <b>⚙️ সেটিংস</b>-এ Dark/Light Mode আর এই গাইড (<b>❓ App-এর গাইড</b>) — যখন খুশি আবার দেখতে পারবে। 🔥 রোজ practice করলে <b>streak</b> বাড়বে!'}
 ];
 var obIdx = 0;
 function openOnboarding(){ obIdx = 0; renderOnboarding(); document.getElementById('obOverlay').classList.add('open'); }
 function closeOnboarding(){
+  var cb=document.getElementById('obHide');
+  if(cb && cb.checked) saveLS('df_ob_hide', true);
   document.getElementById('obOverlay').classList.remove('open');
   saveLS('df_onboarded', true);
 }
@@ -4058,6 +4065,7 @@ function renderOnboarding(){
   else h += '<button class="btn btn-ghost" style="flex:1;padding:14px;" onclick="closeOnboarding()">Skip</button>';
   h += '<button class="btn btn-blue" style="flex:2;padding:14px;" onclick="obGo(1)">'+(last?'🚀 শুরু করি':'পরের ›')+'</button>';
   h += '</div>';
+  h += '<label style="display:flex;align-items:center;gap:8px;margin-top:16px;font-size:13px;color:var(--sub);cursor:pointer;"><input type="checkbox" id="obHide" style="width:18px;height:18px;" '+(window._obHideChk?'checked':'')+' onchange="window._obHideChk=this.checked"> পরের বার আর দেখাবো না</label>';
   document.getElementById('obOverlay').innerHTML = h;
 }
 var HELP_TOPICS = {
@@ -6732,9 +6740,9 @@ function xgCs(){ return xs.course; }
 function xgYtId(u){ u=String(u||'').trim(); var m=u.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([A-Za-z0-9_-]{11})/); if(m) return m[1]; return /^[A-Za-z0-9_-]{11}$/.test(u)?u:''; }
 function xgVid(id){ return xgCs().vids.filter(function(v){return v.id===id;})[0]; }
 function xgOpen(i){ var c=xgCs(); return !c.lock || i===0 || !!c.vids[i-1].w; }
-var xgPc={};
+var xgPc={}, xgPcm={};
 function xgParse(v){
-  var key=(v.tr||'')+'##'+(v.vk||''); if(xgPc.id===v.id&&xgPc.key===key) return xgPc.val;
+  var key=(v.tr||'')+'##'+(v.vk||''); var _c=xgPcm[v.id]; if(_c&&_c.key===key) return _c.val;
   var sents=[], seen={};
   String(v.tr||'').split(/\n+/).forEach(function(line){
     line=line.replace(/^\s*\[?\d{1,2}:\d{2}(?::\d{2})?\]?\s*/,'').trim(); if(!line) return;
@@ -6744,7 +6752,7 @@ function xgParse(v){
     parts.forEach(function(p){ var n=p.de.split(/\s+/).length; if(n<2||n>18||!/[A-Za-zÄÖÜäöüß]/.test(p.de)) return; var k=p.de.toLowerCase(); if(seen[k]) return; seen[k]=1; sents.push(p); });
   });
   var vocab=[]; String(v.vk||'').split(/\n+/).forEach(function(line){ var m=line.trim().match(/^(.+?)\s*(?:=|\||\t|–|—| - )\s*(.+)$/); if(m) vocab.push({de:m[1].trim(),bn:m[2].trim(),k:'w'}); });
-  xgPc={id:v.id,key:key,val:{sents:sents,vocab:vocab}}; return xgPc.val;
+  var _r={sents:sents,vocab:vocab}; xgPcm[v.id]={key:key,val:_r}; return _r;
 }
 // ---- builders ----
 function xgQsDict(S,n){ return xsShuffle(S).slice(0,n).map(function(s){ return {kind:'dict',rows:2,prompt:'🎧 Dictation',sub:'শুনে বাক্য লেখো',acc:[s.de],opts:[s.de],ans:0,speak:s.de,hint:s.bn?'অর্থ: '+s.bn:'',cat:'Dictation',onAnswer:function(ok){ xsMark('sp',s.de,ok,s.bn); xsAct('s',1); }}; }); }
@@ -6864,7 +6872,7 @@ function xgPlayer(v){
     try{ xgP=new YT.Player('xgYt',{videoId:v.yt,playerVars:(/^https?:/.test(location.protocol)?{rel:0,modestbranding:1,playsinline:1,origin:location.origin}:{rel:0,modestbranding:1,playsinline:1}),events:{onError:function(ev){ var e=document.getElementById('xgPr'); if(e) e.innerHTML='⚠️ video এখানে চালানো যাচ্ছে না (error '+(ev&&ev.data)+'). পরে আবার চেষ্টা করো।'; }}}); }catch(e){ done=false; fallback(); return; }
     xgTm=setInterval(function(){
       if(!document.getElementById('xgYtW')){ xgStopTrack(); return; }
-      try{ if(v.w) return; var st=xgP.getPlayerState(), d=xgP.getDuration()||0; if(d>0) v.dur=d; if(st===1&&d>0){ v.acc=Math.min(d,(v.acc||0)+(xgP.getPlaybackRate()||1)); xgTick++; if(xgTick%5===0) xsSave(); xgShowPr(v); } if(d>0&&((st===0&&(v.acc||0)>=0.95*d)||(v.acc||0)>=0.99*d)){ v.acc=d; xgMarkDone(v); } }catch(e){}
+      try{ if(v.w) return; var st=xgP.getPlayerState(), d=xgP.getDuration()||0; if(d>0) v.dur=d; if(st===1&&d>0){ v.acc=Math.min(d,(v.acc||0)+(xgP.getPlaybackRate()||1)); xgTick++; if(xgTick%20===0) xsSave(); xgShowPr(v); } if(d>0&&((st===0&&(v.acc||0)>=0.95*d)||(v.acc||0)>=0.99*d)){ v.acc=d; xgMarkDone(v); } }catch(e){}
     },1000);
   }
   if(window.YT&&YT.Player) make();
@@ -6888,7 +6896,7 @@ function xgCourse(){
   if(!_mg) _mg={g:8};
   var c=xgCs(), V=c.vids, done=V.filter(function(v){return v.w;}).length, tp=V.length?Math.round(done/V.length*100):0;
   var h='<div style="background:linear-gradient(135deg,#1a1f6e,#0d1040);border:1px solid var(--borderL,#3a3f8a);border-radius:18px;padding:15px;margin-bottom:12px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:34px;">🎬</div><div style="flex:1;"><div style="font-size:18px;font-weight:900;color:#fff;">A1 Sprechen Kurs</div><div style="font-size:12px;color:#c7cbff;margin-top:2px;">'+(V.length?done+' / '+V.length+' video সম্পন্ন':'video যোগ করে শুরু করো')+'</div></div><div style="font-size:20px;font-weight:900;color:#fff;">'+tp+'%</div></div><div style="height:8px;background:#ffffff22;border-radius:9px;margin-top:11px;overflow:hidden;"><div style="height:100%;width:'+tp+'%;background:linear-gradient(90deg,#2dd4a0,#22d3ee);border-radius:9px;"></div></div></div>';
-  h+='<div style="display:flex;gap:8px;margin-bottom:12px;"><button class="btn btn-blue btn-sm" style="flex:1;" onclick="xgVidEdit(null)">➕ Video</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgBulk()">📦 একসাথে</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPlaylist()">🎞 Playlist</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgTitles(true)">🏷 নাম</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPracAll()">🔀 মিশ্র</button></div>';
+  h+='<div style="display:flex;gap:8px;margin-bottom:12px;"><button class="btn btn-blue btn-sm" style="flex:1;" onclick="xgVidEdit(null)">➕ Video</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgBulk()">📦 একসাথে</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPlaylist()">🎞 Playlist</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgTitles(true)">🏷 নাম</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgTrAll()">📝 Transcript</button><button class="btn btn-ghost btn-sm" style="flex:1;" onclick="xgPracAll()">🔀 মিশ্র</button></div>';
   if(!V.length) h+='<div class="empty-box"><div class="ico">🎬</div><div class="txt">এখনো কোনো video নেই।<br>➕ Video বা 📦 একসাথে চাপো।</div></div>';
   h+='<div style="padding:2px;">';
   var cur=-1; V.forEach(function(v,i){ if(cur<0&&!v.w) cur=i; });
@@ -6896,7 +6904,7 @@ function xgCourse(){
     var op=xgOpen(i), P=xgParse(v), p=xgPct(v), isCur=(i===cur);
     var st=v.w?'<span style="color:var(--green);">✅ সম্পন্ন</span>':(op?'<span style="color:var(--blue);">'+(p?'▶ চালিয়ে যাও · '+p+'%':'▶ শুরু করো')+'</span>':'<span style="color:var(--muted);">🔒 আগের video শেষ করো</span>');
     h+='<div style="display:flex;gap:11px;background:var(--card);border:1.5px solid '+(isCur?'var(--blue)':v.w?'#2dd4a066':'var(--border)')+';'+(isCur?'box-shadow:0 0 0 3px #4361ee22;':'')+'border-radius:16px;padding:9px;margin-bottom:10px;">';
-    h+='<div onclick="'+(op?'xgOpenVid(\''+v.id+'\')':'showToast(\'🔒 আগের video ১০০% দেখো\')')+'" style="position:relative;width:118px;min-width:118px;height:70px;border-radius:11px;overflow:hidden;background:#111 center/cover url('+xgThumb(v)+');cursor:pointer;">';
+    h+='<div onclick="'+(op?'xgOpenVid(\''+v.id+'\')':'showToast(\'🔒 আগের video ১০০% দেখো\')')+'" style="position:relative;width:118px;min-width:118px;height:70px;border-radius:11px;overflow:hidden;background:#111;cursor:pointer;" data-bg="'+xgThumb(v)+'">';
     h+='<div style="position:absolute;left:5px;top:5px;background:#000a;color:#fff;font-size:11px;font-weight:900;border-radius:7px;padding:1px 7px;">'+(i+1)+'</div>';
     if(!op) h+='<div style="position:absolute;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;font-size:26px;">🔒</div>';
     else if(v.w) h+='<div style="position:absolute;inset:0;background:#0a3d2a99;display:flex;align-items:center;justify-content:center;font-size:26px;">✅</div>';
@@ -7000,7 +7008,7 @@ function xgPlAdd(ids){
 }
 
 </script>
-<script type="application/json" id="plData">[{"name": "A1 Videos", "videos": [{"yt": "PSvABZV9GW4", "title": "Video 1"}, {"yt": "TlVG0ORnkZQ", "title": "Video 2"}, {"yt": "CdoqrkS0sMY", "title": "Video 3"}, {"yt": "yekbqC8mdFY", "title": "Video 4"}, {"yt": "MzkDLa0TWy4", "title": "Video 5"}, {"yt": "5-coQCLlxe0", "title": "Video 6"}, {"yt": "XJSu-DzbQkY", "title": "Video 7"}, {"yt": "adPlB3MhbAs", "title": "Video 8"}, {"yt": "Wz83ixu2cxk", "title": "Video 9"}, {"yt": "THwuFPTWWz0", "title": "Video 10"}, {"yt": "wzhwAC_G7Y4", "title": "Video 11"}, {"yt": "9KzUFTLJMco", "title": "Video 12"}, {"yt": "KOQtdj7kI7o", "title": "Video 13"}, {"yt": "mumUZX6k1Fc", "title": "Video 14"}, {"yt": "_HRlrifQ-kY", "title": "Video 15"}, {"yt": "lTQGA_kZTuI", "title": "Video 16"}, {"yt": "16slasJCyuw", "title": "Video 17"}, {"yt": "EDfZDnyK4tc", "title": "Video 18"}, {"yt": "WGSX7tpJ840", "title": "Video 19"}, {"yt": "z6bdOVplDU0", "title": "Video 20"}, {"yt": "MEa22As8fzk", "title": "Video 21"}, {"yt": "N078y7i1Gfk", "title": "Video 22"}, {"yt": "LLJkzJnQp0M", "title": "Video 23"}, {"yt": "Lm-JHvuA134", "title": "Video 24"}, {"yt": "Q8ulAI-1w8c", "title": "Video 25"}, {"yt": "ZSAb89OdvVo", "title": "Video 26"}, {"yt": "8PZaPQBnwDc", "title": "Video 27"}, {"yt": "tfRiTNiLSAA", "title": "Video 28"}, {"yt": "dIsRaTgF6HA", "title": "Video 29"}, {"yt": "5qvpKWp-LVc", "title": "Video 30"}, {"yt": "qhAQ8R8RvfU", "title": "Video 31"}, {"yt": "uDJ3rN7hO1s", "title": "Video 32"}, {"yt": "E-izrCzHpCY", "title": "Video 33"}, {"yt": "xmg--Tl9bx0", "title": "Video 34"}, {"yt": "FMloKoYBCvo", "title": "Video 35"}, {"yt": "Yu5QuiGjm6c", "title": "Video 36"}, {"yt": "eStqLk1PuXc", "title": "Video 37"}, {"yt": "nnW0Cw1sEAA", "title": "Video 38"}]}, {"name": "Playlist 2", "videos": [{"yt": "B2X5a5MJ5b0", "title": "Video 1"}, {"yt": "avhKwATDNyA", "title": "Video 2"}, {"yt": "e_0YH1wc5Tc", "title": "Video 3"}, {"yt": "ETVbNQr28M0", "title": "Video 4"}, {"yt": "PIFk2kLsc80", "title": "Video 5"}]}, {"name": "Playlist 3", "videos": [{"yt": "qykzCSTfUFE", "title": "Video 1"}, {"yt": "avhKwATDNyA", "title": "Video 2"}, {"yt": "e_0YH1wc5Tc", "title": "Video 3"}, {"yt": "mGLVDjqs4-8", "title": "Video 4"}]}, {"name": "Playlist 4", "videos": [{"yt": "N078y7i1Gfk", "title": "Video 1"}, {"yt": "nwFa00hV86k", "title": "Video 2"}, {"yt": "vy7qp49h8v8", "title": "Video 3"}, {"yt": "Q8ulAI-1w8c", "title": "Video 4"}, {"yt": "uzCnZ4j52EY", "title": "Video 5"}]}, {"name": "Playlist 5", "videos": [{"yt": "0T_OYYc9_hI", "title": "Video 1"}, {"yt": "cUC3t75xBgM", "title": "Video 2"}, {"yt": "f5K7iV6bYUY", "title": "Video 3"}, {"yt": "IKZeRzWRpvU", "title": "Video 4"}]}, {"name": "Playlist 6", "videos": [{"yt": "Ip1cQZhBqto", "title": "Video 1"}, {"yt": "BoDAqwSIcf4", "title": "Video 2"}, {"yt": "FZ5IR_67yL8", "title": "Video 3"}, {"yt": "6WEn1Qgqv-o", "title": "Video 4"}, {"yt": "06eRu5YjJ1o", "title": "Video 5"}, {"yt": "vg5CU8ZdeUs", "title": "Video 6"}, {"yt": "8BjRFjBBkVA", "title": "Video 7"}, {"yt": "fLwuQmPEhwM", "title": "Video 8"}, {"yt": "pwPZsYuDFe0", "title": "Video 9"}, {"yt": "HrohwrVNkNg", "title": "Video 10"}, {"yt": "-RrL_rbmS1w", "title": "Video 11"}, {"yt": "G11QWZumfzo", "title": "Video 12"}, {"yt": "XJndBpddLwU", "title": "Video 13"}, {"yt": "R3ut2M3f2Ro", "title": "Video 14"}, {"yt": "PSvABZV9GW4", "title": "Video 15"}, {"yt": "TlVG0ORnkZQ", "title": "Video 16"}, {"yt": "CdoqrkS0sMY", "title": "Video 17"}, {"yt": "yekbqC8mdFY", "title": "Video 18"}, {"yt": "MzkDLa0TWy4", "title": "Video 19"}, {"yt": "5-coQCLlxe0", "title": "Video 20"}, {"yt": "XJSu-DzbQkY", "title": "Video 21"}, {"yt": "adPlB3MhbAs", "title": "Video 22"}, {"yt": "Wz83ixu2cxk", "title": "Video 23"}, {"yt": "THwuFPTWWz0", "title": "Video 24"}, {"yt": "fdF9OoQV05k", "title": "Video 25"}, {"yt": "wzhwAC_G7Y4", "title": "Video 26"}, {"yt": "9KzUFTLJMco", "title": "Video 27"}, {"yt": "KOQtdj7kI7o", "title": "Video 28"}, {"yt": "mumUZX6k1Fc", "title": "Video 29"}, {"yt": "_HRlrifQ-kY", "title": "Video 30"}, {"yt": "lTQGA_kZTuI", "title": "Video 31"}, {"yt": "16slasJCyuw", "title": "Video 32"}, {"yt": "EDfZDnyK4tc", "title": "Video 33"}, {"yt": "ZIDVIf6RcXM", "title": "Video 34"}, {"yt": "eKLjZjm7caQ", "title": "Video 35"}, {"yt": "p9Fd4y7XsQs", "title": "Video 36"}, {"yt": "-oFq1ocljNQ", "title": "Video 37"}, {"yt": "vPViNKLvpXM", "title": "Video 38"}, {"yt": "9ELoZ5hsDok", "title": "Video 39"}, {"yt": "aUi56o5nnCU", "title": "Video 40"}, {"yt": "fqL9sdYQBLA", "title": "Video 41"}, {"yt": "-2WO_FXmnPI", "title": "Video 42"}, {"yt": "z0JCDNpQ3uo", "title": "Video 43"}, {"yt": "KHhLQDZKw94", "title": "Video 44"}, {"yt": "ZjAQQQa2WjY", "title": "Video 45"}, {"yt": "aRMsdLjUd6g", "title": "Video 46"}, {"yt": "Q4wz-0oQlMQ", "title": "Video 47"}, {"yt": "Fswbz4tUO70", "title": "Video 48"}, {"yt": "xBYd0C9_0ck", "title": "Video 49"}, {"yt": "TWcjV9VveDE", "title": "Video 50"}, {"yt": "7CQ4lMJn4Z0", "title": "Video 51"}, {"yt": "e519GBPwLbM", "title": "Video 52"}, {"yt": "QxJACd0W-3o", "title": "Video 53"}, {"yt": "T9SU6JDJ0pA", "title": "Video 54"}, {"yt": "p0GSsF9y3Fc", "title": "Video 55"}, {"yt": "GIwCKE8OmC0", "title": "Video 56"}, {"yt": "hwGZN7mY66k", "title": "Video 57"}, {"yt": "1hYkDuXm8KE", "title": "Video 58"}, {"yt": "CYHB3I_baT8", "title": "Video 59"}, {"yt": "T1NXbxnnxKE", "title": "Video 60"}, {"yt": "y6-iSJ-gHJA", "title": "Video 61"}, {"yt": "g7BKjVssLF8", "title": "Video 62"}, {"yt": "KEND-lnGFXM", "title": "Video 63"}, {"yt": "hvv73q3FNfQ", "title": "Video 64"}, {"yt": "p75HCZKW_B4", "title": "Video 65"}, {"yt": "8HIm6WaS53Q", "title": "Video 66"}, {"yt": "Pker8-5XZEQ", "title": "Video 67"}, {"yt": "h3RaiRxKa5E", "title": "Video 68"}, {"yt": "hEn7LzaCvCw", "title": "Video 69"}, {"yt": "xZF3Qyv4nnw", "title": "Video 70"}, {"yt": "hCDlNy7AlLQ", "title": "Video 71"}, {"yt": "Xl01hFOuz8I", "title": "Video 72"}, {"yt": "w3TTJIGVf_Y", "title": "Video 73"}, {"yt": "O9z_DCs8EKI", "title": "Video 74"}, {"yt": "cW7jThk5pzs", "title": "Video 75"}, {"yt": "pvarLH7xHxk", "title": "Video 76"}, {"yt": "BXUqE5pOw9o", "title": "Video 77"}, {"yt": "yAbhJt7F6WQ", "title": "Video 78"}, {"yt": "_B-88KgjYu8", "title": "Video 79"}, {"yt": "ni8p4GktE4M", "title": "Video 80"}, {"yt": "mA7f5siPAoM", "title": "Video 81"}, {"yt": "va11RfdlewE", "title": "Video 82"}, {"yt": "3L4EmmAsePQ", "title": "Video 83"}, {"yt": "XLvTUHBqaB4", "title": "Video 84"}, {"yt": "C91aA4peEpg", "title": "Video 85"}, {"yt": "_2pze2p4BgQ", "title": "Video 86"}, {"yt": "lJPOv8K-a0k", "title": "Video 87"}, {"yt": "8NJDe1d-h74", "title": "Video 88"}, {"yt": "e03uSWy1H9I", "title": "Video 89"}, {"yt": "1j4mW0n0J7c", "title": "Video 90"}, {"yt": "eIaA7fnPHLA", "title": "Video 91"}, {"yt": "JDMw_-pAvmc", "title": "Video 92"}, {"yt": "VdVVsTVkhUI", "title": "Video 93"}, {"yt": "SgiyezOGELU", "title": "Video 94"}, {"yt": "JTIBFdaSCC8", "title": "Video 95"}, {"yt": "IuCouSEDut8", "title": "Video 96"}, {"yt": "FMloKoYBCvo", "title": "Video 97"}, {"yt": "Yu5QuiGjm6c", "title": "Video 98"}, {"yt": "eStqLk1PuXc", "title": "Video 99"}, {"yt": "nnW0Cw1sEAA", "title": "Video 100"}]}, {"name": "Playlist 7", "videos": [{"yt": "CdoqrkS0sMY", "title": "Video 1"}, {"yt": "y6-iSJ-gHJA", "title": "Video 2"}, {"yt": "p75HCZKW_B4", "title": "Video 3"}, {"yt": "h3RaiRxKa5E", "title": "Video 4"}, {"yt": "O9z_DCs8EKI", "title": "Video 5"}]}, {"name": "Playlist 8", "videos": [{"yt": "fqL9sdYQBLA", "title": "Video 1"}, {"yt": "3IJAFSrjjac", "title": "Video 2"}, {"yt": "5g4yby73Aqs", "title": "Video 3"}, {"yt": "p9Fd4y7XsQs", "title": "Video 4"}, {"yt": "9ELoZ5hsDok", "title": "Video 5"}]}, {"name": "Playlist 9", "videos": [{"yt": "zpSUI-p7-z4", "title": "Video 1"}, {"yt": "gELfQGv-wyw", "title": "Video 2"}, {"yt": "w3TTJIGVf_Y", "title": "Video 3"}, {"yt": "ibLEW1Aeabc", "title": "Video 4"}, {"yt": "_fWu3PUgPC4", "title": "Video 5"}, {"yt": "8zxMiezQUr0", "title": "Video 6"}, {"yt": "IgCd_6x5TzY", "title": "Video 7"}, {"yt": "P2rbat3lhLU", "title": "Video 8"}, {"yt": "it8M3KWzLgM", "title": "Video 9"}]}, {"name": "Playlist 10", "videos": [{"yt": "dsFAHd38PhE", "title": "Video 1"}, {"yt": "mnmyPZR5ix4", "title": "Video 2"}, {"yt": "YEsYjNVD2Js", "title": "Video 3"}, {"yt": "JNe1GJb9zIA", "title": "Video 4"}, {"yt": "cflGH2xp3FQ", "title": "Video 5"}, {"yt": "9-R4b24AlmU", "title": "Video 6"}, {"yt": "N8FvvpPAoso", "title": "Video 7"}, {"yt": "IG0qvp5MZ1g", "title": "Video 8"}, {"yt": "BOL1HLXR4-Q", "title": "Video 9"}, {"yt": "fZYQKHJVFP4", "title": "Video 10"}]}]</script>
+<script type="application/json" id="plData">[{"name": "A1 Videos", "videos": [{"yt": "PSvABZV9GW4", "title": "Video 1"}, {"yt": "TlVG0ORnkZQ", "title": "Video 2"}, {"yt": "CdoqrkS0sMY", "title": "Video 3"}, {"yt": "yekbqC8mdFY", "title": "Video 4"}, {"yt": "MzkDLa0TWy4", "title": "Video 5"}, {"yt": "5-coQCLlxe0", "title": "Video 6"}, {"yt": "XJSu-DzbQkY", "title": "Video 7"}, {"yt": "adPlB3MhbAs", "title": "Video 8"}, {"yt": "Wz83ixu2cxk", "title": "Video 9"}, {"yt": "THwuFPTWWz0", "title": "Video 10"}, {"yt": "wzhwAC_G7Y4", "title": "Video 11"}, {"yt": "9KzUFTLJMco", "title": "Video 12"}, {"yt": "KOQtdj7kI7o", "title": "Video 13"}, {"yt": "mumUZX6k1Fc", "title": "Video 14"}, {"yt": "_HRlrifQ-kY", "title": "Video 15"}, {"yt": "lTQGA_kZTuI", "title": "Video 16"}, {"yt": "16slasJCyuw", "title": "Video 17"}, {"yt": "EDfZDnyK4tc", "title": "Video 18"}, {"yt": "WGSX7tpJ840", "title": "Video 19"}, {"yt": "z6bdOVplDU0", "title": "Video 20"}, {"yt": "MEa22As8fzk", "title": "Video 21"}, {"yt": "N078y7i1Gfk", "title": "Video 22"}, {"yt": "LLJkzJnQp0M", "title": "Video 23"}, {"yt": "Lm-JHvuA134", "title": "Video 24"}, {"yt": "Q8ulAI-1w8c", "title": "Video 25"}, {"yt": "ZSAb89OdvVo", "title": "Video 26"}, {"yt": "8PZaPQBnwDc", "title": "Video 27"}, {"yt": "tfRiTNiLSAA", "title": "Video 28"}, {"yt": "dIsRaTgF6HA", "title": "Video 29"}, {"yt": "5qvpKWp-LVc", "title": "Video 30"}, {"yt": "qhAQ8R8RvfU", "title": "Video 31"}, {"yt": "uDJ3rN7hO1s", "title": "Video 32"}, {"yt": "E-izrCzHpCY", "title": "Video 33"}, {"yt": "xmg--Tl9bx0", "title": "Video 34"}, {"yt": "FMloKoYBCvo", "title": "Video 35"}, {"yt": "Yu5QuiGjm6c", "title": "Video 36"}, {"yt": "eStqLk1PuXc", "title": "Video 37"}, {"yt": "nnW0Cw1sEAA", "title": "Video 38"}]}, {"name": "Playlist 2", "videos": [{"yt": "B2X5a5MJ5b0", "title": "Video 1"}, {"yt": "avhKwATDNyA", "title": "Video 2"}, {"yt": "e_0YH1wc5Tc", "title": "Video 3"}, {"yt": "ETVbNQr28M0", "title": "Video 4"}, {"yt": "PIFk2kLsc80", "title": "Video 5"}]}, {"name": "Playlist 3", "videos": [{"yt": "qykzCSTfUFE", "title": "Video 1"}, {"yt": "avhKwATDNyA", "title": "Video 2"}, {"yt": "e_0YH1wc5Tc", "title": "Video 3"}, {"yt": "mGLVDjqs4-8", "title": "Video 4"}]}, {"name": "Playlist 4", "videos": [{"yt": "N078y7i1Gfk", "title": "Video 1"}, {"yt": "nwFa00hV86k", "title": "Video 2"}, {"yt": "vy7qp49h8v8", "title": "Video 3"}, {"yt": "Q8ulAI-1w8c", "title": "Video 4"}, {"yt": "uzCnZ4j52EY", "title": "Video 5"}]}, {"name": "Playlist 5", "videos": [{"yt": "0T_OYYc9_hI", "title": "Video 1"}, {"yt": "cUC3t75xBgM", "title": "Video 2"}, {"yt": "f5K7iV6bYUY", "title": "Video 3"}, {"yt": "IKZeRzWRpvU", "title": "Video 4"}]}, {"name": "Playlist 6", "videos": [{"yt": "Ip1cQZhBqto", "title": "Video 1"}, {"yt": "BoDAqwSIcf4", "title": "Video 2"}, {"yt": "FZ5IR_67yL8", "title": "Video 3"}, {"yt": "6WEn1Qgqv-o", "title": "Video 4"}, {"yt": "06eRu5YjJ1o", "title": "Video 5"}, {"yt": "vg5CU8ZdeUs", "title": "Video 6"}, {"yt": "8BjRFjBBkVA", "title": "Video 7"}, {"yt": "fLwuQmPEhwM", "title": "Video 8"}, {"yt": "pwPZsYuDFe0", "title": "Video 9"}, {"yt": "HrohwrVNkNg", "title": "Video 10"}, {"yt": "-RrL_rbmS1w", "title": "Video 11"}, {"yt": "G11QWZumfzo", "title": "Video 12"}, {"yt": "XJndBpddLwU", "title": "Video 13"}, {"yt": "R3ut2M3f2Ro", "title": "Video 14"}, {"yt": "PSvABZV9GW4", "title": "Video 15"}, {"yt": "TlVG0ORnkZQ", "title": "Video 16"}, {"yt": "CdoqrkS0sMY", "title": "Video 17"}, {"yt": "yekbqC8mdFY", "title": "Video 18"}, {"yt": "MzkDLa0TWy4", "title": "Video 19"}, {"yt": "5-coQCLlxe0", "title": "Video 20"}, {"yt": "XJSu-DzbQkY", "title": "Video 21"}, {"yt": "adPlB3MhbAs", "title": "Video 22"}, {"yt": "Wz83ixu2cxk", "title": "Video 23"}, {"yt": "THwuFPTWWz0", "title": "Video 24"}, {"yt": "fdF9OoQV05k", "title": "Video 25"}, {"yt": "wzhwAC_G7Y4", "title": "Video 26"}, {"yt": "9KzUFTLJMco", "title": "Video 27"}, {"yt": "KOQtdj7kI7o", "title": "Video 28"}, {"yt": "mumUZX6k1Fc", "title": "Video 29"}, {"yt": "_HRlrifQ-kY", "title": "Video 30"}, {"yt": "lTQGA_kZTuI", "title": "Video 31"}, {"yt": "16slasJCyuw", "title": "Video 32"}, {"yt": "EDfZDnyK4tc", "title": "Video 33"}, {"yt": "ZIDVIf6RcXM", "title": "Video 34"}, {"yt": "eKLjZjm7caQ", "title": "Video 35"}, {"yt": "p9Fd4y7XsQs", "title": "Video 36"}, {"yt": "-oFq1ocljNQ", "title": "Video 37"}, {"yt": "vPViNKLvpXM", "title": "Video 38"}, {"yt": "9ELoZ5hsDok", "title": "Video 39"}, {"yt": "aUi56o5nnCU", "title": "Video 40"}, {"yt": "fqL9sdYQBLA", "title": "Video 41"}, {"yt": "-2WO_FXmnPI", "title": "Video 42"}, {"yt": "z0JCDNpQ3uo", "title": "Video 43"}, {"yt": "KHhLQDZKw94", "title": "Video 44"}, {"yt": "ZjAQQQa2WjY", "title": "Video 45"}, {"yt": "aRMsdLjUd6g", "title": "Video 46"}, {"yt": "Q4wz-0oQlMQ", "title": "Video 47"}, {"yt": "Fswbz4tUO70", "title": "Video 48"}, {"yt": "xBYd0C9_0ck", "title": "Video 49"}, {"yt": "TWcjV9VveDE", "title": "Video 50"}, {"yt": "7CQ4lMJn4Z0", "title": "Video 51"}, {"yt": "e519GBPwLbM", "title": "Video 52"}, {"yt": "QxJACd0W-3o", "title": "Video 53"}, {"yt": "T9SU6JDJ0pA", "title": "Video 54"}, {"yt": "p0GSsF9y3Fc", "title": "Video 55"}, {"yt": "GIwCKE8OmC0", "title": "Video 56"}, {"yt": "hwGZN7mY66k", "title": "Video 57"}, {"yt": "1hYkDuXm8KE", "title": "Video 58"}, {"yt": "CYHB3I_baT8", "title": "Video 59"}, {"yt": "T1NXbxnnxKE", "title": "Video 60"}, {"yt": "y6-iSJ-gHJA", "title": "Video 61"}, {"yt": "g7BKjVssLF8", "title": "Video 62"}, {"yt": "KEND-lnGFXM", "title": "Video 63"}, {"yt": "hvv73q3FNfQ", "title": "Video 64"}, {"yt": "p75HCZKW_B4", "title": "Video 65"}, {"yt": "8HIm6WaS53Q", "title": "Video 66"}, {"yt": "Pker8-5XZEQ", "title": "Video 67"}, {"yt": "h3RaiRxKa5E", "title": "Video 68"}, {"yt": "hEn7LzaCvCw", "title": "Video 69"}, {"yt": "xZF3Qyv4nnw", "title": "Video 70"}, {"yt": "hCDlNy7AlLQ", "title": "Video 71"}, {"yt": "Xl01hFOuz8I", "title": "Video 72"}, {"yt": "w3TTJIGVf_Y", "title": "Video 73"}, {"yt": "O9z_DCs8EKI", "title": "Video 74"}, {"yt": "cW7jThk5pzs", "title": "Video 75"}, {"yt": "pvarLH7xHxk", "title": "Video 76"}, {"yt": "BXUqE5pOw9o", "title": "Video 77"}, {"yt": "yAbhJt7F6WQ", "title": "Video 78"}, {"yt": "_B-88KgjYu8", "title": "Video 79"}, {"yt": "ni8p4GktE4M", "title": "Video 80"}, {"yt": "mA7f5siPAoM", "title": "Video 81"}, {"yt": "va11RfdlewE", "title": "Video 82"}, {"yt": "3L4EmmAsePQ", "title": "Video 83"}, {"yt": "XLvTUHBqaB4", "title": "Video 84"}, {"yt": "C91aA4peEpg", "title": "Video 85"}, {"yt": "_2pze2p4BgQ", "title": "Video 86"}, {"yt": "lJPOv8K-a0k", "title": "Video 87"}, {"yt": "8NJDe1d-h74", "title": "Video 88"}, {"yt": "e03uSWy1H9I", "title": "Video 89"}, {"yt": "1j4mW0n0J7c", "title": "Video 90"}, {"yt": "eIaA7fnPHLA", "title": "Video 91"}, {"yt": "JDMw_-pAvmc", "title": "Video 92"}, {"yt": "VdVVsTVkhUI", "title": "Video 93"}, {"yt": "SgiyezOGELU", "title": "Video 94"}, {"yt": "JTIBFdaSCC8", "title": "Video 95"}, {"yt": "IuCouSEDut8", "title": "Video 96"}, {"yt": "FMloKoYBCvo", "title": "Video 97"}, {"yt": "Yu5QuiGjm6c", "title": "Video 98"}, {"yt": "eStqLk1PuXc", "title": "Video 99"}, {"yt": "nnW0Cw1sEAA", "title": "Video 100"}]}, {"name": "Playlist 7", "videos": [{"yt": "CdoqrkS0sMY", "title": "Video 1"}, {"yt": "y6-iSJ-gHJA", "title": "Video 2"}, {"yt": "p75HCZKW_B4", "title": "Video 3"}, {"yt": "h3RaiRxKa5E", "title": "Video 4"}, {"yt": "O9z_DCs8EKI", "title": "Video 5"}]}, {"name": "Playlist 8", "videos": [{"yt": "fqL9sdYQBLA", "title": "Video 1"}, {"yt": "3IJAFSrjjac", "title": "Video 2"}, {"yt": "5g4yby73Aqs", "title": "Video 3"}, {"yt": "p9Fd4y7XsQs", "title": "Video 4"}, {"yt": "9ELoZ5hsDok", "title": "Video 5"}]}, {"name": "Playlist 9", "videos": [{"yt": "zpSUI-p7-z4", "title": "Video 1"}, {"yt": "gELfQGv-wyw", "title": "Video 2"}, {"yt": "w3TTJIGVf_Y", "title": "Video 3"}, {"yt": "ibLEW1Aeabc", "title": "Video 4"}, {"yt": "_fWu3PUgPC4", "title": "Video 5"}, {"yt": "8zxMiezQUr0", "title": "Video 6"}, {"yt": "IgCd_6x5TzY", "title": "Video 7"}, {"yt": "P2rbat3lhLU", "title": "Video 8"}, {"yt": "it8M3KWzLgM", "title": "Video 9"}]}, {"name": "Playlist 10", "videos": [{"yt": "dsFAHd38PhE", "title": "Video 1"}, {"yt": "mnmyPZR5ix4", "title": "Video 2"}, {"yt": "YEsYjNVD2Js", "title": "Video 3"}, {"yt": "JNe1GJb9zIA", "title": "Video 4"}, {"yt": "cflGH2xp3FQ", "title": "Video 5"}, {"yt": "9-R4b24AlmU", "title": "Video 6"}, {"yt": "N8FvvpPAoso", "title": "Video 7"}, {"yt": "IG0qvp5MZ1g", "title": "Video 8"}, {"yt": "BOL1HLXR4-Q", "title": "Video 9"}, {"yt": "fZYQKHJVFP4", "title": "Video 10"}]}, {"name": "Playlist 11", "videos": [{"yt": "C11GlHhg6NA", "title": "Video 1"}, {"yt": "HxPkN1AA2Ao", "title": "Video 2"}, {"yt": "87EMKGelygc", "title": "Video 3"}, {"yt": "oJJ0kzVVKnI", "title": "Video 4"}, {"yt": "_f7sOjitnao", "title": "Video 5"}, {"yt": "n9jvmG9Xsd8", "title": "Video 6"}, {"yt": "7-Fnyrj041w", "title": "Video 7"}, {"yt": "cBWnYv2aTlI", "title": "Video 8"}, {"yt": "YEhGsQ3S2DQ", "title": "Video 9"}, {"yt": "WvtoMTgKtks", "title": "Video 10"}, {"yt": "TDmOOqiNcYM", "title": "Video 11"}, {"yt": "RNK9uPiYL5M", "title": "Video 12"}, {"yt": "5Yw5YtDpV50", "title": "Video 13"}, {"yt": "XBuU3n_8az4", "title": "Video 14"}, {"yt": "TbgNJtrbZVA", "title": "Video 15"}, {"yt": "TrTOpiWbjgs", "title": "Video 16"}, {"yt": "Gfg9V1zb6RE", "title": "Video 17"}, {"yt": "FJLaoBDa4QU", "title": "Video 18"}, {"yt": "Ce_Bndc_M_Q", "title": "Video 19"}, {"yt": "BOuVm29dYgw", "title": "Video 20"}, {"yt": "wkkK1oFoLS4", "title": "Video 21"}, {"yt": "nme7kDblD3M", "title": "Video 22"}, {"yt": "f7XzJl3bPkg", "title": "Video 23"}, {"yt": "dghA1TMJngg", "title": "Video 24"}, {"yt": "E_DWtU0KPsI", "title": "Video 25"}, {"yt": "LPufGx9BK_U", "title": "Video 26"}, {"yt": "pioWxJtF994", "title": "Video 27"}, {"yt": "8KbOcV3QeyI", "title": "Video 28"}, {"yt": "7bMh9GpWF_4", "title": "Video 29"}, {"yt": "tRDKDcJrAQs", "title": "Video 30"}, {"yt": "UdXweyij83U", "title": "Video 31"}, {"yt": "P7Te4piYmfg", "title": "Video 32"}, {"yt": "_ZavRhbZSKc", "title": "Video 33"}, {"yt": "47l2IpzMHnY", "title": "Video 34"}, {"yt": "4e0AfTdWDjU", "title": "Video 35"}, {"yt": "xVFWS0gtm0g", "title": "Video 36"}, {"yt": "LanXalXeozs", "title": "Video 37"}, {"yt": "oVwJEnSLVjg", "title": "Video 38"}, {"yt": "ZNTOd3ac5TU", "title": "Video 39"}, {"yt": "VW3YIVYZPjE", "title": "Video 40"}, {"yt": "TLfKhO3h9sM", "title": "Video 41"}, {"yt": "ChEdTDpfu3s", "title": "Video 42"}, {"yt": "lNgeKxZipQE", "title": "Video 43"}, {"yt": "4DvXm0e06eU", "title": "Video 44"}, {"yt": "9zywbk_Oslw", "title": "Video 45"}, {"yt": "sNHjD6gU6Qk", "title": "Video 46"}, {"yt": "0b4XpfIINCw", "title": "Video 47"}, {"yt": "nZr_2_S8svM", "title": "Video 48"}, {"yt": "NyNsEXfy5dE", "title": "Video 49"}, {"yt": "aY7fM7t25aQ", "title": "Video 50"}, {"yt": "hmhxjK9wMkc", "title": "Video 51"}, {"yt": "bNnps9avU9Y", "title": "Video 52"}, {"yt": "D9hA29mmRp8", "title": "Video 53"}, {"yt": "U6kfFu8SFDw", "title": "Video 54"}, {"yt": "RwjlzAILiw8", "title": "Video 55"}, {"yt": "Ryfib0vCamw", "title": "Video 56"}, {"yt": "k55Tksau8DI", "title": "Video 57"}, {"yt": "blTIDsQg1i8", "title": "Video 58"}, {"yt": "qG-ZpG_0dp8", "title": "Video 59"}, {"yt": "o9OxkmOJcbc", "title": "Video 60"}, {"yt": "KKjLsRz2tgs", "title": "Video 61"}, {"yt": "VIv2AyFXm4o", "title": "Video 62"}, {"yt": "6BpBw2Qbm6U", "title": "Video 63"}, {"yt": "Kt7z2cMw5Q0", "title": "Video 64"}, {"yt": "yKNDeM7IGhk", "title": "Video 65"}, {"yt": "xp8c5jgDbmc", "title": "Video 66"}, {"yt": "kIgSzQNF_No", "title": "Video 67"}, {"yt": "i2tn9HDjP78", "title": "Video 68"}, {"yt": "dcvJFPtMSk8", "title": "Video 69"}, {"yt": "clig5JtZyek", "title": "Video 70"}, {"yt": "SrDlMt8I8LU", "title": "Video 71"}, {"yt": "PsZgi4Koz6w", "title": "Video 72"}, {"yt": "JCp1gYn5rnc", "title": "Video 73"}, {"yt": "8yn6uDxsHVc", "title": "Video 74"}, {"yt": "Wi1Z_soTbgQ", "title": "Video 75"}, {"yt": "9xbM-QQiu90", "title": "Video 76"}, {"yt": "2fLTwmg8M80", "title": "Video 77"}, {"yt": "5N5tS3lZwqQ", "title": "Video 78"}, {"yt": "m3ClkgScjkE", "title": "Video 79"}, {"yt": "5ImX8YSGmYg", "title": "Video 80"}, {"yt": "TpNF9aHL0-4", "title": "Video 81"}, {"yt": "lvbidB6wTo4", "title": "Video 82"}, {"yt": "bXPVn6wHp7o", "title": "Video 83"}, {"yt": "1oM-dxW8E3c", "title": "Video 84"}, {"yt": "RdL7lEyjZwU", "title": "Video 85"}, {"yt": "xijBA_QgpAM", "title": "Video 86"}, {"yt": "VDRPwfNBXIY", "title": "Video 87"}, {"yt": "sdJCSPyKNG4", "title": "Video 88"}, {"yt": "77wF3IANZBI", "title": "Video 89"}, {"yt": "3fudGeHXjxM", "title": "Video 90"}, {"yt": "VD3s_Lb-fFg", "title": "Video 91"}, {"yt": "EwuzCcvs6AE", "title": "Video 92"}, {"yt": "OpRMR_6sD2Q", "title": "Video 93"}, {"yt": "Guv4XhvyT8Q", "title": "Video 94"}, {"yt": "Hw5O_68yZwk", "title": "Video 95"}, {"yt": "9GVI-UxiRic", "title": "Video 96"}, {"yt": "C9SpssxYrn0", "title": "Video 97"}, {"yt": "ppcPPCWFEX8", "title": "Video 98"}, {"yt": "aDmcf6avwcA", "title": "Video 99"}, {"yt": "k8D_d-rqaAA", "title": "Video 100"}, {"yt": "wdF_EgATB_Q", "title": "Video 101"}, {"yt": "nFVfrZZdzHg", "title": "Video 102"}, {"yt": "HzU1UM9AJb4", "title": "Video 103"}, {"yt": "DPTG-KHML_A", "title": "Video 104"}, {"yt": "w_1xPgWwyx4", "title": "Video 105"}, {"yt": "znzShcAhm2Y", "title": "Video 106"}, {"yt": "TXz5rbGgm9k", "title": "Video 107"}, {"yt": "AilOyNHvBMo", "title": "Video 108"}, {"yt": "ZIP-aSwfrgc", "title": "Video 109"}, {"yt": "TS6AxX6EpAI", "title": "Video 110"}, {"yt": "kkx52dAmUXw", "title": "Video 111"}, {"yt": "cMr9aRKZ1Lk", "title": "Video 112"}, {"yt": "QqDCUWyOCE0", "title": "Video 113"}, {"yt": "SgXcqjvZAbU", "title": "Video 114"}, {"yt": "D5kcRWVW7jw", "title": "Video 115"}, {"yt": "shSKOGkGB0k", "title": "Video 116"}, {"yt": "imqiucs0IFs", "title": "Video 117"}, {"yt": "QyTXq8FYWxA", "title": "Video 118"}, {"yt": "Y5Ycd1KrCBs", "title": "Video 119"}, {"yt": "8jBOC2eNKKw", "title": "Video 120"}, {"yt": "rahvDiyzIa0", "title": "Video 121"}, {"yt": "kHVPeDjZdY8", "title": "Video 122"}, {"yt": "l93Ks750qzQ", "title": "Video 123"}, {"yt": "gPFwstG6t2g", "title": "Video 124"}, {"yt": "L1GAxjh1NMA", "title": "Video 125"}, {"yt": "_6V1ZAjvjOk", "title": "Video 126"}, {"yt": "8_rx8Mq0VWw", "title": "Video 127"}, {"yt": "h2kZqKqGlv8", "title": "Video 128"}, {"yt": "8D7b2zsH54Q", "title": "Video 129"}, {"yt": "3oekCWOJNs8", "title": "Video 130"}, {"yt": "sNqlFzgCcCs", "title": "Video 131"}, {"yt": "Uofn_vhh15k", "title": "Video 132"}, {"yt": "--GNBDnsQIQ", "title": "Video 133"}, {"yt": "qMuMAdI1kq4", "title": "Video 134"}, {"yt": "PWXtGE6J7-c", "title": "Video 135"}, {"yt": "aXAFeGuBPv8", "title": "Video 136"}]}]</script>
 <script>
 // ── Default Playlists: bundled in the file. Videos auto-appear in A1 Sprechen Kurs for every user (no backup import needed). Format: [{"name":"নাম","videos":[{"yt":"11-char-id","title":"Video নাম"}]}]
 function plLoad(){ try{ return JSON.parse(document.getElementById('plData').textContent)||[]; }catch(e){ return []; } }
@@ -7028,7 +7036,7 @@ plSeed(false);
 
 // Auto-fetch real video titles (noembed) for videos still named "Video N". Thumbnails come from the video ID (xgThumb) automatically.
 function xgTitles(manual){
-  var todo = xgCs().vids.filter(function(v){ return /^Video \d+$/.test(v.title||''); });
+  var todo = xgCs().vids.filter(function(v){ return /^Video \d+$/.test(v.title||''); }); if(!manual) todo = todo.slice(0,40);
   if(!todo.length){ if(manual) showToast('ℹ️ সব নাম আগে থেকেই আছে'); return; }
   if(manual) showToast('⏳ '+todo.length+'টি নাম আনা হচ্ছে…');
   var k = 0, ok = 0;
@@ -7043,7 +7051,7 @@ setTimeout(function(){ if(navigator.onLine) xgTitles(false); }, 2000);
 <script>
 // ===== Smarter transcript parser (handles YouTube "Show transcript" paste) =====
 xgParse=function(v){
-  var key=(v.tr||'')+'##'+(v.vk||''); if(xgPc.id===v.id&&xgPc.key===key) return xgPc.val;
+  var key=(v.tr||'')+'##'+(v.vk||''); var _c=xgPcm[v.id]; if(_c&&_c.key===key) return _c.val;
   var raw=String(v.tr||'').split(/\n+/).map(function(t){ return t.replace(/^\s*\[?\d{1,2}:\d{2}(?::\d{2})?\]?\s*/,'').trim(); }).filter(function(t){ return t && !/^\[[^\]]*\]$/.test(t) && t.indexOf('♪')<0 && !/^(transcript|chapters|kapitel)$/i.test(t); });
   var pairs=raw.some(function(l){ return /[ঀ-৿]/.test(l)&&/\||=>|\t/.test(l); });
   var punct=raw.filter(function(l){ return /[.!?…]$/.test(l); }).length, avg=raw.reduce(function(a,l){ return a+l.split(/\s+/).length; },0)/Math.max(1,raw.length);
@@ -7057,7 +7065,7 @@ xgParse=function(v){
   });
   var sents=[], seen={}; items.forEach(function(p){ var n=p.de.split(/\s+/).length; if(n<2||n>18||!/[A-Za-zÄÖÜäöüß]/.test(p.de)) return; var k=p.de.toLowerCase(); if(seen[k]) return; seen[k]=1; sents.push(p); });
   var vocab=[]; String(v.vk||'').split(/\n+/).forEach(function(line){ var m=line.trim().match(/^(.+?)\s*(?:=|\||\t|–|—| - )\s*(.+)$/); if(m) vocab.push({de:m[1].trim(),bn:m[2].trim(),k:'w'}); });
-  xgPc={id:v.id,key:key,val:{sents:sents,vocab:vocab}}; return xgPc.val;
+  var _r={sents:sents,vocab:vocab}; xgPcm[v.id]={key:key,val:_r}; return _r;
 };
 
 </script>
@@ -7102,7 +7110,7 @@ function xgPlView(pl){
     var op=xgOpenV(v), P=xgParse(v), pc=xgPct(v), isCur=(i===cur);
     var st=v.w?'<span style="color:var(--green);">✅ সম্পন্ন</span>':(op?'<span style="color:var(--blue);">'+(pc?'▶ চালিয়ে যাও · '+pc+'%':'▶ শুরু করো')+'</span>':'<span style="color:var(--muted);">🔒 আগের video শেষ করো</span>');
     h+='<div style="display:flex;gap:11px;background:var(--card);border:1.5px solid '+(isCur?'var(--blue)':v.w?'#2dd4a066':'var(--border)')+';'+(isCur?'box-shadow:0 0 0 3px #4361ee22;':'')+'border-radius:16px;padding:9px;margin-bottom:10px;">';
-    h+='<div onclick="'+(op?'xgOpenVid(\''+v.id+'\')':'showToast(\'🔒 আগের video ১০০% দেখো\')')+'" style="position:relative;width:118px;min-width:118px;height:70px;border-radius:11px;overflow:hidden;background:#111 center/cover url('+xgThumb(v)+');cursor:pointer;"><div style="position:absolute;left:5px;top:5px;background:#000a;color:#fff;font-size:11px;font-weight:900;border-radius:7px;padding:1px 7px;">'+(i+1)+'</div>';
+    h+='<div onclick="'+(op?'xgOpenVid(\''+v.id+'\')':'showToast(\'🔒 আগের video ১০০% দেখো\')')+'" style="position:relative;width:118px;min-width:118px;height:70px;border-radius:11px;overflow:hidden;background:#111;cursor:pointer;" data-bg="'+xgThumb(v)+'"><div style="position:absolute;left:5px;top:5px;background:#000a;color:#fff;font-size:11px;font-weight:900;border-radius:7px;padding:1px 7px;">'+(i+1)+'</div>';
     if(!op) h+='<div style="position:absolute;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;font-size:26px;">🔒</div>';
     else if(v.w) h+='<div style="position:absolute;inset:0;background:#0a3d2a99;display:flex;align-items:center;justify-content:center;font-size:26px;">✅</div>';
     else h+='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;"><div style="width:30px;height:30px;border-radius:50%;background:#000a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;">▶</div></div>';
@@ -7211,6 +7219,454 @@ xgVidDel=function(id){
 };
 xgMbClear=function(){ xgAsk('ভুল খাতার সব এন্ট্রি মুছবে?',function(){ var old=xs.mb; xs.mb=[]; xsSave(); xgMb(); xgSnack('🗑 ভুল খাতা খালি',function(){ xs.mb=old; xsSave(); xgMb(); }); }); };
 
+// ===== Auto transcript (best effort, runs in the user's browser) =====
+var XG_PROX=[
+  function(u){ return 'https://corsproxy.io/?url='+encodeURIComponent(u); },
+  function(u){ return 'https://api.allorigins.win/raw?url='+encodeURIComponent(u); },
+  function(u){ return 'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u); },
+  function(u){ return u; }
+];
+function xgGet(u){
+  var i=0;
+  return new Promise(function(res,rej){
+    (function next(){
+      if(i>=XG_PROX.length){ rej(new Error('net')); return; }
+      var f=XG_PROX[i++], ctl=('AbortController' in window)?new AbortController():null, t=setTimeout(function(){ if(ctl) ctl.abort(); },9000);
+      fetch(f(u),ctl?{signal:ctl.signal}:{}).then(function(r){ clearTimeout(t); if(!r.ok) throw 0; return r.text(); }).then(function(x){ if(!x||x.length<20) throw 0; res(x); }).catch(function(){ clearTimeout(t); next(); });
+    })();
+  });
+}
+function xgEvText(j){
+  var out=[]; ((j&&j.events)||[]).forEach(function(e){ if(!e.segs) return; var t=e.segs.map(function(s){ return s.utf8||''; }).join('').replace(/\s*\n\s*/g,' ').trim(); if(t) out.push(t); });
+  return out;
+}
+function xgBuildTr(de,bn){
+  var lines=[], a=[], b=[], n=0;
+  function flush(){ if(!a.length) return; var d=a.join(' ').replace(/\s+/g,' ').trim(), x=b.join(' ').replace(/\s+/g,' ').trim(); lines.push(bn&&x?d+' | '+x:d); a=[]; b=[]; n=0; }
+  de.forEach(function(t,i){ t=t.replace(/\[[^\]]*\]/g,'').trim(); if(!t) return; a.push(t); if(bn) b.push(bn[i]||''); n+=t.split(/\s+/).length; if(n>=10||/[.!?]$/.test(t)) flush(); });
+  flush(); return lines.join('\n');
+}
+function xgTrFetch(yt,wantBn){
+  return xgGet('https://www.youtube.com/watch?v='+yt+'&hl=de').then(function(html){
+    var m=html.match(/"captionTracks":(\[.*?\])/); if(!m) throw new Error('nocap');
+    var tr=JSON.parse(m[1]), de=tr.filter(function(t){ return /^de/.test(t.languageCode); });
+    var pick=de.filter(function(t){ return t.kind!=='asr'; })[0]||de[0]; if(!pick) throw new Error('node');
+    var base=pick.baseUrl.replace(/&fmt=[^&]*/,'');
+    return xgGet(base+'&fmt=json3').then(function(x){
+      var d=xgEvText(JSON.parse(x)); if(!d.length) throw new Error('empty');
+      if(!wantBn) return xgBuildTr(d,null);
+      return xgGet(base+'&fmt=json3&tlang=bn').then(function(y){ var b=xgEvText(JSON.parse(y)); return xgBuildTr(d,b.length===d.length?b:null); }).catch(function(){ return xgBuildTr(d,null); });
+    });
+  });
+}
+function xgTrAuto(){
+  var yt=xgYtId(document.getElementById('xgVU').value); if(!yt){ showToast('আগে সঠিক YouTube link দাও'); return; }
+  var bn=document.getElementById('xgAB')&&document.getElementById('xgAB').checked, btn=document.getElementById('xgABtn'); btn.disabled=true; btn.textContent='⏳ আনা হচ্ছে…';
+  xgTrFetch(yt,bn).then(function(t){ document.getElementById('xgVR').value=t; showToast('✅ Transcript এসেছে — দেখে Save করো'); }).catch(function(){ showToast('❗ আনা যায়নি (video-তে জার্মান subtitle নাও থাকতে পারে) — নিজে paste করো'); }).then(function(){ btn.disabled=false; btn.textContent='⬇ YouTube থেকে auto আনো'; });
+}
+var _xgVE0=xgVidEdit;
+xgVidEdit=function(id){
+  _xgVE0(id); var ta=document.getElementById('xgVR'); if(!ta) return;
+  var d=document.createElement('div'); d.style.cssText='display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap;';
+  d.innerHTML='<button id="xgABtn" class="btn btn-blue btn-sm" onclick="xgTrAuto()">⬇ YouTube থেকে auto আনো</button><label style="font-size:12px;color:var(--sub);display:flex;align-items:center;gap:5px;"><input type="checkbox" id="xgAB" checked> বাংলা অনুবাদসহ</label>';
+  ta.parentNode.insertBefore(d,ta);
+};
+function xgTrAll(){
+  var vs=xgVidsOf(xgCurPl||xgPls()[0].id).filter(function(v){ return !(v.tr||'').trim(); });
+  if(!vs.length){ showToast('ℹ️ সবার transcript আছে'); return; }
+  xgAsk(vs.length+'টা video-র transcript (জার্মান+বাংলা) auto আনবে? কিছু সময় লাগবে, app খোলা রাখো।',function(){
+    var k=0, ok=0; showToast('⏳ শুরু…');
+    (function next(){
+      if(k>=vs.length){ xsSave(); showToast('✅ '+ok+'/'+vs.length+'টায় transcript এসেছে'); xgCourse(); return; }
+      var v=vs[k++]; showToast('⏳ '+k+'/'+vs.length);
+      xgTrFetch(v.yt,true).then(function(t){ v.tr=t; ok++; xsSave(); }).catch(function(){}).then(function(){ setTimeout(next,600); });
+    })();
+  },'হ্যাঁ, আনো');
+}
+// ===== Profile v2 =====
+var PF_EMO=['👨','👩','👦','👧','👨‍🎓','👩‍🎓','👨‍💻','👩‍💻','👨‍💼','👩‍💼','🧔','👱‍♀️','🧕','👳‍♂️','👴','👵','😀','😎','🤓','🦊','🐼','🦁','🐯','🐸','🦄','🚀','⭐','🔥','📚','🇩🇪','🌈','🎯'];
+var PF_COL=[['#4361ee','#22d3ee'],['#7c5cfc','#f472b6'],['#2dd4a0','#4361ee'],['#f59e0b','#ef4444'],['#ec4899','#8b5cf6'],['#14b8a6','#84cc16']];
+function pfInit(){ var a=document.getElementById('profileAvatar'); if(!a) return; var g=PF_COL[profile.col||0]||PF_COL[0]; a.style.background='linear-gradient(135deg,'+g[0]+','+g[1]+')'; a.textContent=profile.av||((profile.name||'শ').charAt(0)); var b=document.getElementById('avatarBtn'); if(b) b.textContent=profile.av||((profile.name||'শ').charAt(0)); }
+function pfSet(k,v){ profile[k]=v; saveLS('df_prof',profile); pfInit(); pfRender(); }
+function pfExam(v){ profile.exam=v; saveLS('df_prof',profile); pfRender(); }
+function pfCnt(){
+  var vids=(typeof xgCs==='function')?xgCs().vids:[], done=vids.filter(function(v){return v.w;}).length;
+  var sents=0; (sfiles||[]).forEach(function(f){ sents+=(f.items||[]).length; });
+  var learned=0; Object.keys(xs.wp||{}).forEach(function(k){ if((xs.wp[k].b||0)>=4) learned++; });
+  var days=0; Object.keys(xs.act||{}).forEach(function(k){ var a=xs.act[k]; if((a.s||0)+(a.w||0)+(a.r||0)>0) days++; });
+  return {decks:decks.length,cards:decks.reduce(function(s,d){return s+d.cards.length;},0),streak:practice.streak||0,best:profile.best||0,sents:sents,vdone:done,vtot:vids.length,learned:learned,days:days,mb:Object.keys(xs.mb||{}).length||((xs.mb&&xs.mb.length)||0)};
+}
+function pfRender(){
+  var host=document.getElementById('pfX'); if(!host) return;
+  profile.best=Math.max(profile.best||0,practice.streak||0);
+  var c=pfCnt(), goal=practice.goal||5, td=Math.min(practice.todayCount||0,goal), pct=Math.round(td/goal*100);
+  var card='background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:14px;', lbl='font-size:14px;font-weight:800;color:var(--sub);margin-bottom:12px;';
+  var h='<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:-6px 0 14px;">';
+  if(profile.level) h+='<span style="background:#4361ee22;border:1px solid #4361ee55;color:var(--blue);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:800;">🇩🇪 '+esc(profile.level)+'</span>';
+  h+='<span style="background:#f8c94c22;border:1px solid #f8c94c55;color:var(--gold);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:800;">🔥 '+c.streak+' দিন</span>';
+  if(profile.exam){ var d=Math.ceil((new Date(profile.exam+'T00:00:00')-new Date(new Date().toDateString()))/86400000); h+='<span style="background:#f25c7a22;border:1px solid #f25c7a55;color:var(--red);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:800;">⏳ '+(d>0?'পরীক্ষা: '+d+' দিন বাকি':d===0?'আজ পরীক্ষা! 💪':'পরীক্ষা শেষ')+'</span>'; }
+  h+='</div>';
+  h+='<div style="'+card+'display:flex;align-items:center;gap:16px;"><div style="width:74px;height:74px;border-radius:50%;background:conic-gradient(var(--green) '+pct+'%,var(--border) 0);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:58px;height:58px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--text);font-size:15px;">'+td+'/'+goal+'</div></div><div><div style="font-size:15px;font-weight:900;color:var(--text);">আজকের লক্ষ্য</div><div style="font-size:12px;color:var(--sub);line-height:1.5;margin-top:3px;">'+(td>=goal?'✅ আজকের লক্ষ্য পূরণ! streak ঠিক আছে।':'আর '+(goal-td)+'টি সঠিক উত্তর দিলে আজকের streak পাকা।')+'</div></div></div>';
+  var S=[['🗂','Deck',c.decks],['🃏','কার্ড',c.cards],['💬','বাক্য',c.sents],['🧠','মুখস্থ শব্দ',c.learned],['🎬','Video শেষ',c.vdone+'/'+c.vtot],['📓','ভুল খাতা',c.mb],['🔥','চলতি Streak',c.streak],['🏆','সেরা Streak',c.best],['📅','পড়ার দিন',c.days]];
+  h+='<div style="'+card+'"><div style="'+lbl+'">📊 পরিসংখ্যান</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">'+S.map(function(x){ return '<div style="background:var(--bg);border:1px solid var(--border);border-radius:13px;padding:11px 4px;text-align:center;"><div style="font-size:18px;">'+x[0]+'</div><div style="font-size:17px;font-weight:900;color:var(--text);">'+x[2]+'</div><div style="font-size:10px;color:var(--sub);">'+x[1]+'</div></div>'; }).join('')+'</div></div>';
+  // last 7 days
+  var days=[],mx=1; for(var j=6;j>=0;j--){ var dd=new Date(); dd.setDate(dd.getDate()-j); var a=xs.act[dd.toDateString()]||{}, t=(a.s||0)+(a.w||0)+(a.r||0); mx=Math.max(mx,t); days.push({l:['র','সো','ম','বু','বৃ','শু','শ'][dd.getDay()],t:t}); }
+  h+='<div style="'+card+'"><div style="'+lbl+'">📈 গত ৭ দিন</div><div style="display:flex;gap:7px;align-items:flex-end;height:90px;">'+days.map(function(d){ return '<div style="flex:1;text-align:center;"><div style="font-size:10px;color:var(--sub);">'+(d.t||'')+'</div><div style="height:'+Math.max(4,Math.round(d.t/mx*60))+'px;background:linear-gradient(180deg,var(--blue),var(--cyan));border-radius:6px;opacity:'+(d.t?1:.25)+';"></div><div style="font-size:10px;color:var(--sub);margin-top:3px;">'+d.l+'</div></div>'; }).join('')+'</div></div>';
+  // badges
+  var B=[['🌱','প্রথম card',c.cards>=1],['📚','১০০ card',c.cards>=100],['🔥','৩ দিন',c.best>=3],['⚡','৭ দিন',c.best>=7],['👑','৩০ দিন',c.best>=30],['🧠','৫০ শব্দ মুখস্থ',c.learned>=50],['🎬','৫ video',c.vdone>=5],['🎞','২৫ video',c.vdone>=25],['💬','৫০ বাক্য',c.sents>=50]];
+  var got=B.filter(function(b){return b[2];}).length;
+  h+='<div style="'+card+'"><div style="'+lbl+'">🏅 ব্যাজ ('+got+'/'+B.length+')</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">'+B.map(function(b){ return '<div style="text-align:center;padding:10px 4px;border-radius:13px;border:1px solid '+(b[2]?'#f8c94c66':'var(--border)')+';background:'+(b[2]?'#f8c94c15':'var(--bg)')+';opacity:'+(b[2]?1:.45)+';"><div style="font-size:24px;'+(b[2]?'':'filter:grayscale(1);')+'">'+b[0]+'</div><div style="font-size:10px;color:var(--sub);margin-top:2px;">'+b[1]+'</div></div>'; }).join('')+'</div></div>';
+  // avatar
+  h+='<div style="'+card+'"><div style="'+lbl+'">🎨 Avatar</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;"><button onclick="pfSet(\'av\',\'\')" style="width:40px;height:40px;border-radius:12px;border:2px solid '+(!profile.av?'var(--blue)':'var(--border)')+';background:var(--bg);color:var(--text);font-weight:900;cursor:pointer;">'+esc((profile.name||'শ').charAt(0))+'</button>'+PF_EMO.map(function(e){ return '<button onclick="pfSet(\'av\',\''+e+'\')" style="width:40px;height:40px;border-radius:12px;border:2px solid '+(profile.av===e?'var(--blue)':'var(--border)')+';background:var(--bg);font-size:20px;cursor:pointer;">'+e+'</button>'; }).join('')+'</div><div style="display:flex;gap:9px;">'+PF_COL.map(function(g,i){ return '<button onclick="pfSet(\'col\','+i+')" style="width:34px;height:34px;border-radius:50%;border:3px solid '+((profile.col||0)===i?'var(--text)':'transparent')+';background:linear-gradient(135deg,'+g[0]+','+g[1]+');cursor:pointer;"></button>'; }).join('')+'</div></div>';
+  // exam
+  h+='<div style="'+card+'"><div style="'+lbl+'">🗓 পরীক্ষার তারিখ</div><div style="font-size:12px;color:var(--sub);margin-bottom:10px;line-height:1.5;">তারিখ দিলে প্রোফাইলে কত দিন বাকি তা দেখাবে।</div><div style="display:flex;gap:8px;"><input type="date" class="form-inp" style="flex:1;" value="'+esc(profile.exam||'')+'" onchange="pfExam(this.value)"/>'+(profile.exam?'<button class="btn btn-ghost btn-sm" onclick="pfExam(\'\')">✖</button>':'')+'</div></div>';
+  host.innerHTML=h;
+}
+var _pfOP=openProfile;
+openProfile=function(){
+  _pfOP();
+  var old=document.getElementById('ps1'); if(old&&old.closest) { var oc=old.parentNode.parentNode.parentNode; if(oc) oc.style.display='none'; }
+  if(!document.getElementById('pfX')){ var hero=document.getElementById('profileName').parentNode; var d=document.createElement('div'); d.id='pfX'; hero.parentNode.insertBefore(d,hero.nextSibling); }
+  pfInit(); pfRender();
+};
+var _pfSP=saveProfileData;
+saveProfileData=function(){ _pfSP(); pfInit(); pfRender(); };
+pfInit();
+// ===== Big 2D/3D character avatar =====
+var PF_SK=['#fde0c8','#f3c29a','#d9a075','#b07a4e','#7a4a2b'];
+var PF_HC=['#1b1b1f','#4a2c17','#8b5a2b','#d6a84a','#b8402a','#9aa0a6'];
+var PF_SH=['#4361ee','#2dd4a0','#f59e0b','#ec4899','#7c5cfc','#ef4444','#14b8a6','#334155'];
+var PF_HN={m:['ছোট চুল','কোঁকড়া','দাড়ি'],f:['লম্বা চুল','খোঁপা','বব']};
+var _pfU=0;
+function pfSvg(a,col){
+  var u='pf'+(++_pfU), g=PF_COL[col||0]||PF_COL[0], f=a.g==='f', sk=PF_SK[a.skin]||PF_SK[1], hc=PF_HC[a.hc]||PF_HC[0], sh=PF_SH[a.shirt]||PF_SH[0], d3=a.d3!==false, hs=a.hair||0, o='';
+  o+='<svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="'+u+'c"><circle cx="100" cy="100" r="100"/></clipPath><linearGradient id="'+u+'b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+g[0]+'"/><stop offset="1" stop-color="'+g[1]+'"/></linearGradient>';
+  o+='<radialGradient id="'+u+'h" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".4"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="'+u+'s" cx=".4" cy=".35" r=".8"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></radialGradient><linearGradient id="'+u+'k" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".3"/><stop offset=".5" stop-color="#000" stop-opacity="0"/></linearGradient><linearGradient id="'+u+'t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient></defs><g clip-path="url(#'+u+'c)"><rect width="200" height="200" fill="url(#'+u+'b)"/>';
+  if(d3) o+='<ellipse cx="100" cy="190" rx="70" ry="10" fill="#000" opacity=".15"/>';
+  var back=(f&&hs===0)?'M52 90C38 150 48 178 62 184L138 184C152 178 162 150 148 90Z':(f&&hs===2)?'M52 88C46 130 52 148 66 148L134 148C148 148 154 130 148 88Z':'';
+  if(back){ o+='<path d="'+back+'" fill="'+hc+'"/>'; if(d3) o+='<path d="'+back+'" fill="url(#'+u+'k)"/>'; }
+  o+='<rect x="88" y="108" width="24" height="40" rx="10" fill="'+sk+'"/>'; if(d3) o+='<rect x="88" y="108" width="24" height="40" rx="10" fill="url(#'+u+'k)"/>';
+  o+='<path d="M26 200C26 152 66 142 100 142C134 142 174 152 174 200Z" fill="'+sh+'"/>'; if(d3) o+='<path d="M26 200C26 152 66 142 100 142C134 142 174 152 174 200Z" fill="url(#'+u+'t)"/>';
+  o+='<path d="M80 144L100 168L120 144Z" fill="'+sk+'"/>';
+  o+='<ellipse cx="62" cy="94" rx="6" ry="9" fill="'+sk+'"/><ellipse cx="138" cy="94" rx="6" ry="9" fill="'+sk+'"/>';
+  o+='<ellipse cx="100" cy="88" rx="38" ry="44" fill="'+sk+'"/>'; if(d3) o+='<ellipse cx="100" cy="88" rx="38" ry="44" fill="url(#'+u+'s)"/><ellipse cx="100" cy="88" rx="38" ry="44" fill="url(#'+u+'h)"/>';
+  if(!f&&hs===2) o+='<path d="M63 98C62 134 82 146 100 146C118 146 138 134 137 98C131 118 118 124 100 124C82 124 69 118 63 98Z" fill="'+hc+'"/>';
+  o+='<circle cx="76" cy="106" r="7" fill="#ff6b6b" opacity=".22"/><circle cx="124" cy="106" r="7" fill="#ff6b6b" opacity=".22"/>';
+  [84,116].forEach(function(x){ o+='<ellipse cx="'+x+'" cy="92" rx="7.5" ry="6" fill="#fff"/><circle cx="'+x+'" cy="92.5" r="4.3" fill="#4a3322"/><circle cx="'+x+'" cy="92.5" r="2.2" fill="#111"/><circle cx="'+(x+1.6)+'" cy="90.8" r="1.3" fill="#fff"/>'; });
+  if(f) o+='<path d="M75 90Q84 84 92 89M125 90Q116 84 108 89" stroke="#111" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+  o+='<path d="M75 81Q84 76 92 81M108 81Q116 76 125 81" stroke="'+hc+'" stroke-width="'+(f?2.4:3.6)+'" fill="none" stroke-linecap="round"/>';
+  o+='<path d="M100 94Q95 106 101 108" stroke="#000" stroke-opacity=".3" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  var fr='M58 90C52 46 86 34 104 38C128 40 148 56 142 90C138 64 120 52 100 54C78 56 62 70 58 90Z', top='M60 84C58 50 80 40 100 40C122 40 142 50 140 84C134 66 120 58 100 58C80 58 66 66 60 84Z', hp='';
+  if(!f&&hs===0) hp='<path d="'+top+'" fill="'+hc+'"/>';
+  else if(!f&&hs===1) hp='<circle cx="100" cy="46" r="28" fill="'+hc+'"/><circle cx="72" cy="60" r="17" fill="'+hc+'"/><circle cx="128" cy="60" r="17" fill="'+hc+'"/><circle cx="62" cy="76" r="8" fill="'+hc+'"/><circle cx="138" cy="76" r="8" fill="'+hc+'"/>';
+  else if(!f&&hs===2) hp='<path d="M58 88C54 48 90 34 112 40C136 44 146 62 142 88C138 68 126 58 108 56C84 56 66 66 58 88Z" fill="'+hc+'"/>';
+  else if(f&&hs===1) hp='<circle cx="100" cy="30" r="15" fill="'+hc+'"/><path d="'+top+'" fill="'+hc+'"/>';
+  else hp='<path d="'+fr+'" fill="'+hc+'"/>';
+  o+=hp; if(d3) o+='<ellipse cx="88" cy="50" rx="22" ry="8" fill="#fff" opacity=".16" transform="rotate(-18 88 50)"/>';
+  o+='<path d="M89 116Q100 126 111 116" stroke="'+(f?'#d9446a':'#a8433b')+'" stroke-width="'+(f?4:3)+'" fill="none" stroke-linecap="round"/>';
+  return o+'</g></svg>';
+}
+var _pfI0=pfInit;
+pfInit=function(){
+  var a=document.getElementById('profileAvatar'), b=document.getElementById('avatarBtn'); if(!a) return;
+  if(profile.av2&&!profile.av){
+    a.style.cssText='width:150px;height:150px;border-radius:50%;margin:0 auto 12px;overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 0 4px var(--card);'; a.innerHTML=pfSvg(profile.av2,profile.col);
+    if(b){ b.style.overflow='hidden'; b.style.padding='0'; b.innerHTML=pfSvg(profile.av2,profile.col); }
+  } else {
+    _pfI0(); a.style.width='120px'; a.style.height='120px'; a.style.fontSize=profile.av?'58px':'44px'; a.style.boxShadow='0 8px 22px rgba(0,0,0,.3)';
+    if(b){ b.innerHTML=''; b.textContent=profile.av||((profile.name||'শ').charAt(0)); }
+  }
+};
+function pfA(k,v){ var a=profile.av2=profile.av2||{g:'m',skin:1,hair:0,hc:0,shirt:0,d3:true}; a[k]=v; if(k==='g') a.hair=0; profile.av=''; saveLS('df_prof',profile); pfInit(); pfRender(); }
+var _pfR0=pfRender;
+pfRender=function(){
+  _pfR0(); var host=document.getElementById('pfX'); if(!host) return;
+  var a=profile.av2||{g:'m',skin:1,hair:0,hc:0,shirt:0,d3:true}, on=!!(profile.av2&&!profile.av);
+  var card='background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:14px;', lbl='font-size:12px;color:var(--sub);margin:12px 0 6px;font-weight:700;';
+  function sw(list,key,cur,grad){ return '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+list.map(function(c,i){ return '<button onclick="pfA(\''+key+'\','+i+')" style="width:32px;height:32px;border-radius:50%;background:'+c+';border:3px solid '+(on&&cur===i?'var(--text)':'var(--border)')+';cursor:pointer;"></button>'; }).join('')+'</div>'; }
+  function tg(label,k,v,act){ return '<button onclick="pfA(\''+k+'\','+(typeof v==='string'?'\''+v+'\'':v)+')" style="flex:1;padding:10px 6px;border-radius:12px;border:2px solid '+(act?'var(--blue)':'var(--border)')+';background:'+(act?'#4361ee22':'var(--bg)')+';color:var(--text);font-weight:800;font-size:13px;cursor:pointer;">'+label+'</button>'; }
+  var h='<div style="'+card+'"><div style="font-size:14px;font-weight:800;color:var(--sub);">🧑‍🎨 নিজের Character বানাও</div>';
+  h+='<div style="'+lbl+'">ছেলে / মেয়ে</div><div style="display:flex;gap:8px;">'+tg('👨 ছেলে','g','m',on&&a.g==='m')+tg('👩 মেয়ে','g','f',on&&a.g==='f')+'</div>';
+  h+='<div style="'+lbl+'">চুলের স্টাইল</div><div style="display:flex;gap:8px;">'+PF_HN[a.g].map(function(n,i){ return tg(n,'hair',i,on&&a.hair===i); }).join('')+'</div>';
+  h+='<div style="'+lbl+'">চুলের রঙ</div>'+sw(PF_HC,'hc',a.hc);
+  h+='<div style="'+lbl+'">ত্বকের রঙ</div>'+sw(PF_SK,'skin',a.skin);
+  h+='<div style="'+lbl+'">জামার রঙ</div>'+sw(PF_SH,'shirt',a.shirt);
+  h+='<div style="'+lbl+'">স্টাইল</div><div style="display:flex;gap:8px;">'+tg('🎨 2D (সমতল)','d3',false,on&&a.d3===false)+tg('✨ 3D (ছায়াসহ)','d3',true,on&&a.d3!==false)+'</div>';
+  h+='<div style="font-size:11px;color:var(--sub);margin-top:10px;">উপরের বড় ছবিতে সাথে সাথে বদলাবে। পেছনের রঙ বদলাতে নিচের Avatar অংশের রঙ বেছে নাও।</div></div>';
+  host.insertAdjacentHTML('afterbegin',h);
+};
+pfInit(); if(document.getElementById('pfX')) pfRender();
+// ===== Wortarten (parts of speech) =====
+var POS_C=[['Nomen','বিশেষ্য','🏷','#4361ee'],['Verb','ক্রিয়া','🏃','#2dd4a0'],['Adjektiv','বিশেষণ','🎨','#f59e0b'],['Präposition','সম্বন্ধসূচক','📍','#ec4899'],['Adverb','ক্রিয়া-বিশেষণ','⏱','#22d3ee'],['Pronomen','সর্বনাম','👤','#7c5cfc'],['Konjunktion','সংযোজক','🔗','#14b8a6'],['Andere','অন্যান্য / বাক্যাংশ','💬','#94a3b8']];
+var POS_SET={
+ Präposition:'in an auf aus bei mit nach von zu für gegen ohne um durch über unter vor hinter neben zwischen seit bis außer während wegen trotz statt gegenüber entlang ab per pro'.split(' '),
+ Konjunktion:'und oder aber denn weil dass wenn ob als sondern obwohl damit falls bevor nachdem sobald während indem'.split(' '),
+ Pronomen:'ich du er sie es wir ihr mich dich ihn uns euch ihnen ihm dir mir mein meine meinen meinem meiner dein deine dein sein seine unser unsere euer eure man wer was wen wem wessen jemand niemand alles etwas nichts dieser diese dieses jener welcher welche welches'.split(' '),
+ Adverb:'heute morgen gestern jetzt dann danach davor früh spät oft immer nie manchmal selten meistens hier dort da links rechts geradeaus oben unten drinnen draußen sehr zu viel wenig schon noch auch nur gern gerne leider vielleicht bitte danke ja nein nicht kein sofort bald gleich wieder zusammen allein fast ganz etwa ziemlich besonders genau eben doch mal denn hin her weg zurück überall nirgends irgendwo vorgestern übermorgen nachmittags vormittags abends morgens nachts mittags'.split(' ')
+};
+function pfPosGuess(g){
+  var t=String(g||'').replace(/\(.*?\)/g,'').replace(/[.!?,;:]+$/,'').trim(), w=t.split(/\s+/), l=t.toLowerCase();
+  if(!t) return 'Andere';
+  if(/^(der|die|das|ein|eine|einen|einem)\s+\S/i.test(t) && w.length<=4) return 'Nomen';
+  if(w.length===1){
+    for(var k in POS_SET) if(POS_SET[k].indexOf(l)>=0) return k;
+    if(/^[A-ZÄÖÜ]/.test(t)) return 'Nomen';
+    if(/(en|ern|eln)$/.test(l) && !/^(offen|allen|einen|keinen|diesen|jeden|guten|neuen)$/.test(l)) return 'Verb';
+    return 'Adjektiv';
+  }
+  if(/^sich\s+\S+(en|ern|eln)$/i.test(t)) return 'Verb';
+  var last=w[w.length-1];
+  if(w.length<=3 && /^[a-zäöüß]+(en|ern|eln)$/.test(last) && !/^(der|die|das|ein|eine|guten|gute|schönen|wie|was|wo|wer)$/i.test(w[0])) return 'Verb';
+  return 'Andere';
+}
+function pfPosOf(c){ var k=String(c.german||'').toLowerCase().trim(); return (xs.pos&&xs.pos[k])||pfPosGuess(c.german); }
+var posF='all', posQ='', posN=150;
+function pfPosAll(){ var seen={}, out=[]; decks.forEach(function(d){ d.cards.forEach(function(c){ var k=String(c.german||'').toLowerCase().trim(); if(!k||seen[k]) return; seen[k]=1; out.push({c:c,d:d,p:pfPosOf(c)}); }); }); return out; }
+(function(){ var d=document.createElement('div'); d.id='pgPos'; d.className='page'; d.innerHTML='<div class="inner-page-bar"><button class="back-btn" onclick="pfPosBack()">←</button><span class="ipb-title">🏷 Wortarten</span></div><div id="pgPosBody" style="flex:1;overflow-y:auto;padding:14px 16px 40px;max-width:560px;width:100%;margin:0 auto;"></div>'; document.body.appendChild(d); })();
+function pfPosBack(){ showPage('pgApp'); openDrawer(); drCollapse(); drToggle(7); }
+function pfPosOpen(){ closeModal(); if(!_mg) _mg={g:7}; showPage('pgPos'); pfPosDraw(); }
+function pfPosDraw(keepScroll){
+  var all=pfPosAll(), cnt={}; all.forEach(function(x){ cnt[x.p]=(cnt[x.p]||0)+1; });
+  var q=posQ.trim().toLowerCase(), list=all.filter(function(x){ return (posF==='all'||x.p===posF)&&(!q||String(x.c.german).toLowerCase().indexOf(q)>=0||String(x.c.bengali||'').toLowerCase().indexOf(q)>=0||String(x.c.english||'').toLowerCase().indexOf(q)>=0); });
+  var h='<input id="posQ" class="form-inp" placeholder="🔍 খুঁজুন…" value="'+esc(posQ)+'" oninput="pfSearch(this.value)" style="margin-bottom:10px;"/>';
+  h+='<div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px;"><button onclick="pfPosF(\'all\')" style="'+pfChip(posF==='all','#4361ee')+'">সব <b>'+all.length+'</b></button>'+POS_C.map(function(p){ return '<button onclick="pfPosF(\''+p[0]+'\')" style="'+pfChip(posF===p[0],p[3])+'">'+p[2]+' '+p[0]+' <b>'+(cnt[p[0]]||0)+'</b></button>'; }).join('')+'</div>';
+  h+='<div id="posInfo"></div><div id="posList"></div>';
+  h+='<div style="font-size:11px;color:var(--sub);margin-top:12px;line-height:1.6;">ℹ️ তোমার card ছাড়াও Netzwerk A1 Glossar ও Thema-Wortschatz-এর শব্দ এখানে আসে। যেসব শব্দের ধরন Glossar-এ দেওয়া আছে সেগুলো নিখুঁত, বাকিগুলো app অনুমান করে (der/die/das থাকলে Nomen, -en শেষ হলে Verb ইত্যাদি)। Verb-এর পাশের 🔀 চাপলে সব রূপ (Präsens, Perfekt, Präteritum, Imperativ) দেখা যায়। ভুল হলে শব্দের পাশের রঙিন ট্যাগ চাপলে ঠিক করে দিতে পারো।</div>';
+  var b=document.getElementById('pgPosBody'), sc=b.scrollTop; b.innerHTML=h; pfPosList(); if(keepScroll) b.scrollTop=sc;
+}
+function pfChip(on,c){ return 'flex-shrink:0;padding:8px 12px;border-radius:20px;border:1.5px solid '+(on?c:'var(--border)')+';background:'+(on?c+'26':'var(--card)')+';color:var(--text);font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;'; }
+function pfPosF(f){ posF=f; posN=150; pfPosDraw(); }
+function pfPosCur(){ var q=posQ.trim().toLowerCase(); return pfPosAll().filter(function(x){ return (posF==='all'||x.p===posF)&&(!q||String(x.c.german).toLowerCase().indexOf(q)>=0||String(x.c.bengali||'').toLowerCase().indexOf(q)>=0||String(x.c.english||'').toLowerCase().indexOf(q)>=0); }); }
+function pfPosList(){
+  var list=pfPosCur(), el=document.getElementById('posList'), inf=document.getElementById('posInfo'); if(!el) return;
+  inf.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin:4px 0 10px;"><div style="font-size:12px;color:var(--sub);">'+list.length+'টি শব্দ</div><button class="btn btn-blue btn-sm" '+(list.length<4?'disabled style="opacity:.45;"':'')+' onclick="pfPosPrac()">🎯 Practice</button></div>';
+  if(!list.length){ el.innerHTML='<div style="text-align:center;color:var(--sub);padding:30px 0;">কিছু পাওয়া যায়নি</div>'; return; }
+  var cm={}; POS_C.forEach(function(p){ cm[p[0]]=p; });
+  el.innerHTML=list.slice(0,posN).map(function(x,i){
+    var c=x.c, p=cm[x.p], art=(String(c.german).match(/^(der|die|das)\s/i)||[])[1], ac=art?{der:'#4f8cff',die:'#f25c7a',das:'#2dd4a0'}[art.toLowerCase()]:'var(--text)';
+    var key=String(c.german).toLowerCase().trim().replace(/'/g,"\\'");
+    return '<div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 12px;margin-bottom:7px;"><button onclick="speak(\''+String(c.german).replace(/\\/g,'').replace(/'/g,"\\'")+'\',\'de-DE\')" style="background:none;border:none;font-size:17px;cursor:pointer;">🔊</button><div style="flex:1;min-width:0;"><div style="font-weight:800;color:'+ac+';font-size:15px;">'+esc(c.german)+'</div><div style="font-size:12.5px;color:var(--sub);">'+esc(c.bengali||'')+(c.english?' · '+esc(c.english):'')+'</div></div><button onclick="pfPosPick(\''+key+'\')" style="flex-shrink:0;padding:5px 9px;border-radius:14px;border:1px solid '+p[3]+'88;background:'+p[3]+'22;color:var(--text);font-size:11px;font-weight:700;cursor:pointer;">'+p[2]+' '+p[0]+'</button></div>';
+  }).join('')+(list.length>posN?'<button class="btn btn-ghost btn-full" onclick="posN+=150;pfPosList()">আরও দেখাও ('+(list.length-posN)+')</button>':'');
+}
+function pfPosPick(k){
+  var h='<div style="font-size:16px;font-weight:900;color:var(--text);margin-bottom:10px;">"'+esc(k)+'" — কোন ধরন?</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'+POS_C.map(function(p){ return '<button onclick="pfPosSet(\''+k.replace(/'/g,"\\'")+'\',\''+p[0]+'\')" style="padding:11px 8px;border-radius:12px;border:1.5px solid '+p[3]+'77;background:'+p[3]+'1f;color:var(--text);font-weight:800;font-size:13px;cursor:pointer;text-align:left;">'+p[2]+' '+p[0]+'<div style="font-size:10px;font-weight:600;color:var(--sub);">'+p[1]+'</div></button>'; }).join('')+'</div><button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="pfPosSet(\''+k.replace(/'/g,"\\'")+'\',null)">↺ অটো অনুমানে ফিরো</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function pfPosSet(k,p){ xs.pos=xs.pos||{}; if(p) xs.pos[k]=p; else delete xs.pos[k]; xsSave(); closeModal(); pfPosDraw(true); }
+function pfPosPrac(){
+  var list=pfPosCur(); if(list.length<4) return;
+  var title='🏷 '+(posF==='all'?'সব ধরন':posF)+' · practice';
+  xgRunG(title,function(){
+    var pool=list.map(function(x){ return {de:x.c.german,bn:x.c.bengali||x.c.english||''}; }).filter(function(x){ return x.bn; });
+    return xsShuffle(pool).slice(0,10).map(function(c){
+      var o=xqOpts(c.bn,pool.map(function(x){return x.bn;}));
+      return {prompt:c.de, sub:'বাংলা অর্থ কী?', speak:c.de, opts:o.opts, ans:o.ans, explain:c.de+' = '+c.bn, onAnswer:function(ok){ xsAct('w',1); }};
+    });
+  },7);
+}
+// ===== Wortarten: also use built-in Netzwerk glossary (real categories) + Thema words =====
+var POS_DK={'Nomen':'Nomen','Verben':'Verb','Adjektive':'Adjektiv','Präpositionen':'Präposition','Redemittel':'Andere','Andere Wörter':'*'};
+var _pfNW=null;
+function pfNW(){ if(_pfNW) return _pfNW; _pfNW=[]; try{ var d=JSON.parse(document.getElementById('netzwerkData').textContent); Object.keys(d).forEach(function(k){ Object.keys(d[k]).forEach(function(cat){ (d[k][cat]||[]).forEach(function(r){ _pfNW.push({cat:cat,k:k,c:{german:r[0],bengali:r[1],english:r[2]||''}}); }); }); }); }catch(e){} return _pfNW; }
+function pfFromCat(cat,g){
+  var m=POS_DK[cat]; if(!m) return pfPosGuess(g);
+  if(m!=='*') return m;
+  var q=pfPosGuess(g); return (q==='Adverb'||q==='Pronomen'||q==='Konjunktion'||q==='Präposition')?q:'Andere';
+}
+pfPosAll=function(){
+  var seen={}, out=[], ov=xs.pos||{};
+  function add(c,d,cat){ var k=String(c.german||'').toLowerCase().trim(); if(!k||seen[k]) return; seen[k]=1; out.push({c:c,d:d,p:ov[k]||(cat?pfFromCat(cat,c.german):pfPosGuess(c.german))}); }
+  decks.forEach(function(d){ d.cards.forEach(function(c){ add(c,d,POS_DK[d.name]?d.name:null); }); });
+  pfNW().forEach(function(x){ add(x.c,{name:'Kapitel '+x.k},x.cat); });
+  try{ Object.keys(XG_TH).forEach(function(t){ xgThParse(t).forEach(function(w){ add({german:w.de,bengali:w.bn,english:''},{name:t},'Nomen'); }); }); }catch(e){}
+  return out;
+};
+// ===== Wortarten PDF =====
+var _pfOP0=openPDF;
+openPDF=function(h){ _pfOP0(h); var b=document.querySelector('#pgPdfPreview .back-btn'); if(b) b.onclick=function(){ showPage('pgApp'); }; };
+function pfPosPdf(){
+  var list=pfPosCur(); if(!list.length){ showToast('কোনো শব্দ নেই'); return; }
+  var groups=posF==='all'?POS_C.map(function(p){ return {p:p,l:list.filter(function(x){return x.p===p[0];})}; }).filter(function(g){return g.l.length;}):[{p:POS_C.filter(function(p){return p[0]===posF})[0],l:list}];
+  var h='<h1>DeutschFlash – Wortarten</h1><div style="font-size:12px;color:#666;margin:-6px 0 6px;">'+list.length+'টি শব্দ'+(posF==='all'?'':' · '+posF)+'</div>';
+  groups.forEach(function(g){
+    h+='<h2>'+g.p[2]+' '+g.p[0]+' <span style="font-size:14px;color:#777;font-weight:600;">('+g.p[1]+' · '+g.l.length+')</span></h2><table><thead><tr><th>#</th><th>German</th><th>Bengali</th><th>English</th></tr></thead><tbody>';
+    g.l.forEach(function(x,i){ h+='<tr><td style="color:#aaa;">'+(i+1)+'</td><td class="de">'+esc(x.c.german)+'</td><td class="bn">'+esc(x.c.bengali||'')+'</td><td>'+esc(x.c.english||'')+'</td></tr>'; });
+    h+='</tbody></table>';
+  });
+  openPDF(h);
+  var b=document.querySelector('#pgPdfPreview .back-btn'); if(b) b.onclick=function(){ pfPosOpen(); };
+}
+var _pfPL0=pfPosList;
+pfPosList=function(){
+  _pfPL0(); var inf=document.getElementById('posInfo'); if(!inf) return; var btn=inf.querySelector('button'); if(!btn) return;
+  var w=document.createElement('div'); w.style.cssText='display:flex;gap:8px;'; btn.parentNode.insertBefore(w,btn); w.appendChild(btn);
+  var pb=document.createElement('button'); pb.className='btn btn-ghost btn-sm'; pb.textContent='📄 PDF'; pb.onclick=pfPosPdf; w.insertBefore(pb,btn);
+};
+if(document.getElementById('posList')) pfPosList();
+// ===== German verb conjugation engine (rule-based + irregular tables) =====
+var CJ_P=['ich','du','er/sie/es','wir','ihr','sie/Sie'], CJ_RP=['mich','dich','sich','uns','euch','sich'];
+var CJ_IRR={
+ sein:{pr:['bin','bist','ist','sind','seid','sind'],pt:['war','warst','war','waren','wart','waren'],pp:'gewesen',aux:'sein',imp:['sei','seid','seien Sie']},
+ haben:{pr:['habe','hast','hat','haben','habt','haben'],pt:['hatte','hattest','hatte','hatten','hattet','hatten'],pp:'gehabt',aux:'haben',imp:['hab','habt','haben Sie']},
+ werden:{pr:['werde','wirst','wird','werden','werdet','werden'],pt:['wurde','wurdest','wurde','wurden','wurdet','wurden'],pp:'geworden',aux:'sein',imp:['werde','werdet','werden Sie']},
+ wissen:{pr:['weiß','weißt','weiß','wissen','wisst','wissen'],pt:['wusste','wusstest','wusste','wussten','wusstet','wussten'],pp:'gewusst',aux:'haben',imp:['wisse','wisst','wissen Sie']},
+ können:{pr:['kann','kannst','kann','können','könnt','können'],pt:['konnte','konntest','konnte','konnten','konntet','konnten'],pp:'gekonnt',aux:'haben'},
+ müssen:{pr:['muss','musst','muss','müssen','müsst','müssen'],pt:['musste','musstest','musste','mussten','musstet','mussten'],pp:'gemusst',aux:'haben'},
+ wollen:{pr:['will','willst','will','wollen','wollt','wollen'],pt:['wollte','wolltest','wollte','wollten','wolltet','wollten'],pp:'gewollt',aux:'haben'},
+ sollen:{pr:['soll','sollst','soll','sollen','sollt','sollen'],pt:['sollte','solltest','sollte','sollten','solltet','sollten'],pp:'gesollt',aux:'haben'},
+ dürfen:{pr:['darf','darfst','darf','dürfen','dürft','dürfen'],pt:['durfte','durftest','durfte','durften','durftet','durften'],pp:'gedurft',aux:'haben'},
+ mögen:{pr:['mag','magst','mag','mögen','mögt','mögen'],pt:['mochte','mochtest','mochte','mochten','mochtet','mochten'],pp:'gemocht',aux:'haben'},
+ möchten:{pr:['möchte','möchtest','möchte','möchten','möchtet','möchten'],pt:null,pp:'gemocht',aux:'haben'},
+ tun:{pr:['tue','tust','tut','tun','tut','tun'],pt:['tat','tatst','tat','taten','tatet','taten'],pp:'getan',aux:'haben',imp:['tu','tut','tun Sie']}
+};
+// [er-form, preterite stem, aux, participle]
+var CJ_ST={gehen:[null,'ging','sein','gegangen'],kommen:[null,'kam','sein','gekommen'],fahren:['fährt','fuhr','sein','gefahren'],sehen:['sieht','sah','haben','gesehen'],geben:['gibt','gab','haben','gegeben'],nehmen:['nimmt','nahm','haben','genommen'],sprechen:['spricht','sprach','haben','gesprochen'],essen:['isst','aß','haben','gegessen'],trinken:[null,'trank','haben','getrunken'],schlafen:['schläft','schlief','haben','geschlafen'],lesen:['liest','las','haben','gelesen'],schreiben:[null,'schrieb','haben','geschrieben'],finden:[null,'fand','haben','gefunden'],bleiben:[null,'blieb','sein','geblieben'],laufen:['läuft','lief','sein','gelaufen'],treffen:['trifft','traf','haben','getroffen'],helfen:['hilft','half','haben','geholfen'],stehen:[null,'stand','haben','gestanden'],sitzen:[null,'saß','haben','gesessen'],liegen:[null,'lag','haben','gelegen'],denken:[null,'dachte','haben','gedacht'],bringen:[null,'brachte','haben','gebracht'],kennen:[null,'kannte','haben','gekannt'],nennen:[null,'nannte','haben','genannt'],rufen:[null,'rief','haben','gerufen'],fliegen:[null,'flog','sein','geflogen'],schwimmen:[null,'schwamm','sein','geschwommen'],beginnen:[null,'begann','haben','begonnen'],verstehen:[null,'verstand','haben','verstanden'],vergessen:['vergisst','vergaß','haben','vergessen'],bekommen:[null,'bekam','haben','bekommen'],halten:['hält','hielt','haben','gehalten'],tragen:['trägt','trug','haben','getragen'],waschen:['wäscht','wusch','haben','gewaschen'],singen:[null,'sang','haben','gesungen'],schneiden:[null,'schnitt','haben','geschnitten'],beschreiben:[null,'beschrieb','haben','beschrieben'],laden:['lädt','lud','haben','geladen'],ziehen:[null,'zog','haben','gezogen'],gefallen:['gefällt','gefiel','haben','gefallen'],lassen:['lässt','ließ','haben','gelassen'],heißen:[null,'hieß','haben','geheißen'],werfen:['wirft','warf','haben','geworfen'],sterben:['stirbt','starb','sein','gestorben'],wachsen:['wächst','wuchs','sein','gewachsen'],fallen:['fällt','fiel','sein','gefallen'],gewinnen:[null,'gewann','haben','gewonnen'],schließen:[null,'schloss','haben','geschlossen'],treten:['tritt','trat','sein','getreten'],steigen:[null,'stieg','sein','gestiegen'],scheinen:[null,'schien','haben','geschienen'],bieten:[null,'bot','haben','geboten'],verlieren:[null,'verlor','haben','verloren'],rennen:[null,'rannte','sein','gerannt'],backen:['bäckt','backte','haben','gebacken'],braten:['brät','briet','haben','gebraten'],raten:['rät','riet','haben','geraten'],fangen:['fängt','fing','haben','gefangen'],schlagen:['schlägt','schlug','haben','geschlagen'],empfehlen:['empfiehlt','empfahl','haben','empfohlen'],entscheiden:[null,'entschied','haben','entschieden'],gelten:['gilt','galt','haben','gegolten'],riechen:[null,'roch','haben','gerochen'],streiten:[null,'stritt','haben','gestritten'],vergleichen:[null,'verglich','haben','verglichen'],verbieten:[null,'verbot','haben','verboten'],verbinden:[null,'verband','haben','verbunden'],treiben:[null,'trieb','haben','getrieben'],schwitzen:null,sprechen_:null};
+Object.keys(CJ_ST).forEach(function(k){ if(!CJ_ST[k]) delete CJ_ST[k]; });
+var CJ_SEP=['zusammen','zurück','vorbei','heraus','herein','hinaus','hinein','weiter','statt','teil','fest','fort','los','weg','dazu','mit','nach','vor','auf','aus','ein','bei','an','ab','zu','her','hin','da','frei','fern','kennen','spazieren','wieder','um'];
+var CJ_NOSEP={abonnieren:1,einigen:1,anerkennen:1,abstrahieren:1,umarmen:1,beten:1,bellen:1};
+var CJ_SEIN={aufstehen:1,aufwachen:1,einschlafen:1,einsteigen:1,aussteigen:1,umsteigen:1,ankommen:1,abfahren:1,mitkommen:1,reisen:1,wandern:1,passieren:1,klettern:1,losgehen:1,weggehen:1,zurückkommen:1,zurückfahren:1,hinfahren:1,mitfahren:1,abfliegen:1};
+function cjNeedE(s){ return /(chn|[dt]|[^aeiouäöüyhlrmn][mn])$/.test(s); }
+function cjSplit(h){
+  if(CJ_ST[h]||CJ_IRR[h]||CJ_NOSEP[h]) return ['',h];
+  if(/.tun$/.test(h)&&h!=='tun') return [h.slice(0,-3),'tun'];
+  var ps=CJ_SEP.slice().sort(function(a,b){return b.length-a.length;});
+  for(var i=0;i<ps.length;i++){ var p=ps[i]; if(h.indexOf(p)!==0||h.length-p.length<4) continue; var b=h.slice(p.length);
+    if(!/(en|ern|eln)$/.test(b)) continue;
+    if(p==='um'&&!/^(steigen|ziehen|tauschen|drehen|räumen|buchen|bauen|packen|schalten|stellen|wandeln|kehren)$/.test(b)) continue;
+    if((p==='wieder'||p==='da'||p==='her'||p==='hin')&&!/^(holen|sehen|kommen|geben|bringen|gehen|fahren)$/.test(b)) continue;
+    return [p,b]; }
+  return ['',h];
+}
+function cjPret(p){
+  if(/e$/.test(p)) return [p,p+'st',p,p+'n',p+'t',p+'n'];
+  return [p,p+(/[sßxz]$/.test(p)?'t':/[dt]$/.test(p)?'est':'st'),p,p+'en',p+(/[dt]$/.test(p)?'et':'t'),p+'en'];
+}
+function cjVerb(raw){
+  var m=String(raw||'').trim().match(/^(.*?)\s*\(([^)]*)\)\s*$/), s=m?m[1].trim():String(raw||'').trim(), er=null, dAux=null, dPart=null;
+  if(m){ var q=m[2].match(/^(?:er|sie|es)\s+([^/]+?)(?:\/(hat|ist)\s+(.+))?$/); if(q){ er=q[1].trim(); dAux=q[2]?(q[2]==='ist'?'sein':'haben'):null; dPart=q[3]?q[3].trim():null; } }
+  var refl=/^sich\s+/i.test(s); if(refl) s=s.replace(/^sich\s+/i,'');
+  var w=s.split(/\s+/), head=w[w.length-1].toLowerCase(), post=w.slice(0,-1).join(' ');
+  if(!/^[a-zäöüß]{3,}(en|ern|eln|tun)$/.test(head)&&head!=='tun'&&head!=='sein') return null;
+  var erW=er?er.split(/\s+/):[], erFin=erW[0]||null, pf='', base=head;
+  var sp=cjSplit(head); pf=sp[0]; base=sp[1];
+  if(erW.length>1){ var tail=erW[erW.length-1]; if(head.indexOf(tail)===0&&head.length>tail.length){ pf=tail; base=head.slice(tail.length); } else if(head!==base){ /* keep split */ } }
+  if(post&&erW.length>1&&!(head.indexOf(erW[erW.length-1])===0)){ pf=''; base=head; }
+  var irr=CJ_IRR[base]||null, st=CJ_ST[base]||null, o={inf:raw,refl:refl,aux:'haben',pr:null,pt:null,pf:null,imp:null,reg:false}, pr6, ptb=null, pp=null, aux=null, impDu=null;
+  if(irr){ pr6=irr.pr.slice(); ptb=irr.pt?irr.pt.slice():null; pp=irr.pp; aux=irr.aux; impDu=irr.imp||null; }
+  else {
+    var inf=base, ln=/eln$/.test(inf), rn=/ern$/.test(inf), stem=(ln||rn)?inf.slice(0,-1):inf.slice(0,-2), ne=(ln||rn)?false:cjNeedE(stem), regEr=stem+(ne?'et':'t');
+    pr6=[ln?stem.slice(0,-2)+'le':rn?stem+'e':stem+'e', stem+(/[sßxz]$/.test(stem)?'t':ne?'est':'st'), regEr, inf, regEr, inf];
+    var erForm=erFin||(st&&st[0])||null, cs=null;
+    if(erForm&&erForm!==regEr){
+      if(/d$/.test(stem)) cs=erForm.replace(/t$/,''); else if(/t$/.test(stem)) cs=erForm; else cs=erForm.replace(/t$/,'');
+      pr6[1]=cs+(/[sßxz]$/.test(cs)?'t':'st'); pr6[2]=erForm;
+    }
+    impDu=[ (cs&&/ie?/.test(cs)&&/e/.test(stem)&&!/[äöü]/.test(cs))?cs:(ln?stem.slice(0,-2)+'le':rn?stem+'e':stem+(ne?'e':'')), pr6[4], inf+' Sie' ];
+    if(st){ ptb=cjPret(st[1]); pp=st[3]; aux=st[2]; }
+    else { var ins=/^(be|ge|er|ver|zer|ent|emp|miss)/.test(base)&&base.length>6||/ieren$/.test(base)||(pf===''&&/^(über|unter|durch|hinter|wider)/.test(base)); ptb=cjPret(stem+(ne?'ete':'te')); pp=(ins?'':'ge')+stem+(ne?'et':'t'); o.reg=!erFin&&!dPart; o.rpp=pp; o.regEr=regEr; if(erFin||dPart){ ptb=null; } }
+  }
+  aux=dAux||(CJ_SEIN[head]?'sein':aux)||'haben'; o.aux=aux; o.sep=!!pf; o.modal=!!(irr&&/^(können|müssen|wollen|sollen|dürfen|mögen|möchten)$/.test(base)); o.irregular=!!(irr||st)||(!!erFin&&erFin!==o.regEr)||(!!dPart&&dPart!==((post?post+' ':'')+pf+(o.rpp||'')));
+  var cp=function(pro,i,v){ return pro+' '+v+(refl?' '+['mich','dich','sich','uns','euch','sich'][i]:'')+(post?' '+post:'')+(pf?' '+pf:''); };
+  o.pr=pr6.map(function(v,i){ return cp(CJ_P[i],i,v); });
+  o.pt=ptb?ptb.map(function(v,i){ return cp(CJ_P[i],i,v); }):null;
+  var tail=dPart?dPart:(pp?((post?post+' ':'')+pf+pp):null);
+  if(tail){ var A=aux==='sein'?['bin','bist','ist','sind','seid','sind']:['habe','hast','hat','haben','habt','haben']; o.pf=A.map(function(a,i){ return CJ_P[i]+' '+a+(refl?' '+['mich','dich','sich','uns','euch','sich'][i]:'')+' '+tail; }); o.pp=tail; }
+  if(impDu){ var ex=(post?' '+post:'')+(pf?' '+pf:''); var ih=pr6[4]; var sie=impDu[2]; if(irr&&!/ Sie$/.test(sie)) sie=sie; o.imp=[impDu[0]+(refl?' dich':'')+ex, ih+(refl?' euch':'')+ex, (/ Sie$/.test(sie)?sie:sie)+(refl?' sich':'')+ex ]; if(irr) o.imp[1]=(irr.imp[1])+(refl?' euch':'')+ex; if(!/ Sie/.test(impDu[2])){} }
+  return o;
+}
+
+// ===== Verb conjugation UI =====
+function cjForms(x){ var o=cjVerb(x); return o; }
+function cjStrip(s,i){ return s.slice(CJ_P[i].length+1); }
+function cjTable(title,arr,color){
+  return '<div style="font-size:13px;font-weight:800;color:'+color+';margin:12px 0 6px;">'+title+'</div><div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;">'+arr.map(function(f,i){ return '<div style="display:flex;gap:10px;padding:8px 12px;'+(i?'border-top:1px solid var(--border);':'')+'background:'+(i%2?'var(--bg)':'var(--card)')+';"><span style="width:72px;flex-shrink:0;color:var(--sub);font-size:12.5px;">'+esc(CJ_P[i])+'</span><b style="color:var(--text);font-size:14px;">'+esc(cjStrip(f,i))+'</b></div>'; }).join('')+'</div>';
+}
+function pfConj(key){
+  var it=pfPosAll().filter(function(x){ return String(x.c.german).toLowerCase().trim()===key; })[0]; if(!it) return;
+  var o=cjVerb(it.c.german); if(!o){ showToast('এই শব্দের রূপ বানানো গেল না'); return; }
+  var base=String(it.c.german).replace(/\s*\(.*\)\s*$/,'');
+  var h='<div style="display:flex;align-items:center;gap:8px;"><button onclick="speak(\''+base.replace(/'/g,"\\'")+'\',\'de-DE\')" style="background:none;border:none;font-size:20px;cursor:pointer;">🔊</button><div><div style="font-size:19px;font-weight:900;color:var(--text);">'+esc(base)+'</div><div style="font-size:12.5px;color:var(--sub);">'+esc(it.c.bengali||'')+'</div></div></div>';
+  h+='<div style="max-height:60vh;overflow-y:auto;">'+cjTable('Präsens (বর্তমান)',o.pr,'#2dd4a0');
+  h+=o.pf?cjTable('Perfekt (অতীত)',o.pf,'#4361ee'):'';
+  h+=o.pt?cjTable('Präteritum (সরল অতীত)',o.pt,'#f59e0b'):'<div style="font-size:11.5px;color:var(--sub);margin:12px 0 4px;">ℹ️ Präteritum: এই অনিয়মিত ক্রিয়ার রূপ তালিকায় নেই।</div>';
+  if(o.imp) h+='<div style="font-size:13px;font-weight:800;color:#ec4899;margin:12px 0 6px;">Imperativ (আদেশ)</div><div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;">'+[['du',o.imp[0]],['ihr',o.imp[1]],['Sie',o.imp[2]]].map(function(r,i){ return '<div style="display:flex;gap:10px;padding:8px 12px;'+(i?'border-top:1px solid var(--border);':'')+'background:'+(i%2?'var(--bg)':'var(--card)')+';"><span style="width:72px;flex-shrink:0;color:var(--sub);font-size:12.5px;">'+r[0]+'</span><b style="color:var(--text);font-size:14px;">'+esc(r[1])+'!</b></div>'; }).join('')+'</div>';
+  if(it.c.sentence) h+='<div style="margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--bg);border:1px solid var(--border);font-size:13px;color:var(--text);">💬 '+esc(it.c.sentence)+(it.c.sentenceBn?'<div style="color:var(--green);margin-top:3px;">'+esc(it.c.sentenceBn)+'</div>':'')+'</div>';
+  h+='<div style="font-size:10.5px;color:var(--sub);margin-top:10px;line-height:1.5;">রূপগুলো নিয়ম ও Glossar-এর তথ্য থেকে তৈরি। কিছু অনিয়মিত ক্রিয়ায় ভুল থাকতে পারে, তাই পরীক্ষার আগে বইয়ের সাথে মিলিয়ে নিও।</div></div><button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="closeModal()">বন্ধ</button>';
+  document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+}
+function pfConjVerbs(){ return pfPosCur().filter(function(x){ return x.p==='Verb'; }).map(function(x){ return {x:x,o:cjVerb(x.c.german)}; }).filter(function(r){ return r.o; }); }
+function pfConjPrac(){
+  var vs=pfConjVerbs(); if(vs.length<4){ showToast('অন্তত ৪টা Verb লাগবে'); return; }
+  xgRunG('🧩 Konjugation practice',function(){
+    return xsShuffle(vs).slice(0,10).map(function(r,i){
+      var o=r.o, base=String(r.x.c.german).replace(/\s*\(.*\)\s*$/,''), pi=[0,1,2,3,4,5][Math.floor(Math.random()*6)];
+      if(i%3===2&&o.pf){ var tail=cjStrip(o.pf[2],2), au=/^(ist|hat)\s/.exec(tail.replace(/^\S+\s/,'')) , a2=o.aux==='sein'?'ist':'hat', alt=a2==='ist'?'hat':'ist', pcs=o.pf[2].replace(/^er\/sie\/es (ist|hat) /,'');
+        var opts=[a2+' '+pcs,alt+' '+pcs]; var wrong=pcs.replace(/ge(\S+)(en|t)$/,function(m,a,b){ return 'ge'+a+(b==='en'?'t':'en'); }); if(wrong===pcs) wrong='ge'+pcs; opts.push(a2+' '+wrong,alt+' '+wrong); opts=xsShuffle(opts);
+        return {prompt:'er/sie/es ___ ('+base+')', sub:'Perfekt — সঠিক রূপ বাছো', opts:opts, ans:opts.indexOf(a2+' '+pcs), explain:o.pf[2], speak:null, onAnswer:function(ok){ xsAct('w',1); }}; }
+      var forms=o.pr.map(function(f,k){ return cjStrip(f,k); }), corr=forms[pi], set=[]; forms.forEach(function(f){ if(set.indexOf(f)<0) set.push(f); });
+      var extra=xsShuffle(vs).map(function(q){ return cjStrip(q.o.pr[pi],pi); }).filter(function(f){ return set.indexOf(f)<0; });
+      while(set.length<4&&extra.length) set.push(extra.shift());
+      var wrongs=xsShuffle(set.filter(function(f){return f!==corr;})).slice(0,3), opts=xsShuffle([corr].concat(wrongs));
+      return {prompt:CJ_P[pi]+' ___ '+(o.refl?'':''), sub:'Präsens — '+base+(o.refl?' (sich)':'')+' · সঠিক রূপ বাছো', opts:opts, ans:opts.indexOf(corr), explain:o.pr[pi], speak:null, onAnswer:function(ok){ xsAct('w',1); }};
+    });
+  },7);
+}
+var _pfPL1=pfPosList;
+pfPosList=function(){
+  _pfPL1(); var el=document.getElementById('posList'); if(!el) return;
+  var list=pfPosCur().slice(0,posN), rows=el.children;
+  list.forEach(function(x,i){ if(x.p!=='Verb'||!rows[i]) return; if(!cjVerb(x.c.german)) return; var tag=rows[i].querySelector('button[onclick^="pfPosPick"]'); if(!tag) return; var b=document.createElement('button'); b.textContent='🔀'; b.title='Konjugation'; b.style.cssText='flex-shrink:0;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:15px;'; var k=String(x.c.german).toLowerCase().trim(); b.onclick=function(){ pfConj(k); }; tag.parentNode.insertBefore(b,tag); });
+  var inf=document.getElementById('posInfo'); if(inf&&posF==='Verb'&&!inf.querySelector('.cjp')){ var cb=document.createElement('button'); cb.className='btn btn-ghost btn-sm cjp'; cb.textContent='🧩 Konjugation'; cb.onclick=pfConjPrac; var w=inf.querySelector('div>div'); var host=inf.querySelector('button').parentNode; host.insertBefore(cb,host.firstChild); }
+};
+var _pfPdf0=pfPosPdf;
+pfPosPdf=function(){
+  if(posF!=='Verb') return _pfPdf0();
+  var vs=pfConjVerbs(); if(!vs.length){ showToast('কোনো Verb নেই'); return; }
+  var h='<h1>DeutschFlash – Verb Konjugation</h1><div style="font-size:12px;color:#666;margin:-6px 0 6px;">'+vs.length+'টি ক্রিয়া · Präsens ও Perfekt</div><table style="font-size:10.5px;"><thead><tr><th>Infinitiv</th><th>ich</th><th>du</th><th>er/sie/es</th><th>wir</th><th>ihr</th><th>sie/Sie</th><th>Perfekt (er)</th></tr></thead><tbody>';
+  vs.forEach(function(r){ var o=r.o; h+='<tr><td class="de">'+esc(String(r.x.c.german).replace(/\s*\(.*\)\s*$/,''))+'<div class="bn" style="font-size:9.5px;">'+esc(r.x.c.bengali||'')+'</div></td>'+o.pr.map(function(f,i){ return '<td>'+esc(cjStrip(f,i))+'</td>'; }).join('')+'<td>'+esc(o.pf?cjStrip(o.pf[2],2):'')+'</td></tr>'; });
+  h+='</tbody></table>'; openPDF(h); var b=document.querySelector('#pgPdfPreview .back-btn'); if(b) b.onclick=function(){ pfPosOpen(); };
+};
+if(document.getElementById('posList')) pfPosList();
+
+// ===== Verb sub-filters: regular / irregular / separable / reflexive / modal =====
+var posV='all', _cjC={};
+function cjInfo(g){ if(!(g in _cjC)) _cjC[g]=cjVerb(g); return _cjC[g]; }
+var CJ_SUB=[['all','সব'],['reg','Regelmäßig','নিয়মিত'],['irr','Unregelmäßig','অনিয়মিত'],['sep','Trennbar','আলাদা হয়'],['refl','Reflexiv','sich'],['modal','Modalverb','']];
+function cjMatch(o,k){ if(!o) return false; return k==='all'||(k==='reg'&&!o.irregular&&!o.modal)||(k==='irr'&&o.irregular)||(k==='sep'&&o.sep)||(k==='refl'&&o.refl)||(k==='modal'&&o.modal); }
+var _pfCur0=pfPosCur;
+pfPosCur=function(){ var l=_pfCur0(); if(posF!=='Verb'||posV==='all') return l; return l.filter(function(x){ return cjMatch(cjInfo(x.c.german),posV); }); };
+function pfPosV(k){ posV=k; posN=150; pfPosDraw(); }
+var _pfDraw0=pfPosDraw;
+pfPosDraw=function(keep){
+  _pfDraw0(keep); var inf=document.getElementById('posInfo'); if(!inf||posF!=='Verb') return;
+  var vs=_pfCur0().map(function(x){ return cjInfo(x.c.german); }), cnt={}; CJ_SUB.forEach(function(c){ cnt[c[0]]=vs.filter(function(o){ return cjMatch(o,c[0]); }).length; });
+  var d=document.createElement('div'); d.style.cssText='display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;';
+  d.innerHTML=CJ_SUB.map(function(c){ var on=posV===c[0]; return '<button onclick="pfPosV(\''+c[0]+'\')" style="flex-shrink:0;padding:6px 11px;border-radius:16px;border:1.5px solid '+(on?'#2dd4a0':'var(--border)')+';background:'+(on?'#2dd4a026':'var(--card)')+';color:var(--text);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">'+c[1]+(c[2]?' <span style="color:var(--sub);font-weight:600;">'+c[2]+'</span>':'')+' <b>'+cnt[c[0]]+'</b></button>'; }).join('');
+  inf.parentNode.insertBefore(d,inf);
+};
+var _pfF0=pfPosF; pfPosF=function(f){ if(f!=='Verb') posV='all'; _pfF0(f); };
+if(document.getElementById('posList')) pfPosDraw();
+
+// ===== Performance fixes =====
+(function(){
+  // 1) debounce + coalesce heavy localStorage saves of xs (large transcripts)
+  var _xsS=xsSave, tm=null;
+  xsSave=function(){ if(tm) return; tm=setTimeout(function(){ tm=null; _xsS(); },700); };
+  function flush(){ if(tm){ clearTimeout(tm); tm=null; _xsS(); } }
+  window.addEventListener('pagehide',flush); document.addEventListener('visibilitychange',function(){ if(document.hidden) flush(); });
+  window.xsFlush=flush;
+  // 2) lazy-load video thumbnails (only those scrolled into view)
+  var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ var el=e.target; io.unobserve(el); var u=el.getAttribute('data-bg'); if(u) el.style.backgroundImage='url('+u+')', el.style.backgroundSize='cover', el.style.backgroundPosition='center'; } }); },{rootMargin:'200px'}):null;
+  window.xgLazy=function(){ var els=document.querySelectorAll('[data-bg]'); for(var i=0;i<els.length;i++){ var el=els[i]; if(el.getAttribute('data-l')) continue; el.setAttribute('data-l','1'); if(io) io.observe(el); else el.style.backgroundImage='url('+el.getAttribute('data-bg')+')'; } };
+  var _m=xgMount; xgMount=function(pg,h,t){ _m(pg,h,t); xgLazy(); };
+  // 3) memoise the big word list; cheap signature, bumped when a word type is changed
+  var _pa=pfPosAll, memo=null, sig='';
+  window._pfPV=0;
+  pfPosAll=function(){ var n=0; decks.forEach(function(d){ n+=d.cards.length; }); var s2=n+'|'+decks.length+'|'+_pfPV+'|'+Object.keys(xs.pos||{}).length; if(memo&&s2===sig) return memo; sig=s2; memo=_pa(); return memo; };
+  var _ps=pfPosSet; pfPosSet=function(k,p){ _pfPV++; _ps(k,p); };
+  // 4) debounce the search box in Wortarten
+  var dt=null; window.pfSearch=function(v){ posQ=v; posN=150; clearTimeout(dt); dt=setTimeout(pfPosList,160); };
+})();
 </script>
 </body>
 </html>
