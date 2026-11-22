@@ -1099,6 +1099,7 @@ function switchTab(t) {
     if(nb) nb.classList.toggle('on', x===t);
   });
   if(t==='library'){ if(typeof libMode!=='undefined' && libMode==='sent') slRender(); else renderLibrary(); }
+  if(t==='progress'){ window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0; setTimeout(function(){ window.scrollTo(0,0); },0); }
   if(t==='mycard') renderMyCard();
   if(t==='create' && typeof createMode!=='undefined' && createMode==='sent') renderSentences();
 }
@@ -5848,7 +5849,7 @@ function xpRenderProgress(){
   var el=document.getElementById('tabProgress'); if(!el) return;
   var s=xpStats(), lv=xpLevelOf(s.tot), pct=Math.round((s.tot-lv.base)/(lv.next-lv.base)*100);
   var hard=xsHardList().length, fav=Object.keys(xs.fav).length, goal=practice.goal||5, today=xs.cal[xpYmd(new Date())]||0;
-  var h='<div style="font-size:20px;font-weight:900;color:var(--text);margin:4px 0 14px;">📈 আমার অগ্রগতি</div>';
+  var h='<div class="pg-title" style="flex-direction:column;align-items:flex-start;gap:2px;margin:4px 0 14px;"><span class="t">📈 আমার অগ্রগতি</span><span style="font-size:12px;color:var(--sub);">আজ কতটা এগোলে, এক নজরে</span></div>';
   h+='<div onclick="xpLevel()" style="cursor:pointer;background:linear-gradient(135deg,#1a1f6e,#0d1040);border:1px solid var(--borderL,#3a3f8a);border-radius:20px;padding:16px;margin-bottom:12px;"><div style="display:flex;align-items:center;gap:14px;"><div style="width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,var(--blue),var(--green));display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-size:10px;color:#ffffffcc;font-weight:800;">LEVEL</div><div style="font-size:24px;font-weight:900;color:#fff;line-height:1;">'+lv.L+'</div></div><div style="flex:1;min-width:0;"><div style="font-size:16px;font-weight:900;color:#fff;">'+xpLevelName(lv.L)+'</div><div style="height:8px;background:#ffffff22;border-radius:9px;overflow:hidden;margin:8px 0 4px;"><div style="height:100%;width:'+pct+'%;background:var(--green);"></div></div><div style="font-size:11px;color:#ffffffaa;">'+s.tot+' / '+lv.next+' XP · 🏅 '+XP_BADGES.filter(function(b){return b[4](s);}).length+'/'+XP_BADGES.length+' badge</div></div></div></div>';
   var cell=function(v,l,c){ return '<div style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px 4px;text-align:center;"><div style="font-size:20px;font-weight:900;color:'+c+';">'+v+'</div><div style="font-size:10px;color:var(--sub);margin-top:2px;">'+l+'</div></div>'; };
   h+='<div style="display:flex;gap:8px;margin-bottom:12px;">'+cell(practice.streak||0,'🔥 streak','var(--gold)')+cell(today+'/'+goal,'আজকের practice','var(--green)')+cell(hard,'⚠️ কঠিন','var(--red)')+'</div>';
@@ -5856,13 +5857,13 @@ function xpRenderProgress(){
   for(var i=13;i>=0;i--){ var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i), n=xs.cal[xpYmd(d)]||0, bg=n>=goal?'var(--green)':n>0?'#2dd4a055':'var(--border)';
     strip+='<div style="flex:1;text-align:center;"><div style="height:26px;border-radius:7px;background:'+bg+';'+(i===0?'outline:2px solid var(--blue);':'')+'"></div><div style="font-size:9px;color:var(--muted);margin-top:3px;">'+D[d.getDay()]+'</div></div>'; }
   h+='<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px;margin-bottom:12px;"><div style="font-size:11px;color:var(--sub);font-weight:800;margin-bottom:8px;">শেষ ১৪ দিন</div><div style="display:flex;gap:4px;">'+strip+'</div></div>';
-  var btn=function(ico,t,sub,fn){ return '<button onclick="'+fn+'" style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 12px;text-align:left;cursor:pointer;color:var(--text);"><div style="font-size:22px;">'+ico+'</div><div style="font-size:14px;font-weight:800;margin-top:4px;">'+t+'</div><div style="font-size:11px;color:var(--sub);margin-top:2px;">'+sub+'</div></button>'; };
+  var btn=function(ico,t,sub,fn){ return '<button class="pg-tile" onclick="'+fn+'"><div class="pg-ic">'+ico+'</div><div style="font-size:14px;font-weight:800;">'+t+'</div><div style="font-size:11px;color:var(--sub);margin-top:2px;">'+sub+'</div></button>'; };
   h+='<button onclick="xpToday(0)" style="width:100%;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--green);border-radius:16px;padding:13px 14px;margin-bottom:10px;cursor:pointer;color:var(--text);text-align:left;"><span style="font-size:26px;">📅</span><span style="flex:1;"><div style="font-size:14px;font-weight:800;">আজকের শব্দ</div><div style="font-size:11px;color:var(--sub);margin-top:2px;">রোজ একটি শব্দ শেখো</div></span><span style="color:var(--muted);">›</span></button>';
-  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
+  h+='<div class="pg-grid">'
    +btn('🔥','Streak ক্যালেন্ডার','কোন দিন practice হলো','xpCalendar(0)')
    +btn('🏅','Level ও Badge','পয়েন্ট ও পুরস্কার','xpLevel()')
    +btn('⚠️','কঠিন শব্দ',hard?hard+'টি জমেছে':'এখনো নেই','xsHard()')
-   +btn('📊','সাপ্তাহিক রিপোর্ট','শেষ ৭ দিন','xsReport()')
+   +btn('📊','সাপ্তাহিক রিপোর্ট','সময়, লক্ষ্য ও PDF','xsReport()')
    +btn('⭐','প্রিয়',fav?fav+'টি':'তারা দেওয়া শব্দ','xpFavs()')
    +btn('📈','Kapitel অগ্রগতি','Story ও শব্দ শেখা','xpProgress()')
    +'</div>';
@@ -8136,8 +8137,17 @@ try{ xhRender(); }catch(e){ console.error(e); }
 <style>
 .st-chip{position:fixed;left:12px;bottom:92px;z-index:47;display:none;align-items:center;gap:6px;padding:8px 13px;border-radius:99px;background:var(--card);border:1.5px solid var(--cyan);color:var(--text);font-weight:900;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer;font-variant-numeric:tabular-nums;}
 .st-chip.pz{border-color:var(--gold);}
-.st-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:0 0 14px;}
+.st-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin:0 0 12px;}
 .st-clock{font-size:42px;font-weight:900;text-align:center;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:1px;}
+.stp-sum{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px;}
+#pdfPreviewContent .stp-box{flex:1 1 30%;border:1px solid #cfd3e6;border-radius:8px;padding:8px 10px;background:#fff;}
+#pdfPreviewContent .stp-box b{display:block;font-size:18px;color:#1a2a6e;}
+#pdfPreviewContent .stp-box span{font-size:11px;color:#444;}
+#pdfPreviewContent .stp-tab{width:100%;border-collapse:collapse;font-size:12.5px;}
+#pdfPreviewContent .stp-tab th{background:#e8eeff;color:#1a2a6e;text-align:left;padding:5px 8px;border:1px solid #cfd3e6;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+#pdfPreviewContent .stp-tab td{padding:4px 8px;border:1px solid #cfd3e6;color:#000;background:#fff !important;}
+#pdfPreviewContent .stp-tab tr{page-break-inside:avoid;}
+#pdfPreviewContent .stp-bar{height:9px;border-radius:5px;background:#4361ee;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 .st-bar{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:6px;}
 .st-bar>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
 .st-bar i{display:block;width:100%;border-radius:6px 6px 0 0;background:var(--cyan);min-height:2px;}
@@ -8195,16 +8205,57 @@ try{ xhRender(); }catch(e){ console.error(e); }
     h+='<div style="margin-top:6px;font-size:12px;color:var(--sub);">মোট পড়ার সময় (শুরু থেকে): <b style="color:var(--text);">'+human(all)+'</b> · '+Object.keys(D.days).filter(function(q){return D.days[q]>0;}).length+' দিন</div>';
     return h;
   }
+  function weekMini(){
+    var t=new Date(), diff=(t.getDay()+1)%7, st=new Date(t.getFullYear(),t.getMonth(),t.getDate()-diff), tot=0, G=Number(loadLS('df_wgoal',7)); G=(G>0?G:7)*3600000;
+    for(var i=0;i<7;i++){ var d=new Date(st.getFullYear(),st.getMonth(),st.getDate()+i); tot+=D.days[ymd(d)]||0; }
+    var pc=Math.min(100,Math.round(tot/G*100));
+    return '<div onclick="xsReport()" style="cursor:pointer;background:linear-gradient(135deg,#1c2370,#0d1040);border:1px solid #3a3f8a;border-radius:20px;padding:14px 16px;margin:0 0 12px;color:#fff;"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-size:14px;font-weight:900;">📊 এই সপ্তাহ</div><div style="font-size:11px;opacity:.75;">রিপোর্ট দেখো ›</div></div><div style="display:flex;align-items:baseline;gap:8px;margin:8px 0 8px;"><div style="font-size:26px;font-weight:900;">'+human(tot)+'</div><div style="font-size:12px;opacity:.75;">/ '+human(G)+' লক্ষ্য</div></div><div style="height:9px;background:#ffffff22;border-radius:9px;overflow:hidden;"><div style="height:100%;width:'+pc+'%;background:'+(pc>=100?'#2dd4a0':'linear-gradient(90deg,#5b8cff,#ffd76a)')+';"></div></div></div>';
+  }
   function card(){
     return '<div class="st-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><div style="font-size:16px;font-weight:900;color:var(--text);">⏱ Study Timer</div><div id="stStatus" style="font-size:12px;font-weight:800;color:var(--cyan);">'+statusTxt()+'</div></div>'
      +'<div class="st-clock" id="stClock">'+clock(D.sess)+'</div><div style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:12px;">এই session</div>'
      +'<div id="stBtns">'+btns()+'</div>'
      +'<div style="margin-top:14px;padding:11px 12px;border-radius:12px;background:var(--navy);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:11px;color:var(--muted);">আজ মোট পড়েছো</div><div id="stTodayH" style="font-size:14px;font-weight:800;color:var(--text);">'+human(today())+'</div></div><div id="stToday" style="font-size:22px;font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums;">'+clock(today())+'</div></div>'
      +'<div style="font-size:13px;font-weight:800;color:var(--text);margin:14px 0 2px;">📊 শেষ ৭ দিন</div><div id="stWeek">'+weekHtml()+'</div>'
+     +'<button class="btn btn-ghost btn-full" style="margin-top:12px;" onclick="stReportMenu()">📄 Report PDF ডাউনলোড</button>'
      +'<div style="font-size:11px;color:var(--muted);margin-top:10px;">অ্যাপ থেকে বের হলে বা অন্য অ্যাপে গেলে timer নিজে থেকে পজ হয়। ফিরে এসে ▶ রিজিউম চাপো।</div></div>';
   }
+  function dstr(d){ var N=['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি']; return ymd(d).split('-').reverse().join('/')+' ('+N[d.getDay()]+')'; }
+  window.stReportMenu=function(){
+    var h='<div style="text-align:center;margin-bottom:12px;"><div style="font-size:19px;font-weight:900;color:var(--text);">📄 Study Report PDF</div><div style="font-size:12px;color:var(--sub);margin-top:4px;">কত দিনের রিপোর্ট চাও?</div></div>'
+      +'<button class="btn btn-blue btn-full" style="margin-bottom:8px;" onclick="closeModal();stReport(7)">শেষ ৭ দিন</button>'
+      +'<button class="btn btn-blue btn-full" style="margin-bottom:8px;" onclick="closeModal();stReport(30)">শেষ ৩০ দিন</button>'
+      +'<button class="btn btn-blue btn-full" style="margin-bottom:8px;" onclick="closeModal();stReport(0)">শুরু থেকে সব</button>'
+      +'<button class="btn btn-ghost btn-full" onclick="closeModal()">✕ বন্ধ</button>';
+    document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open');
+  };
+  window.stReport=function(n){
+    if(D.st==='run') tick();
+    var keys=Object.keys(D.days).filter(function(k){ return D.days[k]>0; }).sort(), rows=[], t0=new Date();
+    if(n>0){ for(var i=0;i<n;i++){ var d=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()-i); rows.push({d:d,ms:D.days[ymd(d)]||0}); } }
+    else { keys.slice().reverse().forEach(function(k){ var q=k.split('-'); rows.push({d:new Date(+q[0],+q[1]-1,+q[2]),ms:D.days[k]}); }); }
+    var tot=0, days=0, best=null; rows.forEach(function(r){ tot+=r.ms; if(r.ms>0){ days++; if(!best||r.ms>best.ms) best=r; } });
+    var st=0; for(var j=0;;j++){ var dd=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()-j); if((D.days[ymd(dd)]||0)>0) st++; else if(j===0) continue; else break; }
+    var mx=Math.max.apply(null,rows.map(function(r){return r.ms;}).concat([1]));
+    var nm=(typeof profile!=='undefined'&&profile&&profile.name)?profile.name:'';
+    var lbl=n===7?'শেষ ৭ দিন':(n===30?'শেষ ৩০ দিন':'শুরু থেকে সব');
+    var h='<div class="spw-t">⏱ Study Report</div><div class="spw-tb">'+(nm?esc(nm)+' · ':'')+lbl+' · '+dstr(t0)+'</div>'
+      +'<div class="stp-sum"><div class="stp-box"><b>'+human(tot)+'</b><span>মোট পড়ার সময়</span></div><div class="stp-box"><b>'+days+'</b><span>যত দিন পড়েছো</span></div><div class="stp-box"><b>'+human(days?tot/days:0)+'</b><span>পড়া দিনে গড়</span></div>'
+      +'<div class="stp-box"><b>'+(best?human(best.ms):'—')+'</b><span>সেরা দিন'+(best?' · '+ymd(best.d).split('-').reverse().join('/'):'')+'</span></div><div class="stp-box"><b>'+st+' দিন</b><span>টানা পড়া (streak)</span></div><div class="stp-box"><b>'+human(today())+'</b><span>আজ</span></div></div>';
+    if(!rows.length||!tot){ h+='<div class="spw-warn">এই সময়ে কোনো পড়ার সময় জমা নেই।</div>'; }
+    else {
+      h+='<table class="stp-tab"><tr><th style="width:26%;">তারিখ</th><th style="width:20%;">সময়</th><th>তুলনা</th></tr>';
+      rows.forEach(function(r){ h+='<tr><td>'+dstr(r.d)+'</td><td>'+(r.ms?clock(r.ms)+' <span style="color:#666;font-size:11px;">('+human(r.ms)+')</span>':'—')+'</td><td>'+(r.ms?'<div class="stp-bar" style="width:'+Math.max(2,Math.round(r.ms/mx*100))+'%;"></div>':'')+'</td></tr>'; });
+      h+='</table>';
+    }
+    openPDF(h);
+  };
   var _rp=xpRenderProgress;
-  xpRenderProgress=function(){ _rp(); var el=document.getElementById('tabProgress'); if(el){ el.insertAdjacentHTML('afterbegin','<div style="padding:0 16px;margin-top:6px;">'+card()+'</div>'); } ui(); };
+  xpRenderProgress=function(){ _rp(); var el=document.getElementById('tabProgress');
+    if(el){ var lv=el.querySelector('div[onclick="xpLevel()"]'), row=lv&&lv.nextElementSibling, grid=el.querySelector('.pg-grid');
+      if(row) row.insertAdjacentHTML('afterend','<div class="pg-sec">⏱ পড়ার সময়</div>'+weekMini()+card());
+      if(grid) grid.insertAdjacentHTML('beforebegin','<div class="pg-sec">🧰 সব টুল</div>'); }
+    ui(); };
   // auto-pause whenever the app is not in front
   function away(){ pause(true); }
   document.addEventListener('visibilitychange', function(){
@@ -8217,9 +8268,188 @@ try{ xhRender(); }catch(e){ console.error(e); }
   tk=setInterval(tick,1000);
   window.addEventListener('load', function(){ setTimeout(function(){ ui(true); },2600); });
   window._stDbg=function(){ return D; };
+  window._stApi={days:function(){ return D.days; },human:human,clock:clock,ymd:ymd};
 })();
 </script>
 
+<style>
+.wk-bar{height:150px;display:flex;align-items:flex-end;gap:7px;position:relative;margin-top:6px;}
+.wk-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.wk-col i{display:block;width:100%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#5b8cff,#4361ee);min-height:3px;}
+.wk-col.td i{background:linear-gradient(180deg,#ffd76a,#f8b400);}
+.wk-col.fu i{background:var(--border);opacity:.6;}
+.wk-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:12px;}
+.wk-hero{background:linear-gradient(135deg,#1c2370,#0d1040);border:1px solid #3a3f8a;border-radius:22px;padding:16px;margin-bottom:12px;color:#fff;}
+.wk-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.wk-nav button{width:36px;height:36px;border-radius:12px;border:1px solid #ffffff33;background:#ffffff14;color:#fff;font-size:18px;font-weight:900;cursor:pointer;}
+.wk-nav button:disabled{opacity:.3;cursor:default;}
+.wk-st{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px 12px;}
+.wk-st b{display:block;font-size:18px;color:var(--text);}
+.wk-st span{font-size:11px;color:var(--sub);}
+.pg-sec{font-size:12px;font-weight:900;color:var(--sub);letter-spacing:.6px;margin:20px 2px 9px;}
+.pg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pg-tile{background:linear-gradient(145deg,var(--card),transparent);border:1px solid var(--border);border-radius:18px;padding:14px 12px;text-align:left;cursor:pointer;color:var(--text);}
+.pg-ic{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:9px;}
+.pg-tile:nth-child(1) .pg-ic{background:#ff8a3d33;}.pg-tile:nth-child(2) .pg-ic{background:#ffd76a33;}.pg-tile:nth-child(3) .pg-ic{background:#ff5c7a33;}
+.pg-tile:nth-child(4) .pg-ic{background:#4361ee44;}.pg-tile:nth-child(5) .pg-ic{background:#f8c94c33;}.pg-tile:nth-child(6) .pg-ic{background:#2dd4a033;}
+.pg-title{display:flex;align-items:center;gap:10px;margin:4px 0 4px;}
+.pg-title .t{font-size:22px;font-weight:900;color:var(--text);}
+</style>
+<script>
+// ── Weekly report page (Sat → Fri): study time, goal ring, vs last week, daily bars, practice; PDF ──
+(function(){
+  var MN=['জানু','ফেব্রু','মার্চ','এপ্রি','মে','জুন','জুলাই','আগ','সেপ্টে','অক্টো','নভে','ডিসে'], DN=['শনি','রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র'];
+  var API=function(){ return window._stApi; };
+  var off=0;
+  function goalMin(){ var g=Number(loadLS('df_wgoal',7)); return (g>0?g:7)*60; }
+  function wkDays(o){
+    var t=new Date(), diff=(t.getDay()+1)%7, st=new Date(t.getFullYear(),t.getMonth(),t.getDate()-diff+o*7), out=[], tn=new Date(t.getFullYear(),t.getMonth(),t.getDate()).getTime();
+    for(var i=0;i<7;i++){ var d=new Date(st.getFullYear(),st.getMonth(),st.getDate()+i), a=(xs.act||{})[d.toDateString()]||{};
+      out.push({d:d,l:DN[i],ms:API().days()[API().ymd(d)]||0,pr:(xs.cal||{})[xpYmd(d)]||0,s:Math.round(a.s||0),w:Math.round(a.w||0),r:Math.round((a.r||0)/3),td:d.getTime()===tn,fu:d.getTime()>tn}); }
+    return out;
+  }
+  function rng(w){ var a=w[0].d,b=w[6].d; return a.getDate()+' '+MN[a.getMonth()]+' – '+b.getDate()+' '+MN[b.getMonth()]+' '+b.getFullYear(); }
+  function sum(w){ var o={ms:0,days:0,pr:0,s:0,w:0,r:0,best:null}; w.forEach(function(x){ o.ms+=x.ms; o.pr+=x.pr; o.s+=x.s; o.w+=x.w; o.r+=x.r; if(x.ms>0){ o.days++; if(!o.best||x.ms>o.best.ms) o.best=x; } }); return o; }
+  function ring(pc){ var R=54,C=2*Math.PI*R, p=Math.min(1,pc/100); return '<svg width="136" height="136" viewBox="0 0 136 136"><circle cx="68" cy="68" r="'+R+'" fill="none" stroke="#ffffff22" stroke-width="13"/><circle cx="68" cy="68" r="'+R+'" fill="none" stroke="'+(pc>=100?'#2dd4a0':'#ffd76a')+'" stroke-width="13" stroke-linecap="round" stroke-dasharray="'+(C*p).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 68 68)"/></svg>'; }
+  function page(){
+    var el=document.getElementById('pgWeekly');
+    if(!el){ el=document.createElement('div'); el.id='pgWeekly'; el.className='page'; el.innerHTML='<div class="inner-page-bar"><button class="back-btn" onclick="xpWeekBack()">←</button><span class="ipb-title">📊 সাপ্তাহিক রিপোর্ট</span></div><div id="pgWeeklyBody" style="flex:1;overflow-y:auto;padding:14px 16px 40px;max-width:560px;width:100%;margin:0 auto;"></div>'; document.body.appendChild(el); }
+    return el;
+  }
+  function draw(){
+    page(); var A=API(), w=wkDays(off), s=sum(w), pw=sum(wkDays(off-1)), G=goalMin(), pc=Math.round(s.ms/60000/G*100);
+    var dayG=G/7, mx=Math.max.apply(null,w.map(function(x){return x.ms/60000;}).concat([dayG,10]));
+    var chg=pw.ms>0?Math.round((s.ms-pw.ms)/pw.ms*100):null;
+    var chip=chg===null?'<span style="background:#ffffff1f;border-radius:99px;padding:4px 10px;font-size:11px;">আগের সপ্তাহে ডেটা নেই</span>':'<span style="background:'+(chg>=0?'#2dd4a033':'#ff5c7a33')+';color:'+(chg>=0?'#7dffd0':'#ff9db0')+';border-radius:99px;padding:4px 10px;font-size:12px;font-weight:800;">'+(chg>=0?'▲ ':'▼ ')+Math.abs(chg)+'% আগের সপ্তাহের তুলনায়</span>';
+    var h='<div class="wk-hero"><div class="wk-nav"><button onclick="xpWeekGo(-1)">‹</button><div style="text-align:center;"><div style="font-size:15px;font-weight:900;">'+(off===0?'এই সপ্তাহ':off===-1?'গত সপ্তাহ':Math.abs(off)+' সপ্তাহ আগে')+'</div><div style="font-size:11px;opacity:.75;margin-top:2px;">'+rng(w)+'</div></div><button onclick="xpWeekGo(1)" '+(off>=0?'disabled':'')+'>›</button></div>'
+      +'<div style="display:flex;align-items:center;gap:14px;"><div style="position:relative;width:136px;height:136px;flex:0 0 136px;">'+ring(pc)+'<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-size:22px;font-weight:900;line-height:1.1;">'+A.human(s.ms)+'</div><div style="font-size:11px;opacity:.75;margin-top:3px;">'+pc+'% লক্ষ্যের</div></div></div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:12px;opacity:.8;">সাপ্তাহিক লক্ষ্য</div><div style="font-size:20px;font-weight:900;margin:2px 0 8px;">'+A.human(G*60000)+'</div>'+chip+'<div style="font-size:11px;opacity:.8;margin-top:8px;">'+(pc>=100?'🎉 লক্ষ্য পূরণ!':'আরও '+A.human(Math.max(0,G*60000-s.ms))+' বাকি')+'</div></div></div></div>';
+    h+='<div class="wk-card"><div style="display:flex;justify-content:space-between;align-items:baseline;"><div style="font-size:14px;font-weight:900;color:var(--text);">📅 দিন অনুযায়ী পড়া</div><div style="font-size:10px;color:var(--muted);">- - লক্ষ্য: দিনে '+A.human(dayG*60000)+'</div></div><div class="wk-bar">'
+      +'<div style="position:absolute;left:0;right:0;bottom:calc(('+(dayG/mx*100).toFixed(1)+'% * 0.78) + 22px);border-top:1.5px dashed #2dd4a099;"></div>';
+    w.forEach(function(x){ var m=x.ms/60000; h+='<div class="wk-col'+(x.td?' td':'')+(x.fu?' fu':'')+'"><div style="font-size:10px;color:var(--sub);height:16px;white-space:nowrap;">'+(m>=1?Math.round(m)+'মি':'')+'</div><i style="height:calc('+(m/mx*100).toFixed(1)+'% * 0.78);"></i><div style="font-size:10px;color:'+(x.td?'var(--gold)':'var(--muted)')+';font-weight:'+(x.td?900:600)+';height:20px;padding-top:4px;">'+x.l+'</div></div>'; });
+    h+='</div></div>';
+    var st=function(b,l){ return '<div class="wk-st"><b>'+b+'</b><span>'+l+'</span></div>'; };
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">'+st(A.human(s.ms),'⏱ মোট পড়ার সময়')+st(s.days+' / 7','📆 যত দিন পড়েছো')+st(A.human(s.days?s.ms/s.days:0),'📈 পড়া দিনে গড়')+st(s.best?A.human(s.best.ms)+' · '+s.best.l:'—','🏆 সেরা দিন')+'</div>';
+    h+='<div class="wk-card"><div style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:10px;">🧠 Practice ও শেখা</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;text-align:center;">'
+      +[[s.pr,'Practice','var(--blue)'],[s.s,'💬 বাক্য','var(--cyan)'],[s.w,'📚 শব্দ','var(--cyan)'],[s.r,'📖 Story','var(--green)']].map(function(c){ return '<div style="background:var(--navy);border:1px solid var(--border);border-radius:12px;padding:10px 2px;"><div style="font-size:19px;font-weight:900;color:'+c[2]+';">'+c[0]+'</div><div style="font-size:10px;color:var(--sub);margin-top:2px;">'+c[1]+'</div></div>'; }).join('')+'</div></div>';
+    h+='<div style="display:flex;gap:8px;"><button class="btn btn-ghost" style="flex:1;" onclick="xpWeekGoal()">🎯 লক্ষ্য ঠিক করো</button><button class="btn btn-blue" style="flex:1;" onclick="xpWeekPdf()">📄 PDF ডাউনলোড</button></div>';
+    document.getElementById('pgWeeklyBody').innerHTML=h;
+  }
+  window.xpWeekOpen=function(){ off=0; window._wkOff=0; draw(); showPage('pgWeekly'); document.getElementById('pgWeeklyBody').scrollTop=0; };
+  window.xpWeekGo=function(d){ if(off+d>0) return; off+=d; window._wkOff=off; draw(); };
+  window.xpWeekBack=function(){ showPage('pgApp'); switchTab('progress'); };
+  window.xpWeekGoal=function(){ var v=prompt('সপ্তাহে কত ঘণ্টা পড়তে চাও? (যেমন 7 বা 10.5)', String(goalMin()/60)); if(v===null) return; v=parseFloat(String(v).replace(',','.')); if(!(v>0&&v<=100)){ showToast('❗ ১ থেকে ১০০ এর মধ্যে সংখ্যা দাও'); return; } saveLS('df_wgoal',v); draw(); showToast('🎯 লক্ষ্য: সপ্তাহে '+v+' ঘণ্টা'); };
+  window.xpWeekPdf=function(){
+    var A=API(), w=wkDays(off), s=sum(w), G=goalMin(), pc=Math.round(s.ms/60000/G*100), mx=Math.max.apply(null,w.map(function(x){return x.ms;}).concat([1])), pw=sum(wkDays(off-1));
+    var nm=(typeof profile!=='undefined'&&profile&&profile.name)?profile.name:'', chg=pw.ms>0?Math.round((s.ms-pw.ms)/pw.ms*100):null;
+    var h='<div class="spw-t">📊 Weekly Study Report</div><div class="spw-tb">'+(nm?esc(nm)+' · ':'')+rng(w)+'</div>'
+     +'<div class="stp-sum"><div class="stp-box"><b>'+A.human(s.ms)+'</b><span>মোট পড়ার সময়</span></div><div class="stp-box"><b>'+pc+'%</b><span>লক্ষ্য ('+A.human(G*60000)+')</span></div><div class="stp-box"><b>'+(chg===null?'—':(chg>=0?'▲ ':'▼ ')+Math.abs(chg)+'%')+'</b><span>আগের সপ্তাহের তুলনায়</span></div>'
+     +'<div class="stp-box"><b>'+s.days+' / 7</b><span>যত দিন পড়েছো</span></div><div class="stp-box"><b>'+A.human(s.days?s.ms/s.days:0)+'</b><span>পড়া দিনে গড়</span></div><div class="stp-box"><b>'+(s.best?s.best.l:'—')+'</b><span>সেরা দিন'+(s.best?' · '+A.human(s.best.ms):'')+'</span></div></div>'
+     +'<div style="height:12px;border-radius:7px;background:#e3e7f5;margin:0 0 14px;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact;"><div style="height:100%;width:'+Math.min(100,pc)+'%;background:'+(pc>=100?'#1fb883':'#4361ee')+';-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div></div>'
+     +'<table class="stp-tab"><tr><th>দিন</th><th>পড়ার সময়</th><th>Practice</th><th>💬</th><th>📚</th><th>📖</th><th style="width:26%;">তুলনা</th></tr>';
+    w.forEach(function(x){ h+='<tr><td>'+x.l+' <span style="color:#666;font-size:10.5px;">'+x.d.getDate()+' '+MN[x.d.getMonth()]+'</span></td><td>'+(x.ms?A.clock(x.ms):'—')+'</td><td>'+(x.pr||'—')+'</td><td>'+(x.s||'—')+'</td><td>'+(x.w||'—')+'</td><td>'+(x.r||'—')+'</td><td>'+(x.ms?'<div class="stp-bar" style="width:'+Math.max(3,Math.round(x.ms/mx*100))+'%;"></div>':'')+'</td></tr>'; });
+    h+='<tr style="font-weight:800;"><td>মোট</td><td>'+A.clock(s.ms)+'</td><td>'+s.pr+'</td><td>'+s.s+'</td><td>'+s.w+'</td><td>'+s.r+'</td><td></td></tr></table>';
+    openPDF(h);
+  };
+  xsReport=function(){ xpWeekOpen(); };
+})();
+</script>
+<style>
+#pdfPreviewContent .pm-ban{border-radius:16px;padding:18px 20px;margin:0 0 14px;color:#fff;background:linear-gradient(120deg,#1c2370 0%,#3a4be0 60%,#6a8bff 100%);display:flex;justify-content:space-between;align-items:center;gap:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+#pdfPreviewContent .pm-ban .t{font-size:24px;font-weight:900;letter-spacing:.3px;color:#fff;}
+#pdfPreviewContent .pm-ban .s{font-size:13px;opacity:.9;margin-top:3px;color:#fff;}
+#pdfPreviewContent .pm-ban .b{background:#ffffff26;border:1px solid #ffffff55;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:800;white-space:nowrap;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+#pdfPreviewContent .pm-row{display:flex;gap:12px;margin:0 0 14px;align-items:stretch;}
+#pdfPreviewContent .pm-card{border:1px solid #dfe3f5;border-radius:14px;padding:12px 14px;background:#fff;margin:0 0 14px;page-break-inside:avoid;break-inside:avoid;box-shadow:0 1px 3px #1c237014;}
+#pdfPreviewContent .pm-h{font-size:14px;font-weight:900;color:#1c2370;margin:0 0 6px;display:flex;justify-content:space-between;align-items:baseline;}
+#pdfPreviewContent .pm-h small{font-size:10.5px;font-weight:600;color:#6a7090;}
+#pdfPreviewContent .pm-kp{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+#pdfPreviewContent .pm-k{border-radius:12px;padding:9px 11px;background:#f4f6ff;border-left:5px solid var(--c,#4361ee);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+#pdfPreviewContent .pm-k b{display:block;font-size:17px;color:#1c2370;line-height:1.2;}
+#pdfPreviewContent .pm-k span{font-size:10.5px;color:#555b7a;}
+#pdfPreviewContent .pm-6{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:0 0 14px;}
+#pdfPreviewContent .pm-tab{width:100%;border-collapse:collapse;font-size:12.5px;}
+#pdfPreviewContent .pm-tab th{background:#1c2370;color:#fff;text-align:left;padding:6px 8px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+#pdfPreviewContent .pm-tab td{padding:5px 8px;border-bottom:1px solid #e6e9f7;color:#000;background:#fff;}
+#pdfPreviewContent .pm-tab tr:nth-child(even) td{background:#f6f8ff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+#pdfPreviewContent .pm-tab tr{page-break-inside:avoid;}
+#pdfPreviewContent .pm-note{font-size:10.5px;color:#7a809c;text-align:center;margin-top:6px;}
+#pdfPreviewContent svg{display:block;width:100%;height:auto;}
+</style>
+<script>
+// ── Premium PDF charts (SVG): banner, donut, bar / area charts, KPI cards ──
+(function(){
+  var uid=0, MN=['জানু','ফেব্রু','মার্চ','এপ্রি','মে','জুন','জুলাই','আগ','সেপ্টে','অক্টো','নভে','ডিসে'], DN=['শনি','রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র'];
+  function A(){ return window._stApi; }
+  function mm(v){ var m=Math.round(v); return m>=60?(Math.floor(m/60)+'ঘ'+(m%60?(' '+m%60+'মি'):'')):(m+'মি'); }
+  function donut(pc,sub){
+    var id='dg'+(++uid), R=62, C=2*Math.PI*R, p=Math.min(1,pc/100), col=pc>=100?['#1fb883','#6af0c0']:['#3a4be0','#6a8bff'];
+    return '<svg viewBox="0 0 170 170" style="width:170px;"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col[0]+'"/><stop offset="1" stop-color="'+col[1]+'"/></linearGradient></defs><circle cx="85" cy="85" r="'+R+'" fill="none" stroke="#e6e9f7" stroke-width="16"/><circle cx="85" cy="85" r="'+R+'" fill="none" stroke="url(#'+id+')" stroke-width="16" stroke-linecap="round" stroke-dasharray="'+(C*p).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 85 85)"/><text x="85" y="86" text-anchor="middle" font-size="34" font-weight="900" fill="#1c2370">'+pc+'%</text><text x="85" y="108" text-anchor="middle" font-size="12" fill="#6a7090">'+sub+'</text></svg>';
+  }
+  function bars(vals,goal,H){
+    var id='bg'+(++uid), W=700, pl=46, pb=34, pt=26, n=vals.length, mx=Math.max.apply(null,vals.map(function(x){return x.v;}).concat([goal||0,10]))*1.18, ph=H-pt-pb, bw=(W-pl)/n, w=Math.min(64,bw*.58), best=-1, bv=0;
+    vals.forEach(function(x,i){ if(x.v>bv){ bv=x.v; best=i; } });
+    var s='<svg viewBox="0 0 '+W+' '+H+'"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a8bff"/><stop offset="1" stop-color="#3a4be0"/></linearGradient><linearGradient id="'+id+'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd76a"/><stop offset="1" stop-color="#f5a800"/></linearGradient></defs>';
+    for(var g=0;g<=4;g++){ var gy=pt+ph-ph*g/4, gv=mx*g/4; s+='<line x1="'+pl+'" y1="'+gy+'" x2="'+W+'" y2="'+gy+'" stroke="#e6e9f7" stroke-width="1"/><text x="'+(pl-6)+'" y="'+(gy+4)+'" text-anchor="end" font-size="11" fill="#8a90ac">'+mm(gv)+'</text>'; }
+    vals.forEach(function(x,i){ var h=Math.max(x.v>0?4:0,ph*x.v/mx), cx=pl+bw*i+bw/2, y=pt+ph-h;
+      if(x.v>0) s+='<rect x="'+(cx-w/2)+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="8" fill="url(#'+id+(i===best?'g':'')+')"/><text x="'+cx+'" y="'+(y-6)+'" text-anchor="middle" font-size="12" font-weight="800" fill="#1c2370">'+mm(x.v)+'</text>';
+      else s+='<rect x="'+(cx-w/2)+'" y="'+(pt+ph-3)+'" width="'+w+'" height="3" rx="1.5" fill="#dfe3f5"/>';
+      s+='<text x="'+cx+'" y="'+(H-12)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#4a5070">'+x.l+'</text>'; });
+    if(goal){ var gy2=pt+ph-ph*goal/mx; s+='<line x1="'+pl+'" y1="'+gy2+'" x2="'+W+'" y2="'+gy2+'" stroke="#1fb883" stroke-width="2" stroke-dasharray="7 5"/><text x="'+(pl+6)+'" y="'+(gy2-5)+'" text-anchor="start" font-size="11" font-weight="800" fill="#1fb883">লক্ষ্য '+mm(goal)+'/দিন</text>'; }
+    return s+'</svg>';
+  }
+  function area(pts,H){
+    var id='ag'+(++uid), W=700, pl=46, pb=30, pt=22, ph=H-pt-pb, n=pts.length, mx=Math.max.apply(null,pts.map(function(x){return x.v;}).concat([10]))*1.18, step=n>1?(W-pl-14)/(n-1):0;
+    var xy=pts.map(function(p,i){ return [pl+7+step*i, pt+ph-ph*p.v/mx]; }), s='<svg viewBox="0 0 '+W+' '+H+'"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4361ee" stop-opacity=".45"/><stop offset="1" stop-color="#4361ee" stop-opacity=".02"/></linearGradient></defs>';
+    for(var g=0;g<=4;g++){ var gy=pt+ph-ph*g/4; s+='<line x1="'+pl+'" y1="'+gy+'" x2="'+W+'" y2="'+gy+'" stroke="#e6e9f7"/><text x="'+(pl-6)+'" y="'+(gy+4)+'" text-anchor="end" font-size="11" fill="#8a90ac">'+mm(mx*g/4)+'</text>'; }
+    if(n>1){ s+='<path d="M'+xy[0][0]+','+(pt+ph)+' L'+xy.map(function(q){return q[0]+','+q[1];}).join(' L')+' L'+xy[n-1][0]+','+(pt+ph)+' Z" fill="url(#'+id+')"/><polyline points="'+xy.map(function(q){return q[0]+','+q[1];}).join(' ')+'" fill="none" stroke="#3a4be0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>'; }
+    var bi=0; pts.forEach(function(p,i){ if(p.v>pts[bi].v) bi=i; });
+    xy.forEach(function(q,i){ if(pts[i].v>0&&(n<=16||i===bi)) s+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="'+(i===bi?6:4)+'" fill="'+(i===bi?'#f5a800':'#3a4be0')+'" stroke="#fff" stroke-width="2"/>'; });
+    if(pts[bi]&&pts[bi].v>0) s+='<text x="'+xy[bi][0]+'" y="'+(xy[bi][1]-11)+'" text-anchor="middle" font-size="12" font-weight="800" fill="#b57b00">'+mm(pts[bi].v)+'</text>';
+    var every=Math.max(1,Math.ceil(n/8)); pts.forEach(function(p,i){ if(i%every===0||i===n-1) s+='<text x="'+xy[i][0]+'" y="'+(H-10)+'" text-anchor="middle" font-size="11" fill="#4a5070">'+p.l+'</text>'; });
+    return s+'</svg>';
+  }
+  function kp(b,l,c){ return '<div class="pm-k" style="--c:'+c+';"><b>'+b+'</b><span>'+l+'</span></div>'; }
+  function ban(t,s,badge){ return '<div class="pm-ban"><div><div class="t">'+t+'</div><div class="s">'+s+'</div></div>'+(badge?'<div class="b">'+badge+'</div>':'')+'</div>'; }
+  function wkDays(o){ var t=new Date(), diff=(t.getDay()+1)%7, st=new Date(t.getFullYear(),t.getMonth(),t.getDate()-diff+o*7), out=[];
+    for(var i=0;i<7;i++){ var d=new Date(st.getFullYear(),st.getMonth(),st.getDate()+i), a=(xs.act||{})[d.toDateString()]||{}; out.push({d:d,l:DN[i],ms:A().days()[A().ymd(d)]||0,pr:(xs.cal||{})[xpYmd(d)]||0,s:Math.round(a.s||0),w:Math.round(a.w||0),r:Math.round((a.r||0)/3)}); } return out; }
+  function sum(w){ var o={ms:0,days:0,pr:0,s:0,w:0,r:0,best:null}; w.forEach(function(x){ o.ms+=x.ms; o.pr+=x.pr; o.s+=x.s; o.w+=x.w; o.r+=x.r; if(x.ms>0){ o.days++; if(!o.best||x.ms>o.best.ms) o.best=x; } }); return o; }
+  function fd(d){ return d.getDate()+' '+MN[d.getMonth()]; }
+  window.xpWeekPdf=function(){
+    var H=A(), off=window._wkOff||0, w=wkDays(off), s=sum(w), pw=sum(wkDays(off-1)), G=Number(loadLS('df_wgoal',7)); G=(G>0?G:7)*60;
+    var pc=Math.round(s.ms/60000/G*100), chg=pw.ms>0?Math.round((s.ms-pw.ms)/pw.ms*100):null, nm=(typeof profile!=='undefined'&&profile&&profile.name)?profile.name:'';
+    var h=ban('📊 Weekly Study Report',(nm?esc(nm)+' · ':'')+fd(w[0].d)+' – '+fd(w[6].d)+' '+w[6].d.getFullYear(),pc>=100?'🎉 লক্ষ্য পূরণ':pc+'% লক্ষ্য');
+    h+='<div class="pm-row"><div class="pm-card" style="margin:0;text-align:center;flex:0 0 200px;display:flex;flex-direction:column;align-items:center;justify-content:center;">'+donut(pc,'লক্ষ্য '+H.human(G*60000))+'</div><div class="pm-kp">'
+      +kp(H.human(s.ms),'⏱ মোট পড়ার সময়','#4361ee')+kp(s.days+' / 7','📆 যত দিন পড়েছো','#1fb883')+kp(H.human(s.days?s.ms/s.days:0),'📈 পড়া দিনে গড়','#f5a800')
+      +kp(chg===null?'—':(chg>=0?'▲ ':'▼ ')+Math.abs(chg)+'%','↔ আগের সপ্তাহের তুলনায়',chg!==null&&chg<0?'#e5486a':'#1fb883')+kp(s.best?s.best.l+' · '+H.human(s.best.ms):'—','🏆 সেরা দিন','#8a5cf5')+kp(H.human(Math.max(0,G*60000-s.ms)),'🎯 লক্ষ্যে বাকি','#2aa7e0')+'</div></div>';
+    h+='<div class="pm-card"><div class="pm-h">📅 দিন অনুযায়ী পড়ার সময়<small>সোনালি = সেরা দিন · সবুজ দাগ = দৈনিক লক্ষ্য</small></div>'+bars(w.map(function(x){return {l:x.l,v:x.ms/60000};}),G/7,250)+'</div>';
+    h+='<div class="pm-card"><div class="pm-h">🧠 Practice ও শেখা<small>মোট practice '+s.pr+' · বাক্য '+s.s+' · শব্দ '+s.w+' · story '+s.r+'</small></div>'+(s.pr>0?bars(w.map(function(x){return {l:x.l,v:x.pr};}),0,170).replace(/(\d+)মি/g,'$1'):'<div style="text-align:center;color:#7a809c;font-size:13px;padding:22px 0;">এই সপ্তাহে practice হয়নি — আজ থেকেই শুরু করো 💪</div>')+'</div>';
+    h+='<div class="pm-card"><div class="pm-h">📋 দিনওয়ারি তালিকা</div><table class="pm-tab"><tr><th>দিন</th><th>পড়ার সময়</th><th>Practice</th><th>💬 বাক্য</th><th>📚 শব্দ</th><th>📖 Story</th></tr>';
+    w.forEach(function(x){ h+='<tr><td><b>'+x.l+'</b> <span style="color:#777;font-size:11px;">'+fd(x.d)+'</span></td><td>'+(x.ms?H.clock(x.ms):'—')+'</td><td>'+(x.pr||'—')+'</td><td>'+(x.s||'—')+'</td><td>'+(x.w||'—')+'</td><td>'+(x.r||'—')+'</td></tr>'; });
+    h+='<tr style="font-weight:800;"><td>মোট</td><td>'+H.clock(s.ms)+'</td><td>'+s.pr+'</td><td>'+s.s+'</td><td>'+s.w+'</td><td>'+s.r+'</td></tr></table></div><div class="pm-note">DeutschFlash · আজকের পরিশ্রমই কালকের সাফল্য ✨</div>';
+    openPDF(h);
+  };
+  window.stReport=function(n){
+    var H=A(), D=H.days(), keys=Object.keys(D).filter(function(k){ return D[k]>0; }).sort(), rows=[], t0=new Date();
+    if(n>0){ for(var i=n-1;i>=0;i--){ var d=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()-i); rows.push({d:d,ms:D[H.ymd(d)]||0}); } }
+    else keys.forEach(function(k){ var q=k.split('-'); rows.push({d:new Date(+q[0],+q[1]-1,+q[2]),ms:D[k]}); });
+    var tot=0,days=0,best=null; rows.forEach(function(r){ tot+=r.ms; if(r.ms>0){ days++; if(!best||r.ms>best.ms) best=r; } });
+    var st=0; for(var j=0;;j++){ var dd=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()-j); if((D[H.ymd(dd)]||0)>0) st++; else if(j===0) continue; else break; }
+    var nm=(typeof profile!=='undefined'&&profile&&profile.name)?profile.name:'', lbl=n===7?'শেষ ৭ দিন':(n===30?'শেষ ৩০ দিন':'শুরু থেকে সব'), tdy=D[H.ymd(t0)]||0;
+    var h=ban('⏱ Study Report',(nm?esc(nm)+' · ':'')+lbl+' · '+fd(t0)+' '+t0.getFullYear(),H.human(tot));
+    h+='<div class="pm-6">'+kp(H.human(tot),'⏱ মোট পড়ার সময়','#4361ee')+kp(days,'📆 যত দিন পড়েছো','#1fb883')+kp(H.human(days?tot/days:0),'📈 পড়া দিনে গড়','#f5a800')+kp(best?H.human(best.ms):'—','🏆 সেরা দিন'+(best?' · '+fd(best.d):''),'#8a5cf5')+kp(st+' দিন','🔥 টানা পড়া (streak)','#e5486a')+kp(H.human(tdy),'☀️ আজ','#2aa7e0')+'</div>';
+    if(!tot){ h+='<div class="spw-warn">এই সময়ে কোনো পড়ার সময় জমা নেই।</div>'; openPDF(h); return; }
+    var pts=rows.slice(-60).map(function(r){ return {l:fd(r.d),v:r.ms/60000}; });
+    h+='<div class="pm-card"><div class="pm-h">📈 পড়ার ট্রেন্ড'+(rows.length>60?'<small>শেষ ৬০ দিন</small>':'')+'</div>'+(pts.length>1?area(pts,250):bars(pts,0,230))+'</div>';
+    var wk=[0,0,0,0,0,0,0], cn=[0,0,0,0,0,0,0]; rows.forEach(function(r){ var k=(r.d.getDay()+1)%7; wk[k]+=r.ms/60000; if(r.ms>0) cn[k]++; });
+    h+='<div class="pm-card"><div class="pm-h">🗓️ কোন বারে বেশি পড়ো<small>পড়া দিনে গড়</small></div>'+bars(DN.map(function(l,i){ return {l:l,v:cn[i]?wk[i]/cn[i]:0}; }),0,210)+'</div>';
+    h+='<div class="pm-card"><div class="pm-h">📋 দিনওয়ারি তালিকা</div><table class="pm-tab"><tr><th style="width:34%;">তারিখ</th><th>সময়</th><th>মোট (ঘ মি)</th></tr>';
+    rows.slice().reverse().forEach(function(r){ h+='<tr><td>'+fd(r.d)+' '+r.d.getFullYear()+' <span style="color:#777;font-size:11px;">('+DN[(r.d.getDay()+1)%7]+')</span></td><td>'+(r.ms?H.clock(r.ms):'—')+'</td><td>'+(r.ms?H.human(r.ms):'—')+'</td></tr>'; });
+    h+='</table></div><div class="pm-note">DeutschFlash · ধারাবাহিকতাই সাফল্যের চাবিকাঠি ✨</div>';
+    openPDF(h);
+  };
+})();
+</script>
 <style>
 #pdfPreviewContent .spw-t{font-size:24px;color:#1a2a6e;margin:0 0 2px;border:0;padding:0;}
 #pdfPreviewContent .spw-tb{font-size:15px;color:#000;font-weight:700;margin:0 0 10px;}
