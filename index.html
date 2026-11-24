@@ -844,6 +844,9 @@ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000
     <button class="dr-item dr-grp" id="drG8" onclick="drToggle(8)" aria-expanded="false"><span class="dr-ico">🎬</span><span style="flex:1;">A1 Sprechen Kurs<small>Video, lock/unlock ও transcript practice</small></span><span class="dr-arr" style="font-size:13px;color:var(--muted);transition:transform .2s;">▼</span></button>
     <div class="dr-sub" id="drS8" style="display:none;margin:0 0 4px 22px;padding-left:10px;border-left:2px solid var(--border);">
       <button class="dr-item" onclick="drGo('xgCourse()',8)"><span class="dr-ico">🎬</span><span>Video কোর্স<small>তালিকা, দেখা ও practice</small></span></button>
+      <button class="dr-item" onclick="drGo('vrOpen(\'drawer\')',8)"><span class="dr-ico">📊</span><span>Video রিপোর্ট<small>সাপ্তাহিক দেখা, প্রোগ্রেস ও PDF</small></span></button>
+      <button class="dr-item" onclick="drGo('mrOpen(\'drawer\')',8)"><span class="dr-ico">📆</span><span>মাসিক রিপোর্ট<small>পুরো মাসের chart, তুলনা ও PDF</small></span></button>
+      <button class="dr-item" onclick="drGo('dfBackupOpen()',8)"><span class="dr-ico">🛡️</span><span>Backup ও শেয়ার<small>Auto backup, Drive/WhatsApp-এ পাঠানো</small></span></button>
       <button class="dr-item" onclick="drGo('xgVidEdit(null)',8)"><span class="dr-ico">➕</span><span>Video যোগ করো<small>link + transcript</small></span></button>
       <button class="dr-item" onclick="drGo('xgPlaylist()',8)"><span class="dr-ico">🎞</span><span>নতুন Playlist<small>খালি বা YouTube লিংক থেকে</small></span></button>
       <button class="dr-item" onclick="drGo('xgPracAll()',8)"><span class="dr-ico">🔀</span><span>সব video মিশ্র<small>সব transcript থেকে practice</small></span></button>
@@ -909,6 +912,7 @@ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000
         </div>
       </div>
 
+      <button onclick="testReminder()" style="width:100%;margin:-8px 0 16px;background:#7c5cfc1f;border:1.5px dashed #7c5cfc66;border-radius:14px;padding:12px;color:#c4b5fd;font-size:13px;font-weight:800;cursor:pointer;font-family:var(--font);">🔔 এখনই একটা টেস্ট notification পাঠাও</button>
       <!-- Buttons -->
       <div style="display:flex;gap:10px;">
         <button onclick="document.getElementById('reminderModal').style.display='none'"
@@ -3061,15 +3065,7 @@ function showToast(msg, actionText, actionFn) {
   clearTimeout(t._tmr);
   t._tmr = setTimeout(function(){ t.style.display='none'; }, actionText?4500:2800);
 }
-function checkNotify(){
-  var now=new Date();
-  var p=(reminder.time||'08:00').split(':');
-  if(reminder.days.indexOf(now.getDay())>=0 && now.getHours()===parseInt(p[0]) && now.getMinutes()===parseInt(p[1]) && practice.todayCount<(practice.goal||5)){
-    if('Notification' in window && Notification.permission==='granted'){
-      new Notification('DeutschFlash 🇩🇪',{body:'আজকের German practice বাকি!'});
-    }
-  }
-}
+function checkNotify(){ if(window.dfCheckRem) window.dfCheckRem(); }
 
 // ════════════════════════════════
 // PDF EXPORT
@@ -6907,7 +6903,7 @@ function xgPlayer(v){
     try{ xgP=new YT.Player('xgYt',{videoId:v.yt,playerVars:(/^https?:/.test(location.protocol)?{rel:0,modestbranding:1,playsinline:1,origin:location.origin}:{rel:0,modestbranding:1,playsinline:1}),events:{onError:function(ev){ var e=document.getElementById('xgPr'); if(e) e.innerHTML='⚠️ video এখানে চালানো যাচ্ছে না (error '+(ev&&ev.data)+'). পরে আবার চেষ্টা করো।'; }}}); }catch(e){ done=false; fallback(); return; }
     xgTm=setInterval(function(){
       if(!document.getElementById('xgYtW')){ xgStopTrack(); return; }
-      try{ if(v.w) return; var st=xgP.getPlayerState(), d=xgP.getDuration()||0; if(d>0) v.dur=d; if(st===1&&d>0){ v.acc=Math.min(d,(v.acc||0)+(xgP.getPlaybackRate()||1)); xgTick++; if(xgTick%20===0) xsSave(); xgShowPr(v); } if(d>0&&((st===0&&(v.acc||0)>=0.95*d)||(v.acc||0)>=0.99*d)){ v.acc=d; xgMarkDone(v); } }catch(e){}
+      try{ var st=xgP.getPlayerState(), d=xgP.getDuration()||0; if(st===1&&d>0&&window.xgLog) xgLog(v); if(v.w) return; if(d>0) v.dur=d; if(st===1&&d>0){ v.acc=Math.min(d,(v.acc||0)+(xgP.getPlaybackRate()||1)); xgTick++; if(xgTick%20===0) xsSave(); xgShowPr(v); } if(d>0&&((st===0&&(v.acc||0)>=0.95*d)||(v.acc||0)>=0.99*d)){ v.acc=d; xgMarkDone(v); } }catch(e){}
     },1000);
   }
   if(window.YT&&YT.Player) make();
@@ -8273,6 +8269,12 @@ try{ xhRender(); }catch(e){ console.error(e); }
 </script>
 
 <style>
+.wg-in{width:150px;height:56px;border-radius:16px;border:2px solid var(--border);background:var(--navy);color:var(--text);font-size:26px;font-weight:900;text-align:center;padding:0 44px 0 10px;outline:none;font-family:inherit;}
+.wg-in:focus{border-color:#6a8bff;box-shadow:0 0 0 4px #4361ee33;}
+.wg-pm{width:50px;height:50px;border-radius:16px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:26px;font-weight:900;cursor:pointer;}
+.wg-pm:active{transform:scale(.94);}
+.wg-chip{padding:8px 16px;border-radius:99px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:14px;font-weight:800;cursor:pointer;}
+.wg-chip.on{background:linear-gradient(135deg,#3a4be0,#6a8bff);border-color:transparent;color:#fff;box-shadow:0 4px 12px #3a4be055;}
 .wk-bar{height:150px;display:flex;align-items:flex-end;gap:7px;position:relative;margin-top:6px;}
 .wk-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
 .wk-col i{display:block;width:100%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#5b8cff,#4361ee);min-height:3px;}
@@ -8338,7 +8340,25 @@ try{ xhRender(); }catch(e){ console.error(e); }
   window.xpWeekOpen=function(){ off=0; window._wkOff=0; draw(); showPage('pgWeekly'); document.getElementById('pgWeeklyBody').scrollTop=0; };
   window.xpWeekGo=function(d){ if(off+d>0) return; off+=d; window._wkOff=off; draw(); };
   window.xpWeekBack=function(){ showPage('pgApp'); switchTab('progress'); };
-  window.xpWeekGoal=function(){ var v=prompt('সপ্তাহে কত ঘণ্টা পড়তে চাও? (যেমন 7 বা 10.5)', String(goalMin()/60)); if(v===null) return; v=parseFloat(String(v).replace(',','.')); if(!(v>0&&v<=100)){ showToast('❗ ১ থেকে ১০০ এর মধ্যে সংখ্যা দাও'); return; } saveLS('df_wgoal',v); draw(); showToast('🎯 লক্ষ্য: সপ্তাহে '+v+' ঘণ্টা'); };
+  function goalShow(v){ var e=document.getElementById('wgIn'), pv=document.getElementById('wgPv'); if(e&&document.activeElement!==e) e.value=v; if(pv){ var m=Math.round(v*60/7); pv.textContent='দিনে প্রায় '+(m>=60?Math.floor(m/60)+' ঘ '+(m%60?m%60+' মি':''):m+' মি'); }
+    document.querySelectorAll('.wg-chip').forEach(function(c){ c.classList.toggle('on', Number(c.getAttribute('data-v'))===Number(v)); }); }
+  function goalVal(){ var v=parseFloat(String(document.getElementById('wgIn').value).replace(',','.')); return v>0?v:0; }
+  window.xpWgSet=function(v){ document.getElementById('wgIn').value=v; goalShow(v); };
+  window.xpWgAdj=function(d){ var v=Math.round(((goalVal()||0)+d)*2)/2; v=Math.max(0.5,Math.min(100,v)); document.getElementById('wgIn').value=v; goalShow(v); };
+  window.xpWgIn=function(){ var v=goalVal(); if(v) goalShow(v); };
+  window.xpWgSave=function(){ var v=goalVal(); if(!(v>0&&v<=100)){ showToast('❗ ০.৫ থেকে ১০০ ঘণ্টার মধ্যে দাও'); return; } saveLS('df_wgoal',v); closeModal(); draw(); showToast('🎯 লক্ষ্য ঠিক হলো: সপ্তাহে '+v+' ঘণ্টা'); };
+  window.xpWeekGoal=function(){
+    var cur=goalMin()/60;
+    var h='<div style="text-align:center;"><div style="width:62px;height:62px;margin:0 auto 10px;border-radius:20px;background:linear-gradient(135deg,#3a4be0,#6a8bff);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 8px 22px #3a4be055;">🎯</div>'
+      +'<div style="font-size:19px;font-weight:900;color:var(--text);">সাপ্তাহিক লক্ষ্য</div><div style="font-size:12px;color:var(--sub);margin:4px 0 16px;">সপ্তাহে কত ঘণ্টা পড়তে চাও?</div>'
+      +'<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px;"><button class="wg-pm" onclick="xpWgAdj(-0.5)">−</button>'
+      +'<div style="position:relative;"><input id="wgIn" type="number" inputmode="decimal" step="0.5" min="0.5" max="100" value="'+cur+'" oninput="xpWgIn()" class="wg-in"/><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--sub);font-weight:800;">ঘণ্টা</span></div>'
+      +'<button class="wg-pm" onclick="xpWgAdj(0.5)">+</button></div>'
+      +'<div id="wgPv" style="font-size:12px;color:var(--cyan);font-weight:800;min-height:18px;margin-bottom:12px;"></div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px;">'+[3,5,7,10,14].map(function(v){ return '<button class="wg-chip" data-v="'+v+'" onclick="xpWgSet('+v+')">'+v+' ঘ</button>'; }).join('')+'</div>'
+      +'<div style="display:flex;gap:10px;"><button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">বাতিল</button><button class="btn btn-blue" style="flex:2;" onclick="xpWgSave()">✅ সেভ করো</button></div></div>';
+    document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open'); goalShow(cur);
+  };
   window.xpWeekPdf=function(){
     var A=API(), w=wkDays(off), s=sum(w), G=goalMin(), pc=Math.round(s.ms/60000/G*100), mx=Math.max.apply(null,w.map(function(x){return x.ms;}).concat([1])), pw=sum(wkDays(off-1));
     var nm=(typeof profile!=='undefined'&&profile&&profile.name)?profile.name:'', chg=pw.ms>0?Math.round((s.ms-pw.ms)/pw.ms*100):null;
@@ -8599,6 +8619,552 @@ try{ xhRender(); }catch(e){ console.error(e); }
     _sp(p.id); var y=p.y||0; window.scrollTo(0,y); setTimeout(function(){ window.scrollTo(0,y); },60);
     if(s){ setTimeout(function(){ s(); src=s; },120); }
   };
+})();
+</script>
+<script>
+// ── Reminder: works in the APK (real phone alarm, even when the app is closed) and in the browser (while the page is open) ──
+(function(){
+  var NB=null; try{ if(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()) NB=Capacitor.registerPlugin('NativeBridge'); }catch(e){}
+  var TITLE='DeutschFlash 🇩🇪', BODY='আজকের German practice বাকি! ⚡';
+  function tk(){ var d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+  function toast(m){ try{ showToast(m); }catch(e){} }
+  function webNotify(){
+    try{
+      if(!('Notification' in window)||Notification.permission!=='granted') return false;
+      var o={body:BODY,icon:'icon-192.png',badge:'icon-192.png',tag:'df-reminder',vibrate:[200,100,200]};
+      if(navigator.serviceWorker&&navigator.serviceWorker.getRegistration){
+        navigator.serviceWorker.getRegistration().then(function(r){ if(r&&r.showNotification) r.showNotification(TITLE,o); else new Notification(TITLE,o); }).catch(function(){ try{ new Notification(TITLE,o); }catch(e){} });
+        return true;
+      }
+      new Notification(TITLE,o); return true;
+    }catch(e){ return false; }
+  }
+  function ask(cb){
+    if(NB){
+      NB.requestNotifPermission().catch(function(){}).then(function(){ setTimeout(function(){
+        NB.notifStatus().then(function(r){ cb(r&&r.enabled?'granted':'denied'); }).catch(function(){ cb('granted'); }); },800); });
+      return;
+    }
+    if(!('Notification' in window)){ cb('unsupported'); return; }
+    if(Notification.permission!=='default'){ cb(Notification.permission); return; }
+    var done=false; function fin(p){ if(done) return; done=true; cb(p); }
+    try{ var r=Notification.requestPermission(fin); if(r&&r.then) r.then(fin); }catch(e){ fin('denied'); }
+  }
+  function denied(st){
+    if(st==='unsupported') toast('⚠️ এই ব্রাউজারে notification চলে না — APK অ্যাপে ব্যবহার করো');
+    else toast('❗ Notification বন্ধ আছে। Phone Settings → Apps → DeutschFlash → Notifications চালু করো');
+  }
+  function sync(){
+    if(!NB) return; var mask=0; (reminder.days||[]).forEach(function(d){ mask|=(1<<d); });
+    var p=String(reminder.time||'08:00').split(':');
+    NB.scheduleReminder({hour:parseInt(p[0],10)||0, minute:parseInt(p[1],10)||0, mask:mask}).catch(function(){});
+  }
+  window.saveReminder=function(){
+    var time=document.getElementById('rTime').value||'08:00', days=[];
+    document.querySelectorAll('.rday').forEach(function(b){ if(b.classList.contains('on')) days.push(parseInt(b.getAttribute('data-d'),10)); });
+    if(!days.length){ toast('❗ অন্তত একটা দিন বেছে নাও'); return; }
+    reminder={time:time,days:days}; saveLS('df_rem',reminder); saveLS('df_rem_last','');
+    document.getElementById('reminderModal').style.display='none';
+    ask(function(st){
+      if(st==='granted'){ sync(); toast('🔔 Reminder সেট হলো: প্রতিদিন '+time+' ('+days.length+' দিন)'); }
+      else { sync(); denied(st); }
+    });
+  };
+  window.testReminder=function(){
+    ask(function(st){
+      if(st!=='granted'){ denied(st); return; }
+      if(NB){ NB.testNotification().then(function(){ toast('🔔 টেস্ট notification পাঠানো হলো'); }).catch(function(){ toast('❗ Notification পাঠানো যায়নি'); }); }
+      else if(webNotify()) toast('🔔 টেস্ট notification পাঠানো হলো');
+      else toast('❗ Notification পাঠানো যায়নি');
+    });
+  };
+  // browser only: fire once a day, also if the page was opened a little after the time (up to 3 hours)
+  window.dfCheckRem=function(){
+    if(NB) return;
+    try{
+      var now=new Date(), p=String(reminder.time||'08:00').split(':'), at=new Date(now.getFullYear(),now.getMonth(),now.getDate(),parseInt(p[0],10)||0,parseInt(p[1],10)||0).getTime(), t=now.getTime();
+      if((reminder.days||[]).indexOf(now.getDay())<0) return;
+      if(t<at||t>at+3*3600000) return;
+      if(loadLS('df_rem_last','')===tk()) return;
+      if((practice.todayCount||0)>=(practice.goal||5)) { saveLS('df_rem_last',tk()); return; }
+      saveLS('df_rem_last',tk());
+      if(!webNotify()) toast('🔔 '+BODY);
+    }catch(e){}
+  };
+  setInterval(window.dfCheckRem,30000);
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) window.dfCheckRem(); });
+  setTimeout(function(){ window.dfCheckRem(); sync(); },3500);
+})();
+</script>
+<script>
+// ── Video watch report (A1 Sprechen Kurs): daily watch time, weekly goal, per-video progress, PDF ──
+(function(){
+  var MN=['জানু','ফেব্রু','মার্চ','এপ্রি','মে','জুন','জুলাই','আগ','সেপ্টে','অক্টো','নভে','ডিসে'], DN=['শনি','রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র'];
+  var off=0, from='progress', uid=0;
+  function H(){ return window._stApi; }
+  function vids(){ try{ return xgCs().vids||[]; }catch(e){ return []; } }
+  function vlog(){ return (xs&&xs.vlog)||{}; }
+  function goalH(){ var g=Number(loadLS('df_vgoal',2)); return g>0?g:2; }
+  function hum(sec){ return H().human(sec*1000); }
+  function mm(v){ var m=Math.round(v); return m>=60?(Math.floor(m/60)+'ঘ'+(m%60?(' '+m%60+'মি'):'')):(m+'মি'); }
+  function fd(d){ return d.getDate()+' '+MN[d.getMonth()]; }
+  function wkDays(o){
+    var t=new Date(), diff=(t.getDay()+1)%7, st=new Date(t.getFullYear(),t.getMonth(),t.getDate()-diff+o*7), out=[], tn=new Date(t.getFullYear(),t.getMonth(),t.getDate()).getTime(), L=vlog();
+    for(var i=0;i<7;i++){ var d=new Date(st.getFullYear(),st.getMonth(),st.getDate()+i), rec=L[xpYmd(d)]||{}, tot=0, k; for(k in rec) tot+=rec[k];
+      out.push({d:d,l:DN[i],sec:tot,rec:rec,td:d.getTime()===tn,fu:d.getTime()>tn}); }
+    return out;
+  }
+  function doneIn(w){ var a=w[0].d.getTime(), b=w[6].d.getTime()+86400000; return vids().filter(function(v){ return v.w&&v.wt&&v.wt>=a&&v.wt<b; }).length; }
+  function sum(w){ var o={sec:0,days:0,best:null,per:{}}; w.forEach(function(x){ o.sec+=x.sec; if(x.sec>0){ o.days++; if(!o.best||x.sec>o.best.sec) o.best=x; } var k; for(k in x.rec) o.per[k]=(o.per[k]||0)+x.rec[k]; }); return o; }
+  function perList(s){ var V=vids(), out=[]; Object.keys(s.per).forEach(function(id){ var v=V.filter(function(q){return q.id===id;})[0]; if(v&&s.per[id]>0) out.push({v:v,sec:s.per[id]}); }); out.sort(function(a,b){return b.sec-a.sec;}); return out; }
+  function course(){ var V=vids(), d=V.filter(function(v){return v.w;}).length, avg=0; V.forEach(function(v){ avg+=xgPct(v); }); return {n:V.length,done:d,pct:V.length?Math.round(avg/V.length):0}; }
+  function allSec(){ var L=vlog(), t=0, d, k; for(d in L) for(k in L[d]) t+=L[d][k]; return t; }
+  function ring(pc){ var R=54,C=2*Math.PI*R, p=Math.min(1,pc/100); return '<svg width="136" height="136" viewBox="0 0 136 136"><circle cx="68" cy="68" r="'+R+'" fill="none" stroke="#ffffff22" stroke-width="13"/><circle cx="68" cy="68" r="'+R+'" fill="none" stroke="'+(pc>=100?'#2dd4a0':'#ff8fb1')+'" stroke-width="13" stroke-linecap="round" stroke-dasharray="'+(C*p).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 68 68)"/></svg>'; }
+  function bar(pc,h,col){ return '<div style="height:'+h+'px;background:var(--border);border-radius:9px;overflow:hidden;"><div style="height:100%;width:'+pc+'%;background:'+(col||'linear-gradient(90deg,#5b8cff,#8a5cf5)')+';border-radius:9px;"></div></div>'; }
+  function page(){
+    var el=document.getElementById('pgVidRep');
+    if(!el){ el=document.createElement('div'); el.id='pgVidRep'; el.className='page'; el.innerHTML='<div class="inner-page-bar"><button class="back-btn" onclick="vrBack()">←</button><span class="ipb-title">🎬 Video রিপোর্ট</span></div><div id="pgVidRepBody" style="flex:1;overflow-y:auto;padding:14px 16px 40px;max-width:560px;width:100%;margin:0 auto;"></div>'; document.body.appendChild(el); }
+    return el;
+  }
+  function draw(){
+    page(); var w=wkDays(off), s=sum(w), pw=sum(wkDays(off-1)), G=goalH()*3600, pc=Math.round(s.sec/G*100), C=course(), dayG=G/7;
+    var mx=Math.max.apply(null,w.map(function(x){return x.sec/60;}).concat([dayG/60,10]));
+    var chg=pw.sec>0?Math.round((s.sec-pw.sec)/pw.sec*100):null;
+    var chip=chg===null?'<span style="background:#ffffff1f;border-radius:99px;padding:4px 10px;font-size:11px;">আগের সপ্তাহে ডেটা নেই</span>':'<span style="background:'+(chg>=0?'#2dd4a033':'#ff5c7a33')+';color:'+(chg>=0?'#7dffd0':'#ff9db0')+';border-radius:99px;padding:4px 10px;font-size:12px;font-weight:800;">'+(chg>=0?'▲ ':'▼ ')+Math.abs(chg)+'% আগের সপ্তাহের তুলনায়</span>';
+    var h='<div class="wk-hero" style="background:linear-gradient(135deg,#4a1d6e,#1a0d40);border-color:#6a3f8a;"><div class="wk-nav"><button onclick="vrGo(-1)">‹</button><div style="text-align:center;"><div style="font-size:15px;font-weight:900;">'+(off===0?'এই সপ্তাহ':off===-1?'গত সপ্তাহ':Math.abs(off)+' সপ্তাহ আগে')+'</div><div style="font-size:11px;opacity:.75;margin-top:2px;">'+fd(w[0].d)+' – '+fd(w[6].d)+' '+w[6].d.getFullYear()+'</div></div><button onclick="vrGo(1)" '+(off>=0?'disabled':'')+'>›</button></div>'
+      +'<div style="display:flex;align-items:center;gap:14px;"><div style="position:relative;width:136px;height:136px;flex:0 0 136px;">'+ring(pc)+'<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-size:21px;font-weight:900;line-height:1.1;">'+hum(s.sec)+'</div><div style="font-size:11px;opacity:.75;margin-top:3px;">'+pc+'% লক্ষ্যের</div></div></div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:12px;opacity:.8;">Video দেখার লক্ষ্য</div><div style="font-size:20px;font-weight:900;margin:2px 0 8px;">'+hum(G)+'</div>'+chip+'<div style="font-size:11px;opacity:.8;margin-top:8px;">'+(pc>=100?'🎉 লক্ষ্য পূরণ!':'আরও '+hum(Math.max(0,G-s.sec))+' বাকি')+'</div></div></div></div>';
+    h+='<div class="wk-card"><div style="display:flex;justify-content:space-between;align-items:baseline;"><div style="font-size:14px;font-weight:900;color:var(--text);">📅 দিন অনুযায়ী video দেখা</div><div style="font-size:10px;color:var(--muted);">- - লক্ষ্য: দিনে '+hum(dayG)+'</div></div><div class="wk-bar"><div style="position:absolute;left:0;right:0;bottom:calc(('+(dayG/60/mx*100).toFixed(1)+'% * 0.78) + 22px);border-top:1.5px dashed #2dd4a099;"></div>';
+    w.forEach(function(x){ var m=x.sec/60; h+='<div class="wk-col'+(x.td?' td':'')+(x.fu?' fu':'')+'"><div style="font-size:10px;color:var(--sub);height:16px;white-space:nowrap;">'+(m>=1?Math.round(m)+'মি':'')+'</div><i style="height:calc('+(m/mx*100).toFixed(1)+'% * 0.78);"></i><div style="font-size:10px;color:'+(x.td?'var(--gold)':'var(--muted)')+';font-weight:'+(x.td?900:600)+';height:20px;padding-top:4px;">'+x.l+'</div></div>'; });
+    h+='</div></div>';
+    var st=function(b,l){ return '<div class="wk-st"><b>'+b+'</b><span>'+l+'</span></div>'; };
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">'+st(hum(s.sec),'⏱ মোট দেখা')+st(s.days+' / 7','📆 যত দিন দেখেছো')+st(hum(s.days?s.sec/s.days:0),'📈 দেখা দিনে গড়')+st(s.best?hum(s.best.sec)+' · '+s.best.l:'—','🏆 সেরা দিন')+'</div>';
+    h+='<div class="wk-card"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;"><div style="font-size:14px;font-weight:900;color:var(--text);">🎓 কোর্স প্রোগ্রেস</div><div style="font-size:12px;font-weight:900;color:var(--cyan);">'+C.pct+'%</div></div>'+bar(C.pct,10)
+      +'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-top:7px;"><span>✅ '+C.done+' / '+C.n+' video শেষ</span><span>এই সপ্তাহে শেষ: <b style="color:var(--text);">'+doneIn(w)+'</b></span></div><div style="font-size:11px;color:var(--muted);margin-top:4px;">শুরু থেকে মোট দেখা: '+hum(allSec())+'</div></div>';
+    var L=perList(s).slice(0,10);
+    h+='<div class="wk-card"><div style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:10px;">🎞 এই সপ্তাহে যে video দেখেছো</div>';
+    if(!L.length) h+='<div style="text-align:center;color:var(--sub);font-size:12px;padding:12px 0;">এই সপ্তাহে কোনো video দেখা হয়নি।<br><span style="color:var(--muted);font-size:11px;">video চালালে সময় নিজে থেকেই জমা হবে।</span></div>';
+    L.forEach(function(r){ var p=xgPct(r.v);
+      h+='<div style="display:flex;gap:10px;align-items:center;margin-bottom:11px;"><div style="width:62px;min-width:62px;height:40px;border-radius:8px;background:#111 center/cover url('+xgThumb(r.v)+');"></div><div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(r.v.title||'Video')+'</div><div style="margin:5px 0 3px;">'+bar(p,6,r.v.w?'var(--green)':'')+'</div><div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--sub);"><span>এই সপ্তাহে '+hum(r.sec)+'</span><span>'+(r.v.w?'✅ শেষ':p+'% দেখা')+'</span></div></div></div>'; });
+    h+='</div>';
+    h+='<div style="display:flex;gap:8px;"><button class="btn btn-ghost" style="flex:1;" onclick="vrGoal()">🎯 লক্ষ্য ঠিক করো</button><button class="btn btn-blue" style="flex:1;" onclick="vrPdf()">📄 PDF ডাউনলোড</button></div>';
+    document.getElementById('pgVidRepBody').innerHTML=h;
+  }
+  window.vrOpen=function(f){ from=f||'progress'; off=0; window._vrOff=0; draw(); showPage('pgVidRep'); document.getElementById('pgVidRepBody').scrollTop=0; };
+  window.vrGo=function(d){ if(off+d>0) return; off+=d; window._vrOff=off; draw(); };
+  window.vrBack=function(){ if(from==='course'){ xgCourse(); return; } if(from==='drawer'){ showPage('pgApp'); openDrawer(); drCollapse(); drToggle(8); return; } showPage('pgApp'); switchTab('progress'); };
+  // goal editor
+  function gShow(v){ var e=document.getElementById('vgIn'), pv=document.getElementById('vgPv'); if(e&&document.activeElement!==e) e.value=v; if(pv){ var m=Math.round(v*60/7); pv.textContent='দিনে প্রায় '+(m>=60?Math.floor(m/60)+' ঘ '+(m%60?m%60+' মি':''):m+' মি'); } document.querySelectorAll('.vg-chip').forEach(function(c){ c.classList.toggle('on',Number(c.getAttribute('data-v'))===Number(v)); }); }
+  function gVal(){ var v=parseFloat(String(document.getElementById('vgIn').value).replace(',','.')); return v>0?v:0; }
+  window.vrGSet=function(v){ document.getElementById('vgIn').value=v; gShow(v); };
+  window.vrGAdj=function(d){ var v=Math.round(((gVal()||0)+d)*2)/2; v=Math.max(0.5,Math.min(100,v)); document.getElementById('vgIn').value=v; gShow(v); };
+  window.vrGIn=function(){ var v=gVal(); if(v) gShow(v); };
+  window.vrGSave=function(){ var v=gVal(); if(!(v>0&&v<=100)){ showToast('❗ ০.৫ থেকে ১০০ ঘণ্টার মধ্যে দাও'); return; } saveLS('df_vgoal',v); closeModal(); draw(); showToast('🎯 লক্ষ্য ঠিক হলো: সপ্তাহে '+v+' ঘণ্টা video'); };
+  window.vrGoal=function(){
+    var cur=goalH();
+    var h='<div style="text-align:center;"><div style="width:62px;height:62px;margin:0 auto 10px;border-radius:20px;background:linear-gradient(135deg,#8a3be0,#c06aff);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 8px 22px #8a3be055;">🎬</div>'
+      +'<div style="font-size:19px;font-weight:900;color:var(--text);">Video দেখার লক্ষ্য</div><div style="font-size:12px;color:var(--sub);margin:4px 0 16px;">সপ্তাহে কত ঘণ্টা video দেখতে চাও?</div>'
+      +'<div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px;"><button class="wg-pm" onclick="vrGAdj(-0.5)">−</button><div style="position:relative;"><input id="vgIn" type="number" inputmode="decimal" step="0.5" min="0.5" max="100" value="'+cur+'" oninput="vrGIn()" class="wg-in"/><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--sub);font-weight:800;">ঘণ্টা</span></div><button class="wg-pm" onclick="vrGAdj(0.5)">+</button></div>'
+      +'<div id="vgPv" style="font-size:12px;color:var(--cyan);font-weight:800;min-height:18px;margin-bottom:12px;"></div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px;">'+[1,2,3,5,7].map(function(v){ return '<button class="wg-chip vg-chip" data-v="'+v+'" onclick="vrGSet('+v+')">'+v+' ঘ</button>'; }).join('')+'</div>'
+      +'<div style="display:flex;gap:8px;"><button class="btn btn-ghost" style="flex:1;" onclick="closeModal()">বাতিল</button><button class="btn btn-blue" style="flex:1;" onclick="vrGSave()">✅ সেভ</button></div></div>';
+    document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open'); gShow(cur);
+  };
+  // ---- PDF ----
+  function donut(pc,sub){ var id='vd'+(++uid), R=62, C=2*Math.PI*R, p=Math.min(1,pc/100), col=pc>=100?['#1fb883','#6af0c0']:['#8a3be0','#c06aff'];
+    return '<svg viewBox="0 0 170 170" style="width:170px;"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col[0]+'"/><stop offset="1" stop-color="'+col[1]+'"/></linearGradient></defs><circle cx="85" cy="85" r="'+R+'" fill="none" stroke="#ece6f7" stroke-width="16"/><circle cx="85" cy="85" r="'+R+'" fill="none" stroke="url(#'+id+')" stroke-width="16" stroke-linecap="round" stroke-dasharray="'+(C*p).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 85 85)"/><text x="85" y="86" text-anchor="middle" font-size="34" font-weight="900" fill="#3a1370">'+pc+'%</text><text x="85" y="108" text-anchor="middle" font-size="12" fill="#6a7090">'+sub+'</text></svg>'; }
+  function bars(vals,goal,Ht){
+    var id='vb'+(++uid), W=700, pl=46, pb=34, pt=26, n=vals.length, mx=Math.max.apply(null,vals.map(function(x){return x.v;}).concat([goal||0,10]))*1.18, ph=Ht-pt-pb, bw=(W-pl)/n, w=Math.min(64,bw*.58), best=-1, bv=0;
+    vals.forEach(function(x,i){ if(x.v>bv){ bv=x.v; best=i; } });
+    var s='<svg viewBox="0 0 '+W+' '+Ht+'"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c06aff"/><stop offset="1" stop-color="#8a3be0"/></linearGradient><linearGradient id="'+id+'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd76a"/><stop offset="1" stop-color="#f5a800"/></linearGradient></defs>';
+    for(var g=0;g<=4;g++){ var gy=pt+ph-ph*g/4; s+='<line x1="'+pl+'" y1="'+gy+'" x2="'+W+'" y2="'+gy+'" stroke="#ece6f7"/><text x="'+(pl-6)+'" y="'+(gy+4)+'" text-anchor="end" font-size="11" fill="#8a90ac">'+mm(mx*g/4)+'</text>'; }
+    vals.forEach(function(x,i){ var hh=Math.max(x.v>0?4:0,ph*x.v/mx), cx=pl+bw*i+bw/2, y=pt+ph-hh;
+      if(x.v>0) s+='<rect x="'+(cx-w/2)+'" y="'+y+'" width="'+w+'" height="'+hh+'" rx="8" fill="url(#'+id+(i===best?'g':'')+')"/><text x="'+cx+'" y="'+(y-6)+'" text-anchor="middle" font-size="12" font-weight="800" fill="#3a1370">'+mm(x.v)+'</text>';
+      else s+='<rect x="'+(cx-w/2)+'" y="'+(pt+ph-3)+'" width="'+w+'" height="3" rx="1.5" fill="#e6e0f5"/>';
+      s+='<text x="'+cx+'" y="'+(Ht-12)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#4a5070">'+x.l+'</text>'; });
+    if(goal){ var gy2=pt+ph-ph*goal/mx; s+='<line x1="'+pl+'" y1="'+gy2+'" x2="'+W+'" y2="'+gy2+'" stroke="#1fb883" stroke-width="2" stroke-dasharray="7 5"/><text x="'+(pl+6)+'" y="'+(gy2-5)+'" font-size="11" font-weight="800" fill="#1fb883">লক্ষ্য '+mm(goal)+'/দিন</text>'; }
+    return s+'</svg>'; }
+  function kp(b,l,c){ return '<div class="pm-k" style="--c:'+c+';"><b>'+b+'</b><span>'+l+'</span></div>'; }
+  function pbar(p,col){ return '<div style="height:9px;background:#e9e4f5;border-radius:9px;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact;"><div style="height:100%;width:'+p+'%;background:'+col+';border-radius:9px;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div></div>'; }
+  window.vrPdf=function(){
+    var w=wkDays(off), s=sum(w), pw=sum(wkDays(off-1)), G=goalH()*3600, pc=Math.round(s.sec/G*100), chg=pw.sec>0?Math.round((s.sec-pw.sec)/pw.sec*100):null, C=course(), nm=(typeof profile!=='undefined'&&profile&&profile.name)?profile.name:'';
+    var h='<div class="pm-ban" style="background:linear-gradient(135deg,#6a1fc0,#2a0d70);"><div><div class="t">🎬 Weekly Video Report</div><div class="s">'+(nm?esc(nm)+' · ':'')+'A1 Sprechen Kurs · '+fd(w[0].d)+' – '+fd(w[6].d)+' '+w[6].d.getFullYear()+'</div></div><div class="b">'+(pc>=100?'🎉 লক্ষ্য পূরণ':pc+'% লক্ষ্য')+'</div></div>';
+    h+='<div class="pm-row"><div class="pm-card" style="margin:0;text-align:center;flex:0 0 200px;display:flex;flex-direction:column;align-items:center;justify-content:center;">'+donut(pc,'লক্ষ্য '+hum(G))+'</div><div class="pm-kp">'
+      +kp(hum(s.sec),'⏱ মোট video দেখা','#8a3be0')+kp(s.days+' / 7','📆 যত দিন দেখেছো','#1fb883')+kp(hum(s.days?s.sec/s.days:0),'📈 দেখা দিনে গড়','#f5a800')
+      +kp(chg===null?'—':(chg>=0?'▲ ':'▼ ')+Math.abs(chg)+'%','↔ আগের সপ্তাহের তুলনায়',chg!==null&&chg<0?'#e5486a':'#1fb883')+kp(s.best?s.best.l+' · '+hum(s.best.sec):'—','🏆 সেরা দিন','#4361ee')+kp(doneIn(w)+' টি','✅ এই সপ্তাহে শেষ video','#2aa7e0')+'</div></div>';
+    h+='<div class="pm-card"><div class="pm-h">📅 দিন অনুযায়ী video দেখা<small>সোনালি = সেরা দিন · সবুজ দাগ = দৈনিক লক্ষ্য</small></div>'+bars(w.map(function(x){return {l:x.l,v:x.sec/60};}),G/7/60,250)+'</div>';
+    h+='<div class="pm-card"><div class="pm-h">🎓 কোর্স প্রোগ্রেস<small>'+C.done+' / '+C.n+' video শেষ · গড় '+C.pct+'%</small></div>'+pbar(C.pct,'linear-gradient(90deg,#8a3be0,#c06aff)');
+    var pls=[]; try{ pls=xgPls(); }catch(e){}
+    if(pls.length){ h+='<table class="pm-tab" style="margin-top:10px;"><tr><th>Playlist</th><th style="width:20%;">শেষ</th><th style="width:34%;">প্রোগ্রেস</th></tr>';
+      pls.forEach(function(p){ var Lx=xgVidsOf(p.id), d=Lx.filter(function(v){return v.w;}).length, q=Lx.length?Math.round(d/Lx.length*100):0; h+='<tr><td>'+esc(p.name)+'</td><td>'+d+' / '+Lx.length+'</td><td>'+pbar(q,q>=100?'#1fb883':'#8a3be0')+'</td></tr>'; });
+      h+='</table>'; }
+    h+='</div>';
+    var L=perList(s);
+    h+='<div class="pm-card"><div class="pm-h">🎞 এই সপ্তাহে দেখা video<small>'+L.length+' টি video</small></div>';
+    if(!L.length) h+='<div style="text-align:center;color:#7a809c;font-size:13px;padding:20px 0;">এই সপ্তাহে কোনো video দেখা হয়নি — আজই একটা শুরু করো 🎬</div>';
+    else { h+='<table class="pm-tab"><tr><th>Video</th><th style="width:18%;">এই সপ্তাহে</th><th style="width:30%;">মোট দেখা</th></tr>';
+      L.forEach(function(r){ var p=xgPct(r.v); h+='<tr><td>'+esc(r.v.title||'Video')+'</td><td>'+hum(r.sec)+'</td><td>'+pbar(p,r.v.w?'#1fb883':'#8a3be0')+'<div style="font-size:10px;color:#555;margin-top:2px;">'+(r.v.w?'✅ শেষ':p+'%')+'</div></td></tr>'; });
+      h+='</table>'; }
+    h+='</div>';
+    h+='<div class="pm-card"><div class="pm-h">📋 দিনওয়ারি তালিকা</div><table class="pm-tab"><tr><th>দিন</th><th>দেখার সময়</th><th>Video সংখ্যা</th></tr>';
+    w.forEach(function(x){ h+='<tr><td><b>'+x.l+'</b> <span style="color:#777;font-size:11px;">'+fd(x.d)+'</span></td><td>'+(x.sec?H().clock(x.sec*1000):'—')+'</td><td>'+(Object.keys(x.rec).filter(function(k){return x.rec[k]>0;}).length||'—')+'</td></tr>'; });
+    h+='<tr style="font-weight:800;"><td>মোট</td><td>'+H().clock(s.sec*1000)+'</td><td>'+L.length+'</td></tr></table></div><div class="pm-note">DeutschFlash · রোজ একটু একটু দেখলেই জার্মান সহজ হয়ে যায় ✨</div>';
+    openPDF(h);
+  };
+  // ---- record watch time (called from the player's 1-second tracker) ----
+  var cnt=0;
+  window.xgLog=function(v){ try{ var k=xpYmd(new Date()); if(!xs.vlog) xs.vlog={}; var d=xs.vlog[k]||(xs.vlog[k]={}); d[v.id]=(d[v.id]||0)+1; if(++cnt%15===0) xsSave(); }catch(e){} };
+  var _st=xgStopTrack; xgStopTrack=function(){ try{ xsSave(); }catch(e){} _st(); };
+  window.addEventListener('pagehide',function(){ try{ xsSave(); }catch(e){} });
+  document.addEventListener('visibilitychange',function(){ if(document.hidden){ try{ xsSave(); }catch(e){} } });
+  // ---- entry points ----
+  function mini(f){
+    var w=wkDays(0), s=sum(w), G=goalH()*3600, pc=Math.min(100,Math.round(s.sec/G*100));
+    return '<div onclick="vrOpen(\''+f+'\')" style="cursor:pointer;background:linear-gradient(135deg,#4a1d6e,#1a0d40);border:1px solid #6a3f8a;border-radius:20px;padding:14px 16px;margin:0 0 12px;color:#fff;"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-size:14px;font-weight:900;">🎬 Video রিপোর্ট</div><div style="font-size:11px;opacity:.75;">রিপোর্ট দেখো ›</div></div><div style="display:flex;align-items:baseline;gap:8px;margin:8px 0 8px;"><div style="font-size:26px;font-weight:900;">'+hum(s.sec)+'</div><div style="font-size:12px;opacity:.75;">/ '+hum(G)+' লক্ষ্য · এই সপ্তাহ</div></div><div style="height:9px;background:#ffffff22;border-radius:9px;overflow:hidden;"><div style="height:100%;width:'+pc+'%;background:'+(pc>=100?'#2dd4a0':'linear-gradient(90deg,#c06aff,#ffd76a)')+';"></div></div></div>';
+  }
+  var _rp=xpRenderProgress;
+  xpRenderProgress=function(){ _rp(); try{ var el=document.getElementById('tabProgress'); if(!el) return;
+    var old=el.querySelector('#vrMiniP'); if(old) old.remove();
+    var secs=el.querySelectorAll('.pg-sec'), tgt=null; secs.forEach(function(x){ if(/সব টুল/.test(x.textContent)) tgt=x; });
+    var box=document.createElement('div'); box.id='vrMiniP'; box.innerHTML=mini('progress');
+    if(tgt) tgt.parentNode.insertBefore(box,tgt); else { var g=el.querySelector('.pg-grid'); if(g) g.parentNode.insertBefore(box,g); }
+  }catch(e){} };
+  var _xc=xgCourse;
+  xgCourse=function(){ _xc(); try{ var b=document.getElementById('pgCourseBody'); if(b&&xgCurView==='home') b.insertAdjacentHTML('afterbegin',mini('course')); }catch(e){} };
+})();
+</script>
+<script>
+// ── Movable + resizable floating buttons: word popup (✕, drag, resize) and the study-timer pill (drag). Remembered. ──
+(function(){
+  var W0=function(){ return window.innerWidth; }, H0=function(){ return window.innerHeight; };
+  function getPos(k){ try{ var v=JSON.parse(localStorage.getItem('df_pos_'+k)||'null'); return v&&typeof v.x==='number'?v:null; }catch(e){ return null; } }
+  function setPos(k,p){ try{ localStorage.setItem('df_pos_'+k,JSON.stringify(p)); }catch(e){} }
+  function cl(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  // layout state kept in JS: x,y (left/top px), s (scale). Transform is the only thing touched while dragging.
+  function st(el){ return el.__st||(el.__st={x:0,y:0,s:1,bw:0,bh:0}); }
+  function measure(el){ var S=st(el); S.bw=el.offsetWidth; S.bh=el.offsetHeight; }
+  function paint(el,dx,dy){ var S=st(el); el.style.transform='translate3d('+(dx||0)+'px,'+(dy||0)+'px,0) scale('+S.s+')'; }
+  function fix(el){ // switch from CSS-anchored to explicit left/top once
+    var S=st(el); if(el.__fixed) return; var r=el.getBoundingClientRect(); measure(el);
+    el.style.width=S.bw+'px'; el.style.transformOrigin='0 0'; el.style.left=r.left+'px'; el.style.top=r.top+'px'; el.style.right='auto'; el.style.bottom='auto'; el.style.margin='0'; S.x=r.left; S.y=r.top; S.s=S.s||1; el.__fixed=1; el.style.willChange='transform'; }
+  function bounds(el){ var S=st(el); return {mx:Math.max(4,W0()-S.bw*S.s-4), my:Math.max(4,H0()-S.bh*S.s-4)}; }
+  function commit(el,k){ var S=st(el), b=bounds(el); S.x=cl(S.x,4,b.mx); S.y=cl(S.y,4,b.my); el.style.left=S.x+'px'; el.style.top=S.y+'px'; paint(el,0,0); setPos(k,{x:Math.round(S.x),y:Math.round(S.y),s:+S.s.toFixed(3),w:Math.round(S.bw)}); }
+  function restore(el,k){ var p=getPos(k); if(!p) return; var S=st(el); if(k==='srPop'&&p.w) el.style.width=Math.min(p.w,W0()-8)+'px'; el.__fixed=0; if(k==='srPop'){ el.style.transformOrigin='0 0'; } measure(el); S.s=p.s||1; S.x=p.x; S.y=p.y; el.style.transformOrigin='0 0'; el.style.right='auto'; el.style.bottom='auto'; el.style.margin='0'; el.__fixed=1; el.style.willChange='transform';
+    var b=bounds(el); S.x=cl(S.x,4,b.mx); S.y=cl(S.y,4,b.my); el.style.left=S.x+'px'; el.style.top=S.y+'px'; paint(el,0,0); }
+  function drag(el,k,skip){
+    if(el.__drag) return; el.__drag=1; el.style.touchAction='none'; el.style.userSelect='none'; el.style.webkitUserSelect='none';
+    var sx,sy,on=false,moved=false,pid,raf=0,ddx=0,ddy=0;
+    el.addEventListener('pointerdown',function(e){
+      if(e.button>0) return; if(skip&&e.target.closest(skip)) return;
+      fix(el); measure(el); sx=e.clientX; sy=e.clientY; ddx=0; ddy=0; moved=false; on=true; pid=e.pointerId; });
+    el.addEventListener('pointermove',function(e){
+      if(!on) return; var dx=e.clientX-sx, dy=e.clientY-sy;
+      if(!moved&&Math.abs(dx)+Math.abs(dy)<6) return; if(!moved){ try{ el.setPointerCapture(pid); }catch(_){} } moved=true; e.preventDefault();
+      var S=st(el), b=bounds(el); ddx=cl(S.x+dx,4,b.mx)-S.x; ddy=cl(S.y+dy,4,b.my)-S.y;
+      if(!raf) raf=requestAnimationFrame(function(){ raf=0; paint(el,ddx,ddy); }); });
+    function end(){ if(!on) return; on=false; try{ el.releasePointerCapture(pid); }catch(_){}
+      if(raf){ cancelAnimationFrame(raf); raf=0; }
+      if(moved){ var S=st(el); S.x+=ddx; S.y+=ddy; commit(el,k); el.__jd=Date.now(); } }
+    el.addEventListener('pointerup',end); el.addEventListener('pointercancel',end);
+    el.addEventListener('click',function(e){ if(el.__jd&&Date.now()-el.__jd<350){ e.stopImmediatePropagation(); e.preventDefault(); } },true);
+  }
+  function initPop(){
+    var pop=document.getElementById('srPop'); if(!pop||pop.__init) return; pop.__init=1; pop.style.position='fixed';
+    var x=document.createElement('button'); x.type='button'; x.id='srPopX'; x.setAttribute('aria-label','বন্ধ করো'); x.textContent='✕';
+    x.onclick=function(e){ e.stopPropagation(); pop.style.display='none'; document.querySelectorAll('.sr-w.on').forEach(function(q){ q.classList.remove('on'); }); try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(_){} };
+    var rz=document.createElement('div'); rz.id='srPopR'; rz.setAttribute('aria-label','ছোট-বড় করো'); rz.textContent='⤡';
+    var gr=document.createElement('div'); gr.className='df-grip';
+    pop.appendChild(x); pop.appendChild(rz); pop.insertBefore(gr,pop.firstChild);
+    drag(pop,'srPop','#srPopR,#srPopX');
+    // resize: drag the corner handle; top-left stays put
+    var on=false,sx,sw,s0,pid,raf=0,ns=1;
+    rz.addEventListener('pointerdown',function(e){ e.stopPropagation(); fix(pop); measure(pop); var S=st(pop); on=true; sx=e.clientX; sw=S.bw*S.s; s0=S.s; ns=s0; pid=e.pointerId; try{ rz.setPointerCapture(pid); }catch(_){} e.preventDefault(); });
+    rz.addEventListener('pointermove',function(e){ if(!on) return; var S=st(pop); var maxS=Math.min(2,(W0()-4-S.x)/S.bw), minS=0.45; ns=cl(s0*(sw+(e.clientX-sx))/sw,minS,Math.max(minS,maxS));
+      if(!raf) raf=requestAnimationFrame(function(){ raf=0; S.s=ns; paint(pop,0,0); }); e.preventDefault(); });
+    function rend(){ if(!on) return; on=false; try{ rz.releasePointerCapture(pid); }catch(_){} if(raf){ cancelAnimationFrame(raf); raf=0; } var S=st(pop); S.s=ns; commit(pop,'srPop'); }
+    rz.addEventListener('pointerup',rend); rz.addEventListener('pointercancel',rend);
+    rz.addEventListener('dblclick',function(){ var S=st(pop); S.s=1; commit(pop,'srPop'); });
+    // restore saved place/size whenever the popup is shown
+    var mo=new MutationObserver(function(){ if(pop.style.display==='block'){ if(!pop.__shown){ pop.__shown=1; if(getPos('srPop')) restore(pop,'srPop'); } } else pop.__shown=0; }); mo.observe(pop,{attributes:true,attributeFilter:['style']});
+  }
+  var tries=0, tm=setInterval(function(){
+    initPop(); var c=document.getElementById('stChip');
+    if(c&&!c.__drag){ drag(c,'stChip'); restore(c,'stChip'); }
+    if((++tries>200)||(c&&c.__drag&&document.getElementById('srPop')&&document.getElementById('srPop').__init)) clearInterval(tm);
+  },500);
+  window.addEventListener('resize',function(){ ['srPop','stChip'].forEach(function(id){ var el=document.getElementById(id); if(el&&el.__fixed){ measure(el); commit(el,id); } }); });
+  window.dfResetPos=function(){ ['srPop','stChip'].forEach(function(id){ try{ localStorage.removeItem('df_pos_'+id); }catch(_){} var el=document.getElementById(id); if(el){ el.__fixed=0; el.__st=null; ['left','top','right','bottom','margin','width','transform','transformOrigin','willChange'].forEach(function(p){ el.style[p]=''; }); } }); };
+})();
+</script>
+<style>
+#srPop{padding-top:20px!important;}
+#srPop .df-grip{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:38px;height:4px;border-radius:4px;background:var(--border);opacity:.9;pointer-events:none;}
+#srPopX{position:absolute;top:-12px;right:-6px;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--blue);background:var(--card);color:var(--text);font-size:14px;font-weight:900;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px #0008;padding:0;}
+#srPopR{position:absolute;right:-9px;bottom:-9px;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--blue);background:var(--card);color:var(--text);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px #0008;cursor:nwse-resize;touch-action:none;}
+.st-chip{cursor:grab;}
+</style>
+<script>
+// ── Monthly report + share image + timed Mock test + streak warning + backup/share + widget sync ──
+(function(){
+  var MN=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'], DN=['শনি','রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র'], uid=0;
+  var NB=null; try{ if(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()) NB=Capacitor.registerPlugin('NativeBridge'); }catch(e){}
+  function A(){ return window._stApi; }
+  function human(ms){ return A()?A().human(ms):Math.round(ms/60000)+'মি'; }
+  function mm(v){ var m=Math.round(v); return m>=60?(Math.floor(m/60)+'ঘ'+(m%60?(' '+m%60+'মি'):'')):(m+'মি'); }
+  function pad(n){ return (n<10?'0':'')+n; }
+  function vsec(d){ var r=((xs&&xs.vlog)||{})[xpYmd(d)]||{}, t=0, k; for(k in r) t+=r[k]; return t; }
+  function dayRec(d,tn){ var a=(xs.act||{})[d.toDateString()]||{};
+    return {d:d,ms:(A().days()[A().ymd(d)]||0),pr:(xs.cal||{})[xpYmd(d)]||0,vs:vsec(d),s:Math.round(a.s||0),w:Math.round(a.w||0),r:Math.round((a.r||0)/3),td:d.getTime()===tn,fu:d.getTime()>tn}; }
+  function tnow(){ var t=new Date(); return new Date(t.getFullYear(),t.getMonth(),t.getDate()).getTime(); }
+  function wkRecs(o){ var t=new Date(), diff=(t.getDay()+1)%7, st=new Date(t.getFullYear(),t.getMonth(),t.getDate()-diff+o*7), out=[], tn=tnow(); for(var i=0;i<7;i++){ var r=dayRec(new Date(st.getFullYear(),st.getMonth(),st.getDate()+i),tn); r.l=DN[i]; out.push(r); } return out; }
+  function monRecs(o){ var t=new Date(), y=t.getFullYear(), m=t.getMonth()+o, first=new Date(y,m,1), n=new Date(y,m+1,0).getDate(), out=[], tn=tnow(); for(var i=1;i<=n;i++){ var r=dayRec(new Date(first.getFullYear(),first.getMonth(),i),tn); r.l=String(i); out.push(r); } return {first:first,days:out}; }
+  function sum(a){ var o={ms:0,pr:0,vs:0,s:0,w:0,r:0,days:0,best:null}; a.forEach(function(x){ o.ms+=x.ms; o.pr+=x.pr; o.vs+=x.vs; o.s+=x.s; o.w+=x.w; o.r+=x.r; if(x.ms>0||x.pr>0){ o.days++; } if(x.ms>0&&(!o.best||x.ms>o.best.ms)) o.best=x; }); return o; }
+  function mgoalMin(days){ var g=Number(loadLS('df_wgoal',7)); return Math.round((g>0?g:7)*60*days/7); }
+  // longest streak of practice days inside the month
+  function bestRun(a){ var b=0,c=0; a.forEach(function(x){ if(x.ms>0||x.pr>0){ c++; if(c>b) b=c; } else if(!x.fu) c=0; }); return b; }
+
+  // ============ monthly page ============
+  var moff=0;
+  function ring(pc){ var R=54,C=2*Math.PI*R, p=Math.min(1,pc/100); return '<svg width="136" height="136" viewBox="0 0 136 136"><circle cx="68" cy="68" r="'+R+'" fill="none" stroke="#ffffff22" stroke-width="13"/><circle cx="68" cy="68" r="'+R+'" fill="none" stroke="'+(pc>=100?'#2dd4a0':'#7fe3ff')+'" stroke-width="13" stroke-linecap="round" stroke-dasharray="'+(C*p).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 68 68)"/></svg>'; }
+  function mpage(){ var el=document.getElementById('pgMonthly'); if(!el){ el=document.createElement('div'); el.id='pgMonthly'; el.className='page'; el.innerHTML='<div class="inner-page-bar"><button class="back-btn" onclick="mrBack()">←</button><span class="ipb-title">📆 মাসিক রিপোর্ট</span></div><div id="pgMonthlyBody" style="flex:1;overflow-y:auto;padding:14px 16px 40px;max-width:560px;width:100%;margin:0 auto;"></div>'; document.body.appendChild(el); } return el; }
+  function weeksOf(days){ // split into Sat→Fri blocks
+    var out=[], cur=[]; days.forEach(function(x){ cur.push(x); if(x.d.getDay()===5){ out.push(cur); cur=[]; } }); if(cur.length) out.push(cur); return out; }
+  var from='progress';
+  function mdraw(){
+    mpage(); var M=monRecs(moff), P=monRecs(moff-1), s=sum(M.days), ps=sum(P.days), G=mgoalMin(M.days.length), pc=Math.round(s.ms/60000/G*100), chg=ps.ms>0?Math.round((s.ms-ps.ms)/ps.ms*100):null;
+    var nm=MN[M.first.getMonth()]+' '+M.first.getFullYear(), mx=Math.max.apply(null,M.days.map(function(x){return x.ms/60000;}).concat([G/M.days.length,10]));
+    var chip=chg===null?'<span style="background:#ffffff1f;border-radius:99px;padding:4px 10px;font-size:11px;">আগের মাসে ডেটা নেই</span>':'<span style="background:'+(chg>=0?'#2dd4a033':'#ff5c7a33')+';color:'+(chg>=0?'#7dffd0':'#ff9db0')+';border-radius:99px;padding:4px 10px;font-size:12px;font-weight:800;">'+(chg>=0?'▲ ':'▼ ')+Math.abs(chg)+'% আগের মাসের তুলনায়</span>';
+    var h='<div class="wk-hero" style="background:linear-gradient(135deg,#0b4a63,#0d1b4d);border-color:#2a7a9a;"><div class="wk-nav"><button onclick="mrGo(-1)">‹</button><div style="text-align:center;"><div style="font-size:16px;font-weight:900;">'+nm+'</div><div style="font-size:11px;opacity:.75;margin-top:2px;">'+M.days.length+' দিনের হিসাব</div></div><button onclick="mrGo(1)" '+(moff>=0?'disabled':'')+'>›</button></div>'
+      +'<div style="display:flex;align-items:center;gap:14px;"><div style="position:relative;width:136px;height:136px;flex:0 0 136px;">'+ring(pc)+'<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;"><div style="font-size:21px;font-weight:900;line-height:1.1;">'+human(s.ms)+'</div><div style="font-size:11px;opacity:.75;margin-top:3px;">'+pc+'% লক্ষ্যের</div></div></div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:12px;opacity:.8;">মাসিক লক্ষ্য</div><div style="font-size:20px;font-weight:900;margin:2px 0 8px;">'+human(G*60000)+'</div>'+chip+'<div style="font-size:11px;opacity:.8;margin-top:8px;">'+(pc>=100?'🎉 লক্ষ্য পূরণ!':'আরও '+human(Math.max(0,G*60000-s.ms))+' বাকি')+'</div></div></div></div>';
+    // daily bars (compact, all days)
+    h+='<div class="wk-card"><div style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:8px;">📅 দিন অনুযায়ী পড়া</div><div style="display:flex;align-items:flex-end;gap:2px;height:120px;">';
+    M.days.forEach(function(x){ var m=x.ms/60000, hh=Math.max(m>0?4:2,m/mx*100); h+='<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;"><div title="'+x.l+': '+mm(m)+'" style="height:'+hh+'%;border-radius:3px;background:'+(x.td?'var(--gold)':m>0?'linear-gradient(180deg,#7fe3ff,#4361ee)':'var(--border)')+';opacity:'+(x.fu?.35:1)+';"></div></div>'; });
+    h+='</div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px;"><span>১</span><span>'+Math.ceil(M.days.length/2)+'</span><span>'+M.days.length+'</span></div></div>';
+    var st=function(b,l){ return '<div class="wk-st"><b>'+b+'</b><span>'+l+'</span></div>'; };
+    var passed=M.days.filter(function(x){return !x.fu;}).length;
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">'+st(human(s.ms),'⏱ মোট পড়ার সময়')+st(s.days+' / '+passed,'📆 যত দিন পড়েছো')+st(human(s.days?s.ms/s.days:0),'📈 পড়া দিনে গড়')+st(s.best?human(s.best.ms)+' · '+s.best.l+' তারিখ':'—','🏆 সেরা দিন')+st(bestRun(M.days)+' দিন','🔥 টানা সবচেয়ে বেশি')+st(human(s.vs*1000),'🎬 Video দেখা')+'</div>';
+    // week by week
+    var W=weeksOf(M.days);
+    h+='<div class="wk-card"><div style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:10px;">🗓 সপ্তাহ অনুযায়ী</div>';
+    var wmx=Math.max.apply(null,W.map(function(w){return sum(w).ms;}).concat([1]));
+    W.forEach(function(w,i){ var t=sum(w), a=w[0].d, b=w[w.length-1].d; h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;"><div style="width:74px;font-size:11px;color:var(--sub);">'+a.getDate()+'–'+b.getDate()+'</div><div style="flex:1;height:10px;background:var(--border);border-radius:9px;overflow:hidden;"><div style="height:100%;width:'+(t.ms/wmx*100)+'%;background:linear-gradient(90deg,#7fe3ff,#4361ee);border-radius:9px;"></div></div><div style="width:64px;text-align:right;font-size:11px;font-weight:800;color:var(--text);">'+(t.ms?human(t.ms):'—')+'</div></div>'; });
+    h+='</div>';
+    h+='<div class="wk-card"><div style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:10px;">🧠 Practice ও শেখা</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;text-align:center;">'
+      +[[s.pr,'Practice','var(--blue)'],[s.s,'💬 বাক্য','var(--cyan)'],[s.w,'📚 শব্দ','var(--cyan)'],[s.r,'📖 Story','var(--green)']].map(function(c){ return '<div style="background:var(--navy);border:1px solid var(--border);border-radius:12px;padding:10px 2px;"><div style="font-size:19px;font-weight:900;color:'+c[2]+';">'+c[0]+'</div><div style="font-size:10px;color:var(--sub);margin-top:2px;">'+c[1]+'</div></div>'; }).join('')+'</div></div>';
+    h+='<div style="display:flex;gap:8px;"><button class="btn btn-ghost" style="flex:1;" onclick="dfShareImg(\'month\')">🖼 ছবি শেয়ার</button><button class="btn btn-blue" style="flex:1;" onclick="mrPdf()">📄 PDF ডাউনলোড</button></div>';
+    document.getElementById('pgMonthlyBody').innerHTML=h;
+  }
+  window.mrOpen=function(f){ from=f||'progress'; moff=0; mdraw(); showPage('pgMonthly'); document.getElementById('pgMonthlyBody').scrollTop=0; };
+  window.mrGo=function(d){ if(moff+d>0) return; moff+=d; mdraw(); };
+  window.mrBack=function(){ if(from==='drawer'){ showPage('pgApp'); openDrawer(); drCollapse(); drToggle(8); return; } if(from==='weekly'){ xpWeekOpen(); return; } showPage('pgApp'); switchTab('progress'); };
+  function donut(pc,sub){ var id='mq'+(++uid), R=62, C=2*Math.PI*R, p=Math.min(1,pc/100), col=pc>=100?['#1fb883','#6af0c0']:['#0f8fc0','#5fd6ff'];
+    return '<svg viewBox="0 0 170 170" style="width:170px;"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col[0]+'"/><stop offset="1" stop-color="'+col[1]+'"/></linearGradient></defs><circle cx="85" cy="85" r="'+R+'" fill="none" stroke="#e3eef5" stroke-width="16"/><circle cx="85" cy="85" r="'+R+'" fill="none" stroke="url(#'+id+')" stroke-width="16" stroke-linecap="round" stroke-dasharray="'+(C*p).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 85 85)"/><text x="85" y="86" text-anchor="middle" font-size="34" font-weight="900" fill="#0b3b57">'+pc+'%</text><text x="85" y="108" text-anchor="middle" font-size="12" fill="#6a7090">'+sub+'</text></svg>'; }
+  function mbars(days,goal){ var W=700,Ht=240,pl=46,pb=30,pt=24,n=days.length,mx=Math.max.apply(null,days.map(function(x){return x.ms/60000;}).concat([goal,10]))*1.18,ph=Ht-pt-pb,bw=(W-pl)/n,w=Math.max(4,bw*.66),id='mb'+(++uid),best=-1,bv=0;
+    days.forEach(function(x,i){ if(x.ms>bv){ bv=x.ms; best=i; } });
+    var s='<svg viewBox="0 0 '+W+' '+Ht+'"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fd6ff"/><stop offset="1" stop-color="#0f8fc0"/></linearGradient><linearGradient id="'+id+'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd76a"/><stop offset="1" stop-color="#f5a800"/></linearGradient></defs>';
+    for(var g=0;g<=4;g++){ var gy=pt+ph-ph*g/4; s+='<line x1="'+pl+'" y1="'+gy+'" x2="'+W+'" y2="'+gy+'" stroke="#e3eef5"/><text x="'+(pl-6)+'" y="'+(gy+4)+'" text-anchor="end" font-size="11" fill="#8a90ac">'+mm(mx*g/4)+'</text>'; }
+    days.forEach(function(x,i){ var m=x.ms/60000, hh=Math.max(m>0?3:0,ph*m/mx), cx=pl+bw*i+bw/2; if(m>0) s+='<rect x="'+(cx-w/2)+'" y="'+(pt+ph-hh)+'" width="'+w+'" height="'+hh+'" rx="3" fill="url(#'+id+(i===best?'g':'')+')"/>'; else s+='<rect x="'+(cx-w/2)+'" y="'+(pt+ph-2)+'" width="'+w+'" height="2" fill="#dde6ee"/>'; if(i%2===0||n<=16) s+='<text x="'+cx+'" y="'+(Ht-10)+'" text-anchor="middle" font-size="10" fill="#4a5070">'+x.l+'</text>'; });
+    var gy2=pt+ph-ph*goal/mx; s+='<line x1="'+pl+'" y1="'+gy2+'" x2="'+W+'" y2="'+gy2+'" stroke="#1fb883" stroke-width="2" stroke-dasharray="7 5"/><text x="'+(pl+6)+'" y="'+(gy2-5)+'" font-size="11" font-weight="800" fill="#1fb883">লক্ষ্য '+mm(goal)+'/দিন</text>';
+    return s+'</svg>'; }
+  function kp(b,l,c){ return '<div class="pm-k" style="--c:'+c+';"><b>'+b+'</b><span>'+l+'</span></div>'; }
+  window.mrPdf=function(){
+    var M=monRecs(moff), P=monRecs(moff-1), s=sum(M.days), ps=sum(P.days), G=mgoalMin(M.days.length), pc=Math.round(s.ms/60000/G*100), chg=ps.ms>0?Math.round((s.ms-ps.ms)/ps.ms*100):null, nm=MN[M.first.getMonth()]+' '+M.first.getFullYear(), pn=(typeof profile!=='undefined'&&profile&&profile.name)?profile.name:'';
+    var h='<div class="pm-ban" style="background:linear-gradient(135deg,#0b6a93,#0d1b4d);"><div><div class="t">📆 Monthly Report</div><div class="s">'+(pn?esc(pn)+' · ':'')+nm+'</div></div><div class="b">'+(pc>=100?'🎉 লক্ষ্য পূরণ':pc+'% লক্ষ্য')+'</div></div>';
+    h+='<div class="pm-row"><div class="pm-card" style="margin:0;text-align:center;flex:0 0 200px;display:flex;flex-direction:column;align-items:center;justify-content:center;">'+donut(pc,'লক্ষ্য '+human(G*60000))+'</div><div class="pm-kp">'
+      +kp(human(s.ms),'⏱ মোট পড়ার সময়','#0f8fc0')+kp(s.days+' দিন','📆 যত দিন পড়েছো','#1fb883')+kp(human(s.days?s.ms/s.days:0),'📈 পড়া দিনে গড়','#f5a800')
+      +kp(chg===null?'—':(chg>=0?'▲ ':'▼ ')+Math.abs(chg)+'%','↔ আগের মাসের তুলনায়',chg!==null&&chg<0?'#e5486a':'#1fb883')+kp(bestRun(M.days)+' দিন','🔥 টানা সবচেয়ে বেশি','#e5486a')+kp(human(s.vs*1000),'🎬 Video দেখা','#8a3be0')+'</div></div>';
+    h+='<div class="pm-card"><div class="pm-h">📅 দিন অনুযায়ী পড়া<small>সোনালি = সেরা দিন · সবুজ দাগ = দৈনিক লক্ষ্য</small></div>'+mbars(M.days,G/M.days.length)+'</div>';
+    h+='<div class="pm-card"><div class="pm-h">🗓 সপ্তাহ অনুযায়ী</div><table class="pm-tab"><tr><th>সপ্তাহ</th><th>পড়ার সময়</th><th>দিন</th><th>Practice</th></tr>';
+    weeksOf(M.days).forEach(function(w){ var t=sum(w),a=w[0].d,b=w[w.length-1].d; h+='<tr><td>'+a.getDate()+' – '+b.getDate()+' '+MN[b.getMonth()].slice(0,4)+'</td><td>'+(t.ms?human(t.ms):'—')+'</td><td>'+t.days+'</td><td>'+t.pr+'</td></tr>'; });
+    h+='<tr style="font-weight:800;"><td>মোট</td><td>'+human(s.ms)+'</td><td>'+s.days+'</td><td>'+s.pr+'</td></tr></table></div>';
+    h+='<div class="pm-card"><div class="pm-h">🧠 Practice ও শেখা</div><table class="pm-tab"><tr><th>Practice</th><th>💬 বাক্য</th><th>📚 শব্দ</th><th>📖 Story</th><th>🎬 Video</th></tr><tr><td>'+s.pr+'</td><td>'+s.s+'</td><td>'+s.w+'</td><td>'+s.r+'</td><td>'+human(s.vs*1000)+'</td></tr></table></div><div class="pm-note">DeutschFlash · প্রতি মাসে একটু একটু করে এগিয়ে যাও ✨</div>';
+    openPDF(h);
+  };
+
+  // ============ share image (canvas) ============
+  function rr(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+  function mkImage(kind){
+    var isM=(kind==='month'), recs=isM?monRecs(0).days:wkRecs(0), s=sum(recs), strk=(typeof practice!=='undefined'&&practice.streak)||0, title=isM?('📆 '+MN[new Date().getMonth()]+' '+new Date().getFullYear()):'📊 এই সপ্তাহ';
+    var cv=document.createElement('canvas'); cv.width=1080; cv.height=1350; var c=cv.getContext('2d'), F='"Noto Sans Bengali","Hind Siliguri",system-ui,sans-serif';
+    var g=c.createLinearGradient(0,0,1080,1350); g.addColorStop(0,'#2b2fd6'); g.addColorStop(1,'#12134a'); c.fillStyle=g; c.fillRect(0,0,1080,1350);
+    c.fillStyle='#ffffff10'; c.beginPath(); c.arc(960,150,260,0,7); c.fill(); c.beginPath(); c.arc(80,1250,220,0,7); c.fill();
+    c.fillStyle='#fff'; c.font='900 54px '+F; c.fillText('DeutschFlash',70,120);
+    c.fillStyle='#ffd76a'; c.font='800 38px '+F; c.fillText(title,70,185);
+    var nm=(typeof profile!=='undefined'&&profile&&profile.name)?profile.name:''; if(nm){ c.fillStyle='#c8cdff'; c.font='600 32px '+F; c.fillText(nm,70,235); }
+    // big time
+    c.fillStyle='#fff'; c.font='900 150px '+F; var t=human(s.ms); c.fillText(t,70,455); c.fillStyle='#b8bff5'; c.font='600 36px '+F; c.fillText('মোট পড়ার সময়',70,510);
+    // stat tiles
+    var tiles=[[strk+' 🔥','দিনের streak'],[s.days+' দিন','পড়েছি'],[String(s.pr),'Practice'],[human(s.vs*1000),'Video']];
+    tiles.forEach(function(tl,i){ var x=70+(i%2)*470, y=570+Math.floor(i/2)*170; c.fillStyle='#ffffff1c'; rr(c,x,y,440,145,28); c.fill(); c.fillStyle='#fff'; c.font='900 54px '+F; c.fillText(tl[0],x+30,y+75); c.fillStyle='#b8bff5'; c.font='600 30px '+F; c.fillText(tl[1],x+30,y+118); });
+    // bars
+    var n=recs.length, bx=70, bw=940, by=1180, bh=200, mx=Math.max.apply(null,recs.map(function(x){return x.ms;}).concat([60000])), sl=bw/n;
+    recs.forEach(function(x,i){ var h=Math.max(x.ms>0?8:4,bh*x.ms/mx), w=Math.min(70,sl*.62), cx=bx+sl*i+sl/2; c.fillStyle=x.td?'#ffd76a':x.ms>0?'#7fe3ff':'#ffffff30'; rr(c,cx-w/2,by-h,w,h,Math.min(10,w/2)); c.fill(); if(!isM||n<=16){ c.fillStyle='#b8bff5'; c.font='600 24px '+F; c.textAlign='center'; c.fillText(isM?x.l:x.l,cx,by+34); c.textAlign='left'; } });
+    c.fillStyle='#8f95e0'; c.font='600 26px '+F; c.fillText('আমার জার্মান শেখার অগ্রগতি ✨',70,1318);
+    return cv;
+  }
+  var imgCss=document.createElement('style'); imgCss.textContent=
+    '#imgPop{position:fixed;inset:0;z-index:1150;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(5,6,24,.7);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);animation:dlFade .2s ease;}'
+   +'#imgPop .ip-card{width:100%;max-width:360px;max-height:94vh;overflow-y:auto;background:linear-gradient(160deg,var(--card),var(--navy));border:1.5px solid var(--borderL,var(--border));border-radius:26px;padding:16px 16px 14px;text-align:center;box-shadow:0 24px 60px #000a;position:relative;animation:dlUp .38s cubic-bezier(.2,1.1,.3,1);}'
+   +'#imgPop .ip-x{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--navy);color:var(--text);font-size:14px;font-weight:900;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;padding:0;}'
+   +'#imgPop .ip-t{font-size:17px;font-weight:900;color:var(--text);margin:2px 34px 3px;}#imgPop .ip-s{font-size:11.5px;color:var(--sub);margin-bottom:12px;}'
+   +'#imgPop .ip-prev{width:68%;margin:0 auto 12px;border-radius:16px;overflow:hidden;border:2px solid #4361ee66;box-shadow:0 12px 30px #0009;background:#14154f;aspect-ratio:4/5;}#imgPop .ip-prev img{width:100%;height:100%;display:block;object-fit:cover;}'
+   +'#imgPop .ip-file{display:flex;align-items:center;gap:8px;justify-content:center;font-size:11.5px;color:var(--cyan);font-weight:700;margin-bottom:12px;overflow-wrap:anywhere;}'
+   +'#imgPop .ip-b{width:100%;border:none;border-radius:14px;padding:13px;font-size:15px;font-weight:900;color:#fff;cursor:pointer;font-family:var(--font);margin-bottom:8px;}'
+   +'#imgPop .ip-b.p{background:linear-gradient(135deg,#25b87f,#4be0b0);box-shadow:0 8px 22px #25b87f55;}#imgPop .ip-b.s{background:var(--navy);border:1.5px solid var(--border);color:var(--text);font-weight:800;margin-bottom:0;}#imgPop .ip-b[disabled]{opacity:.6;}';
+  document.head.appendChild(imgCss);
+  function toB64(blob,cb){ var fr=new FileReader(); fr.onload=function(){ cb(String(fr.result).split(',')[1]); }; fr.readAsDataURL(blob); }
+  function closeImg(){ var e=document.getElementById('imgPop'); if(e){ try{ URL.revokeObjectURL(e.__url); }catch(_){} e.remove(); } }
+  window.dfShareImg=function(kind){
+    try{
+      closeImg(); showToast('🖼 ছবি বানানো হচ্ছে…');
+      setTimeout(function(){
+        var cv=mkImage(kind||'week'), name='DeutschFlash-'+(kind==='month'?'month':'week')+'-'+new Date().toISOString().slice(0,10)+'.jpg';
+        cv.toBlob(function(blob){
+          if(!blob){ showToast('❗ ছবি বানানো যায়নি'); return; }
+          var url=URL.createObjectURL(blob), b64c=null, p=document.createElement('div'); p.id='imgPop'; p.__url=url;
+          p.innerHTML='<div class="ip-card"><button class="ip-x" type="button" aria-label="বন্ধ করো">✕</button><div class="ip-t">ছবি তৈরি হয়েছে! 🎉</div><div class="ip-s">শেয়ার করো, নয়তো সেভ করে রাখো</div><div class="ip-prev"><img alt=""></div><div class="ip-file">🖼️ <span></span></div><button class="ip-b p" type="button" id="ipShare">📤 শেয়ার করো</button><button class="ip-b s" type="button" id="ipSave">💾 Downloads-এ সেভ করো</button></div>';
+          p.querySelector('img').src=url; p.querySelector('.ip-file span').textContent=name;
+          function data(cb){ if(b64c) cb(b64c); else toB64(blob,function(d){ b64c=d; cb(d); }); }
+          p.addEventListener('click',function(e){ if(e.target===p||e.target.closest('.ip-x')) closeImg(); });
+          p.querySelector('#ipShare').onclick=function(){
+            var btn=this; btn.disabled=true; var old=btn.textContent; btn.textContent='⏳ খুলছে…';
+            function done(){ btn.disabled=false; btn.textContent=old; }
+            if(NB&&NB.shareFile){ data(function(d){ NB.shareFile({name:name,data:d,mime:'image/jpeg',title:'DeutschFlash রিপোর্ট'}).then(done).catch(function(){ done(); showToast('❗ শেয়ার করা যায়নি'); }); }); return; }
+            try{ var f=new File([blob],name,{type:'image/jpeg'}); if(navigator.canShare&&navigator.canShare({files:[f]})){ navigator.share({files:[f],title:'DeutschFlash রিপোর্ট'}).then(done).catch(done); return; } }catch(e){}
+            done(); showToast('ℹ️ এখানে সরাসরি শেয়ার হয় না — "সেভ করো" চাপো');
+          };
+          p.querySelector('#ipSave').onclick=function(){
+            if(NB&&NB.saveFile){ data(function(d){ NB.saveFile({name:name,data:d,mime:'image/jpeg'}).then(function(){ closeImg(); dfDlPop(name,'Downloads ফোল্ডারে'); }).catch(function(){ showToast('❗ সেভ হয়নি'); }); }); return; }
+            var a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); closeImg(); dfDlPop(name,'আপনার Downloads ফোল্ডারে');
+          };
+          document.body.appendChild(p);
+        },'image/jpeg',0.9);
+      },30);
+    }catch(e){ showToast('❗ '+e.message); }
+  };
+
+  // ============ timed Mock test ============
+  var mk=null;
+  function mkStop(){ if(mk&&mk.iv) clearInterval(mk.iv); var c=document.getElementById('xqMockT'); if(c) c.remove(); mk=null; }
+  function mkTick(){ if(!mk) return; var left=Math.max(0,Math.round((mk.end-Date.now())/1000)), c=document.getElementById('xqMockT');
+    if(typeof xq!=='undefined'&&xq.done){ mk.used=Math.round((Date.now()-mk.start)/1000); mkFinish(false); return; }
+    if(!c){ var ct=document.getElementById('xqCounter'); if(ct&&ct.parentNode){ c=document.createElement('span'); c.id='xqMockT'; c.style.cssText='margin-left:8px;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:900;background:#ffd76a22;color:#ffd76a;border:1px solid #ffd76a66;'; ct.parentNode.insertBefore(c,ct.nextSibling); } }
+    if(c){ c.textContent='⏱ '+pad(Math.floor(left/60))+':'+pad(left%60); var low=left<=60; c.style.color=low?'#ff7b8f':'#ffd76a'; c.style.background=low?'#ff5c7a22':'#ffd76a22'; c.style.borderColor=low?'#ff5c7a66':'#ffd76a66'; }
+    if(left<=0){ mk.used=mk.limit; mkFinish(true); } }
+  function mkFinish(timeUp){ var m=mk; if(!m) return; clearInterval(m.iv); m.iv=null; var c=document.getElementById('xqMockT'); if(c) c.remove();
+    if(timeUp&&!xq.done){ var from=xq.locked?xq.i+1:xq.i; for(var i=from;i<xq.qs.length;i++) xq.wrong.push(xq.qs[i]); xq.done=true; xqDraw(); }
+    setTimeout(function(){ var body=document.getElementById('xqBody'); if(!body||!xq.done) return; var first=body.querySelector('.qcard'); if(first&&!first.querySelector('.mk-time')){ var d=document.createElement('div'); d.className='mk-time'; d.style.cssText='margin-top:10px;font-size:13px;font-weight:800;color:'+(timeUp?'#ff7b8f':'#7dffd0')+';'; d.textContent=(timeUp?'⏰ সময় শেষ! ':'⏱ সময় লেগেছে: ')+pad(Math.floor(m.used/60))+':'+pad(m.used%60)+' / '+pad(Math.floor(m.limit/60))+':'+pad(m.limit%60); first.appendChild(d); } },30);
+    mk=null; }
+  var _xqS=xqStart;
+  xqStart=function(title,qs,back){ mkStop(); _xqS(title,qs,back);
+    if(title==='🏁 A1 Mock test'&&qs&&qs.length){ var lim=Math.max(240,qs.length*75); mk={start:Date.now(),end:Date.now()+lim*1000,limit:lim,iv:null}; mk.iv=setInterval(mkTick,500); mkTick(); } };
+  var _xqB=xqBack; xqBack=function(){ mkStop(); _xqB(); };
+
+  // ============ streak warning + widget state ============
+  function sw(){ try{ var v=JSON.parse(localStorage.getItem('df_streakwarn')||'null'); return v||{on:true,h:21,m:0}; }catch(e){ return {on:true,h:21,m:0}; } }
+  function swSave(v){ try{ localStorage.setItem('df_streakwarn',JSON.stringify(v)); }catch(e){} }
+  function todayN(){ return (xs.cal||{})[xpYmd(new Date())]||0; }
+  function syncState(){ try{
+    var o={last:todayN()>0?xpYmd(new Date()):'', streak:(practice&&practice.streak)||0, today:todayN(), goal:(practice&&practice.goal)||5};
+    // if practiced earlier on another day, keep last as the most recent practised day
+    if(!o.last){ var ks=Object.keys(xs.cal||{}).filter(function(k){ return xs.cal[k]>0; }); if(ks.length){ var best=ks.map(function(k){ var p=k.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }).sort(function(a,b){return b-a;})[0]; o.last=xpYmd(best); } }
+    if(NB&&NB.syncState) NB.syncState(o).catch(function(){});
+  }catch(e){} }
+  function sch(){ try{ var v=sw(); if(NB&&NB.scheduleStreak) NB.scheduleStreak({on:!!v.on,hour:v.h,minute:v.m}).catch(function(){}); }catch(e){} }
+  var _rp=recPrac; recPrac=function(n){ _rp(n); syncState(); };
+  window.dfStreakUI=function(){
+    var btn=document.querySelector('#reminderModal button[onclick*="testReminder"]'); if(!btn||document.getElementById('rmStreak')) return;
+    var v=sw(), d=document.createElement('div'); d.id='rmStreak'; d.style.cssText='margin:0 0 18px;background:linear-gradient(135deg,#2a1208,#1d0d2e);border:1.5px solid #ff8a3d55;border-radius:16px;padding:14px;';
+    d.innerHTML='<label style="display:flex;align-items:center;gap:10px;cursor:pointer;"><input type="checkbox" id="rmStreakOn" '+(v.on?'checked':'')+' style="width:20px;height:20px;accent-color:#ff8a3d;"/><span style="flex:1;"><span style="display:block;font-size:14px;font-weight:900;color:#fff;">🔥 Streak সতর্কতা</span><span style="display:block;font-size:11px;color:#c9b5d8;margin-top:2px;">আজ পড়া না হলে, নিচের সময়ে মনে করিয়ে দেবে</span></span></label><div style="display:flex;align-items:center;gap:10px;margin-top:10px;"><span style="font-size:12px;color:#c9b5d8;">সময়:</span><input type="time" id="rmStreakT" value="'+pad(v.h)+':'+pad(v.m)+'" style="background:#0b0d28;border:1.5px solid #ff8a3d66;border-radius:10px;color:#fff;font-size:18px;font-weight:800;padding:6px 10px;font-family:var(--font);"/></div>';
+    btn.parentNode.insertBefore(d,btn);
+  };
+  function swRead(){ var on=document.getElementById('rmStreakOn'), t=document.getElementById('rmStreakT'); if(!on||!t) return; var p=String(t.value||'21:00').split(':'); swSave({on:on.checked,h:+p[0]||21,m:+p[1]||0}); sch(); }
+  var _sr=window.saveReminder; if(typeof _sr==='function'){ window.saveReminder=function(){ try{ swRead(); }catch(e){} return _sr.apply(this,arguments); }; }
+  var _oR=openReminderModal; openReminderModal=function(){ _oR.apply(this,arguments); setTimeout(window.dfStreakUI,50); };
+  // browser fallback: only while the page is open
+  function webWarn(){ try{ var v=sw(); if(!v.on||NB) return; var n=new Date(), key=xpYmd(n); if(todayN()>0||localStorage.getItem('df_sw_done')===key) return; if(n.getHours()*60+n.getMinutes()<v.h*60+v.m) return;
+    if(!('Notification' in window)||Notification.permission!=='granted') return; new Notification('DeutschFlash 🔥',{body:'আজ এখনো পড়োনি! '+((practice&&practice.streak)||0)+' দিনের streak ধরে রাখো।'}); localStorage.setItem('df_sw_done',key); }catch(e){} }
+  setInterval(webWarn,60000);
+
+  // ============ backup + share ============
+  function backupJSON(){ var b={version:2,exportedAt:new Date().toISOString(),decks:decks,folders:folders,sfolders:sfolders,sfiles:sfiles,practice:practice,profile:profile,reminder:reminder,xs:(typeof xs!=='undefined'?xs:null)}; return JSON.stringify(b); }
+  function b64(str){ return btoa(unescape(encodeURIComponent(str))); }
+  function bkName(){ return 'DeutschFlash-backup-'+new Date().toISOString().slice(0,10)+'.json'; }
+  function lastBk(){ try{ return Number(localStorage.getItem('df_lastbk')||0); }catch(e){ return 0; } }
+  function setLastBk(){ try{ localStorage.setItem('df_lastbk',String(Date.now())); }catch(e){} }
+  function autoOn(){ try{ return localStorage.getItem('df_autobk')!=='0'; }catch(e){ return true; } }
+  window.dfBkNow=function(){ if(NB&&NB.saveFile){ NB.saveFile({name:bkName(),data:b64(backupJSON()),mime:'application/json'}).then(function(){ setLastBk(); showToast('💾 Backup Downloads ফোল্ডারে সেভ হয়েছে'); dfBackupOpen(); }).catch(function(){ showToast('❗ Backup সেভ হয়নি'); }); } else { exportBackup(); setLastBk(); setTimeout(dfBackupOpen,300); } };
+  window.dfBkShare=function(){ var n=bkName(), d=b64(backupJSON());
+    if(NB&&NB.shareFile){ NB.shareFile({name:n,data:d,mime:'application/json',title:'DeutschFlash Backup'}).then(function(){ setLastBk(); }).catch(function(){ showToast('❗ শেয়ার করা যায়নি'); }); return; }
+    try{ var f=new File([backupJSON()],n,{type:'application/json'}); if(navigator.canShare&&navigator.canShare({files:[f]})){ navigator.share({files:[f],title:'DeutschFlash Backup'}).then(setLastBk).catch(function(){}); return; } }catch(e){}
+    exportBackup(); setLastBk(); };
+  window.dfBkAuto=function(on){ try{ localStorage.setItem('df_autobk',on?'1':'0'); }catch(e){} showToast(on?'✅ Auto backup চালু (প্রতি ৭ দিনে)':'⏸ Auto backup বন্ধ'); };
+  window.dfBackupOpen=function(){
+    var lb=lastBk(), when=lb?new Date(lb).toLocaleString('bn-BD',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}):'এখনো হয়নি';
+    var h='<div style="text-align:center;"><div style="width:62px;height:62px;margin:0 auto 10px;border-radius:20px;background:linear-gradient(135deg,#0f9d77,#34d3a0);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 8px 22px #0f9d7755;">🛡️</div><div style="font-size:19px;font-weight:900;color:var(--text);">Backup ও শেয়ার</div><div style="font-size:12px;color:var(--sub);margin:4px 0 14px;">শেষ backup: <b style="color:var(--cyan);">'+when+'</b></div>'
+      +'<button class="btn btn-blue btn-full" style="margin-bottom:8px;" onclick="dfBkNow()">💾 এখনই Backup নাও</button><button class="btn btn-gold btn-full" style="margin-bottom:8px;" onclick="dfBkShare()">📤 Drive / WhatsApp / Gmail-এ পাঠাও</button>'
+      +'<label style="display:flex;align-items:center;gap:10px;background:var(--navy);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin:6px 0 8px;text-align:left;cursor:pointer;"><input type="checkbox" '+(autoOn()?'checked':'')+' onchange="dfBkAuto(this.checked)" style="width:20px;height:20px;"/><span style="flex:1;font-size:13px;font-weight:800;color:var(--text);">🔄 Auto backup (প্রতি ৭ দিনে)<small style="display:block;font-weight:500;color:var(--sub);margin-top:2px;">'+(NB?'Downloads ফোল্ডারে নিজে থেকে সেভ হবে':'শুধু APK অ্যাপে নিজে থেকে হয়')+'</small></span></label>'
+      +'<button class="btn btn-ghost btn-full" onclick="closeModal()">বন্ধ করো</button></div>';
+    document.getElementById('modalBody').innerHTML=h; document.getElementById('modalOverlay').classList.add('open'); };
+  function autoBk(){ try{ if(!NB||!NB.saveFile||!autoOn()) return; var lb=lastBk(); if(lb&&Date.now()-lb<7*864e5) return; if(!lb){ setLastBk(); return; } NB.saveFile({name:bkName(),data:b64(backupJSON()),mime:'application/json'}).then(setLastBk).catch(function(){}); }catch(e){} }
+
+  // ============ entry points ============
+  function mini(){ var M=monRecs(0), s=sum(M.days), G=mgoalMin(M.days.length), pc=Math.min(100,Math.round(s.ms/60000/G*100));
+    return '<div onclick="mrOpen(\'progress\')" style="cursor:pointer;background:linear-gradient(135deg,#0b4a63,#0d1b4d);border:1px solid #2a7a9a;border-radius:20px;padding:14px 16px;margin:0 0 12px;color:#fff;"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-size:14px;font-weight:900;">📆 মাসিক রিপোর্ট</div><div style="font-size:11px;opacity:.75;">রিপোর্ট দেখো ›</div></div><div style="display:flex;align-items:baseline;gap:8px;margin:8px 0;"><div style="font-size:26px;font-weight:900;">'+human(s.ms)+'</div><div style="font-size:12px;opacity:.75;">/ '+human(G*60000)+' লক্ষ্য · এই মাস</div></div><div style="height:9px;background:#ffffff22;border-radius:9px;overflow:hidden;"><div style="height:100%;width:'+pc+'%;background:'+(pc>=100?'#2dd4a0':'linear-gradient(90deg,#7fe3ff,#4361ee)')+';"></div></div><div style="display:flex;gap:8px;margin-top:10px;"><span onclick="event.stopPropagation();dfShareImg(\'week\')" style="flex:1;text-align:center;background:#ffffff1c;border-radius:10px;padding:7px 0;font-size:12px;font-weight:800;">🖼 ছবি শেয়ার</span><span onclick="event.stopPropagation();dfBackupOpen()" style="flex:1;text-align:center;background:#ffffff1c;border-radius:10px;padding:7px 0;font-size:12px;font-weight:800;">🛡️ Backup</span></div></div>'; }
+  var _rp2=xpRenderProgress;
+  xpRenderProgress=function(){ _rp2(); try{ var el=document.getElementById('tabProgress'); if(!el) return; var old=el.querySelector('#mrMiniP'); if(old) old.remove(); var anchor=el.querySelector('#vrMiniP'); var box=document.createElement('div'); box.id='mrMiniP'; box.innerHTML=mini();
+    if(anchor) anchor.parentNode.insertBefore(box,anchor.nextSibling); else { var tgt=null; el.querySelectorAll('.pg-sec').forEach(function(x){ if(/সব টুল/.test(x.textContent)) tgt=x; }); if(tgt) tgt.parentNode.insertBefore(box,tgt); } }catch(e){} };
+  // share + monthly buttons on the weekly page
+  var wo=new MutationObserver(function(){ var b=document.getElementById('pgWeeklyBody'); if(!b||b.querySelector('#wkExtra')) return; var d=document.createElement('div'); d.id='wkExtra'; d.style.cssText='display:flex;gap:8px;margin-top:8px;'; d.innerHTML='<button class="btn btn-ghost" style="flex:1;" onclick="dfShareImg(\'week\')">🖼 ছবি শেয়ার</button><button class="btn btn-ghost" style="flex:1;" onclick="mrOpen(\'weekly\')">📆 মাসিক রিপোর্ট</button>'; b.appendChild(d); });
+  var wt=setInterval(function(){ var b=document.getElementById('pgWeeklyBody'); if(b){ wo.observe(b,{childList:true}); wo.takeRecords(); if(!b.querySelector('#wkExtra')){ var d=document.createElement('div'); d.id='wkExtra'; d.style.cssText='display:flex;gap:8px;margin-top:8px;'; d.innerHTML='<button class="btn btn-ghost" style="flex:1;" onclick="dfShareImg(\'week\')">🖼 ছবি শেয়ার</button><button class="btn btn-ghost" style="flex:1;" onclick="mrOpen(\'weekly\')">📆 মাসিক রিপোর্ট</button>'; b.appendChild(d); } clearInterval(wt); } },700);
+  setTimeout(function(){ syncState(); sch(); autoBk(); },4000);
+  document.addEventListener('visibilitychange',function(){ if(document.hidden){ syncState(); } else { autoBk(); } });
+})();
+</script>
+<script>
+// ── Download-complete popup (replaces the plain toast for saved/downloaded files) ──
+(function(){
+  var ICON={pdf:['📕','#ff5c7a'],json:['🗂️','#34d3a0'],txt:['📝','#7fe3ff'],docx:['📘','#4a8bff'],png:['🖼️','#c06aff'],jpg:['🖼️','#c06aff'],csv:['📊','#ffd76a'],apk:['📦','#34d3a0']};
+  var css=document.createElement('style'); css.textContent=
+    '#dlPop{position:fixed;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(5,6,24,.62);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:dlFade .2s ease;}'
+   +'#dlPop .dl-card{width:100%;max-width:340px;background:linear-gradient(160deg,var(--card),var(--navy));border:1.5px solid var(--borderL,var(--border));border-radius:26px;padding:26px 22px 18px;text-align:center;box-shadow:0 24px 60px #000a;position:relative;overflow:hidden;animation:dlUp .38s cubic-bezier(.2,1.1,.3,1);}'
+   +'#dlPop .dl-glow{position:absolute;top:-60px;left:50%;width:220px;height:160px;transform:translateX(-50%);background:radial-gradient(closest-side,#34d3a055,transparent);pointer-events:none;}'
+   +'#dlPop .dl-ok{position:relative;width:74px;height:74px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#1fb883,#5ff0c0);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px #1fb88366;animation:dlPopIn .5s .1s cubic-bezier(.2,1.4,.4,1) both;}'
+   +'#dlPop .dl-ok svg{width:40px;height:40px;}#dlPop .dl-ok path{stroke-dasharray:40;stroke-dashoffset:40;animation:dlDraw .45s .45s ease forwards;}'
+   +'#dlPop .dl-t{font-size:20px;font-weight:900;color:var(--text);position:relative;}#dlPop .dl-s{font-size:12px;color:var(--sub);margin:4px 0 16px;position:relative;}'
+   +'#dlPop .dl-file{display:flex;align-items:center;gap:12px;background:var(--navy);border:1px solid var(--border);border-radius:16px;padding:11px 12px;text-align:left;margin-bottom:14px;position:relative;}'
+   +'#dlPop .dl-ic{width:44px;height:44px;flex:0 0 44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;}'
+   +'#dlPop .dl-nm{font-size:13px;font-weight:800;color:var(--text);overflow-wrap:anywhere;line-height:1.35;}#dlPop .dl-loc{font-size:11px;color:var(--cyan);margin-top:3px;font-weight:700;}'
+   +'#dlPop .dl-btn{width:100%;border:none;border-radius:14px;padding:13px;font-size:15px;font-weight:900;color:#fff;background:linear-gradient(135deg,#3a4be0,#6a8bff);cursor:pointer;font-family:var(--font);position:relative;box-shadow:0 8px 22px #3a4be055;}'
+   +'#dlPop .dl-bar{height:3px;background:var(--border);border-radius:3px;margin-top:12px;overflow:hidden;position:relative;}#dlPop .dl-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#34d3a0,#7fe3ff);transform-origin:left;animation:dlBar 4.5s linear forwards;}'
+   +'@keyframes dlFade{from{opacity:0}}@keyframes dlUp{from{opacity:0;transform:translateY(24px) scale(.94)}}@keyframes dlPopIn{from{transform:scale(0)}}@keyframes dlDraw{to{stroke-dashoffset:0}}@keyframes dlBar{to{transform:scaleX(0)}}';
+  document.head.appendChild(css);
+  var tmr=null;
+  function close(){ var p=document.getElementById('dlPop'); if(p) p.remove(); clearTimeout(tmr); }
+  window.dfDlPop=function(name,where){
+    close(); var ext=(String(name).split('.').pop()||'').toLowerCase(), ic=ICON[ext]||['📄','#8a90ff'];
+    var p=document.createElement('div'); p.id='dlPop';
+    p.innerHTML='<div class="dl-card"><div class="dl-glow"></div><div class="dl-ok"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+      +'<div class="dl-t">ডাউনলোড সম্পন্ন!</div><div class="dl-s">ফাইলটি সফলভাবে সেভ হয়েছে</div>'
+      +'<div class="dl-file"><div class="dl-ic" style="background:'+ic[1]+'26;border:1px solid '+ic[1]+'55;">'+ic[0]+'</div><div style="min-width:0;flex:1;"><div class="dl-nm"></div><div class="dl-loc">📁 '+(where||'Downloads ফোল্ডারে')+'</div></div></div>'
+      +'<button class="dl-btn" type="button">ঠিক আছে</button><div class="dl-bar"><i></i></div></div>';
+    p.querySelector('.dl-nm').textContent=name;
+    p.addEventListener('click',function(e){ if(e.target===p||e.target.closest('.dl-btn')) close(); });
+    document.body.appendChild(p); tmr=setTimeout(close,4600);
+  };
+  function parse(msg){
+    var s=String(msg), m;
+    if((m=s.match(/Downloads ফোল্ডারে সেভ হয়েছে:\s*(.+)$/))) return m[1].trim();
+    if((m=s.match(/^⬇️\s*(\S+\.\w{2,5})\s+download হয়েছে/))) return m[1];
+    if(/Backup download হয়েছে/.test(s)) return 'DeutschFlash-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    if(/Backup Downloads ফোল্ডারে সেভ হয়েছে/.test(s)) return 'DeutschFlash-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    if(/Word file download হয়েছে/.test(s)) return 'DeutschFlash.docx';
+    if(/ছবি download হয়েছে/.test(s)) return 'DeutschFlash-report.png';
+    return null;
+  }
+  var _st=showToast;
+  showToast=function(msg,a,b){ try{ var n=(typeof msg==='string')?parse(msg):null; if(n){ var apk=/Downloads ফোল্ডারে/.test(msg); dfDlPop(n,apk?'Downloads ফোল্ডারে':'আপনার Downloads ফোল্ডারে'); return; } }catch(e){} return _st.apply(this,arguments); };
 })();
 </script>
 <script>
