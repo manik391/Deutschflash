@@ -8023,7 +8023,9 @@ try{ xhRender(); }catch(e){ console.error(e); }
   window.glWrongPdf=function(){ var seen={}, list=[]; (xq.wrong||[]).forEach(function(q){ if(q.glit&&!seen[q.glit.d]){ seen[q.glit.d]=1; list.push(q.glit); } }); if(!list.length) return;
     var B=book(), h='<div class="sp-pdf gl-pdf"><div class="gl-bar">আমার ভুল শব্দ ('+list.length+'টি)</div>'; list.forEach(function(it,i){ h+=cardHtml(it,i+1); }); openPDF(h+'</div>'); };
   // ---- কুইজ PDF (প্রশ্নপত্র + আলাদা উত্তরপত্র, Glossar বা Story শব্দ থেকে) ----
-  var PS='g', PK='0', PSI=-1, PM='de2bn', PN=20;
+  var PS='g', PK='0', PSS=[], PM='de2bn', PN=20, PW=[];
+  var PWL=[['Nomen','Nomen'],['Pronomen','Pronomen'],['Adjektiv','Adjektiv'],['Verb','Verb'],['Präposition','Präposition']];
+  function posOfItem(it){ var w=qw(it); try{ var o=xs&&xs.pos&&xs.pos[w.toLowerCase()]; if(o) return o; }catch(e){} if(it.v) return 'Verb'; return pfPosGuess(w); }
   var PML=[['de2bn','জার্মান → বাংলা'],['bn2de','বাংলা → জার্মান'],['artikel','der / die / das'],['mix','মিশ্র']];
   var PNL=[20,50,100,150,200,0];
   var AR2=/^(der|die|das)\s+(.+)$/i;
@@ -8035,24 +8037,27 @@ try{ xhRender(); }catch(e){ console.error(e); }
     try{ (sfiles||[]).forEach(function(f){ (f.items||[]).forEach(function(it){ if(it.story&&it.vocab&&it.vocab.length&&!titles[it.title]){ titles[it.title]=1; (out.E=out.E||[]).push({title:it.title||'Story', items:it.vocab.map(function(v){ return {d:v.de,b:v.bn}; })}); } }); }); }catch(e){}
     return out; }
   function cleanItems(arr){ var seen={}, out=[]; arr.forEach(function(it){ if(!it||!it.d||!it.b) return; var w=qw(it); if(!w||/^(der|die|das)(\s*\/\s*(der|die|das))*$/i.test(w)) return; var k=w.toLowerCase(); if(seen[k]) return; seen[k]=1; out.push(it); }); return out; }
-  function pSource(){
+  function pSource(noPos){
     var B=book(), items=[], key, label;
     if(PS==='s'){
       var SD=storyData(), ks=(PK==='0')?Object.keys(SD).sort(function(a,b){ return (a==='E')-(b==='E')||(+a)-(+b); }):[PK];
-      var one=(PK!=='0'&&PSI>=0&&SD[PK]&&SD[PK][PSI])?SD[PK][PSI]:null;
-      if(one){ items=one.items; label=(PK==='E'?'নিজের Story':'Kapitel '+PK)+' · '+one.title; key='s:'+PK+':'+PSI; }
+      var pick=(PK!=='0'&&SD[PK])?PSS.filter(function(i){ return SD[PK][i]; }).sort(function(a,b){return a-b;}):[];
+      if(pick.length){ pick.forEach(function(i){ items=items.concat(SD[PK][i].items); }); label=(PK==='E'?'নিজের Story':'Kapitel '+PK)+' · '+pick.map(function(i){ return SD[PK][i].title; }).join(' + '); key='s:'+PK+':'+pick.join(','); }
       else { ks.forEach(function(k){ (SD[k]||[]).forEach(function(st){ items=items.concat(st.items); }); }); label=(PK==='0')?'সব Story':((PK==='E'?'নিজের Story':'Kapitel '+PK)+' · সব Story'); key='s:'+PK+':*'; }
     } else {
       var ks2=kList(PK); ks2.forEach(function(k){ items=items.concat(ents([k]).map(function(e){ return e.it; })); });
       label=(+PK)?('Kapitel '+PK+': '+(B[PK]?B[PK].t:'')):'সব Kapitel'; key='g:'+PK;
     }
-    return {key:key,label:label,items:cleanItems(items)}; }
+    items=cleanItems(items);
+    if(PW.length&&!noPos){ items=items.filter(function(it){ return PW.indexOf(posOfItem(it))>=0; }); label+=' · '+PW.join('+'); key+='|w:'+PW.slice().sort().join(','); }
+    return {key:key,label:label,items:items}; }
   function usedStore(){ var u=loadLS('df_qused',{}); return (u&&typeof u==='object')?u:{}; }
   function pRead(){ /* nothing to read from DOM: state is kept in variables */ }
   window.glPSet=function(kind,val){
-    if(kind==='src'){ PS=val; PK='0'; PSI=-1; }
-    else if(kind==='k'){ PK=String(val); PSI=-1; }
-    else if(kind==='st'){ PSI=+val; }
+    if(kind==='src'){ PS=val; PK='0'; PSS=[]; }
+    else if(kind==='k'){ PK=String(val); PSS=[]; }
+    else if(kind==='st'){ if(val==='all') PSS=[]; else { var iv=+val, ix=PSS.indexOf(iv); if(ix<0) PSS.push(iv); else PSS.splice(ix,1); var Ln=(storyData()[PK]||[]).length; if(PSS.length>=Ln) PSS=[]; } var sh=document.querySelector('#modalOverlay .modal-sheet'), sy=sh?sh.scrollTop:0; glQpdfMenu(); if(sh) sh.scrollTop=sy; return; }
+    else if(kind==='w'){ if(val==='all') PW=[]; else { var wi=PW.indexOf(val); if(wi<0) PW.push(val); else PW.splice(wi,1); if(PW.length>=PWL.length) PW=[]; } }
     else if(kind==='m'){ PM=val; }
     else if(kind==='n'){ PN=+val; }
     glQpdfMenu(); };
@@ -8066,7 +8071,11 @@ try{ xhRender(); }catch(e){ console.error(e); }
     Object.keys(B).map(Number).sort(function(a,b){return a-b;}).forEach(function(k){ h+='<option value="'+k+'"'+(PK===String(k)?' selected':'')+'>Kapitel '+k+': '+esc2(B[k].t)+'</option>'; });
     if(PS==='s'&&(storyData().E||[]).length) h+='<option value="E"'+(PK==='E'?' selected':'')+'>নিজের Story</option>';
     h+='</select>';
-    if(PS==='s'&&PK!=='0'){ var SL=storyData()[PK]||[]; h+='<div class="gl-lbl">Story</div><select class="gl-sel" onchange="glPSet(\'st\',this.value)"><option value="-1"'+(PSI<0?' selected':'')+'>সব Story একসাথে ('+SL.length+'টি)</option>'+SL.map(function(st,i){ return '<option value="'+i+'"'+(PSI===i?' selected':'')+'>'+esc2(st.title)+' ('+cleanItems(st.items).length+' শব্দ)</option>'; }).join('')+'</select>'; }
+    if(PS==='s'&&PK!=='0'){ var SL=storyData()[PK]||[], allOn=!PSS.length;
+      function mrow(on,txt,sub,val){ return '<div onclick="glPSet(\'st\',\''+val+'\')" style="display:flex;align-items:center;gap:11px;padding:11px 12px;margin-bottom:7px;border-radius:13px;cursor:pointer;border:1.5px solid '+(on?'var(--blue)':'var(--border)')+';background:'+(on?'rgba(67,97,238,.16)':'var(--card)')+';"><span style="flex:0 0 22px;width:22px;height:22px;border-radius:7px;border:2px solid '+(on?'var(--blue)':'var(--muted)')+';background:'+(on?'var(--blue)':'transparent')+';color:#fff;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;">'+(on?'✓':'')+'</span><span style="flex:1;min-width:0;font-size:13.5px;font-weight:700;color:var(--text);line-height:1.35;">'+txt+'<small style="display:block;font-weight:600;color:var(--sub);font-size:11px;margin-top:1px;">'+sub+'</small></span></div>'; }
+      h+='<div class="gl-lbl">Story <span style="font-weight:600;color:var(--sub);">(একটা বা একাধিক বেছে নাও)</span></div>'+mrow(allOn,'সব Story একসাথে',SL.length+'টি Story','all')+SL.map(function(st,i){ return mrow(PSS.indexOf(i)>=0,esc2(st.title),cleanItems(st.items).length+' শব্দ',i); }).join('')+(PSS.length>1?'<div style="font-size:11.5px;color:var(--cyan);font-weight:700;margin:-2px 0 8px;">✓ '+PSS.length+'টি Story একসাথে বাছা হয়েছে</div>':''); }
+    var pc={}; pSource(true).items.forEach(function(it){ var p=posOfItem(it); pc[p]=(pc[p]||0)+1; });
+    h+='<div class="gl-lbl">শব্দের ধরন (Wortart) <span style="font-weight:600;color:var(--sub);">(এক বা একাধিক বেছে নাও)</span></div><div><span class="gl-chip'+(PW.length?'':' on')+'" onclick="glPSet(\'w\',\'all\')">🔀 মিশ্র (সব)</span>'+PWL.map(function(x){ return '<span class="gl-chip'+(PW.indexOf(x[0])>=0?' on':'')+'" onclick="glPSet(\'w\',\''+x[0]+'\')">'+x[1]+' <small style="opacity:.75;">'+(pc[x[0]]||0)+'</small></span>'; }).join('')+'</div>';
     h+='<div class="gl-lbl">ধরন</div><div>'+chipRow(PML,PM,'m')+'</div>';
     h+='<div class="gl-lbl">কয়টা প্রশ্ন?</div><div>'+PNL.map(function(n){ return '<span class="gl-chip'+(n===PN?' on':'')+'" onclick="glPSet(\'n\',\''+n+'\')">'+(n?n:'সব শব্দ')+'</span>'; }).join('')+'</div>';
     h+='<div style="font-size:12px;color:var(--sub);margin:6px 0 4px;line-height:1.6;">এই উৎসে মোট <b style="color:var(--text);">'+tot+'</b> শব্দ · আগে এসেছে <b style="color:var(--text);">'+usedN+'</b> · নতুন বাকি <b style="color:var(--gold);">'+(tot-usedN)+'</b><br>আগের বার যে শব্দ এসেছে সেগুলো পরেরবার আসবে না।</div>';
@@ -8074,11 +8083,12 @@ try{ xhRender(); }catch(e){ console.error(e); }
     h+='<button class="btn btn-blue btn-full" style="margin-top:8px;" onclick="glQpdfGo()">📄 প্রশ্নপত্র PDF বানাও</button>';
     var last=loadLS('df_qlast',null);
     if(last&&last.secs) h+='<button class="btn btn-gold btn-full" style="margin-top:6px;" onclick="glAnsPdf()">📋 উত্তরপত্র PDF (শেষ প্রশ্নপত্রের · '+last.n+' প্রশ্ন)</button><div style="font-size:11px;color:var(--sub);text-align:center;margin-top:3px;">'+esc2(last.label)+' · '+esc2(last.type)+'</div>';
+    h+='<button class="btn btn-ghost btn-full" style="margin-top:8px;border-color:var(--gold);" onclick="glResMenu()">🧾 পরীক্ষার ফলাফল / Answer sheet (ম্যানুয়াল বা PDF আপলোড)</button>';
     h+='<button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="closeModal()">✕ বন্ধ</button>';
     openM(h); };
   window.glQpdfGo=function(){
     var src=pSource(), W=src.items, notes=[];
-    if(!W.length){ showToast('❗ এই উৎসে কোনো শব্দ নেই'); return; }
+    if(!W.length){ showToast(PW.length?'❗ এই উৎসে '+PW.join('/')+' ধরনের কোনো শব্দ নেই':'❗ এই উৎসে কোনো শব্দ নেই'); return; }
     var U=usedStore(), used=U[src.key]||{};
     var cand=(PM==='artikel')?W.filter(function(it){ return AR2.test(qw(it)); }):W;
     if(!cand.length){ showToast('❗ এই উৎসে article-সহ Nomen নেই'); return; }
@@ -8095,16 +8105,176 @@ try{ xhRender(); }catch(e){ console.error(e); }
     ['de2bn','bn2de','artikel'].forEach(function(m){ var L=B2[m]; if(!L.length) return; var S={t:(PM==='mix'?{de2bn:'A · ',bn2de:'B · ',artikel:'C · '}[m]:'')+TT[m],qs:[]};
       sec+='<div class="qz-sec">'+esc2(S.t)+'</div>';
       L.forEach(function(q){ num++; S.qs.push({n:num,p:q.p,a:q.a}); sec+='<div class="qz-q"><span class="qz-n">'+num+'</span><span class="qz-p">'+esc2(q.p)+'</span><span class="qz-l"></span></div>'; }); secs.push(S); });
-    saveLS('df_qlast',{label:src.label,type:QMN(PM),n:num,secs:secs,date:new Date().toISOString().slice(0,10)});
-    var h='<div class="sp-pdf qz-pdf"><div class="qz-top"><div class="qz-t">DeutschFlash · Wortschatz-Test</div><div class="qz-s">'+esc2(src.label)+' · '+esc2(QMN(PM))+' · '+num+' প্রশ্ন</div></div><div class="qz-meta"><span>নাম: ______________</span><span>তারিখ: __________</span><span>নম্বর: ____ / '+num+'</span></div>'+sec+'</div>';
+    var pid=Date.now(), paper={id:pid,label:src.label,type:QMN(PM),n:num,secs:secs,date:new Date().toISOString().slice(0,10)}; saveLS('df_qlast',paper); var hs=histAll(); hs=hs.filter(function(x){ return x.id!==pid; }); hs.unshift(paper); saveLS('df_qhist',hs.slice(0,30));
+    var h='<div class="sp-pdf qz-pdf"><div class="qz-top"><div class="qz-t">DeutschFlash · Wortschatz-Test</div><div class="qz-s">'+esc2(src.label)+' · '+esc2(QMN(PM))+' · '+num+' প্রশ্ন</div><div class="qz-s" style="font-size:10px;opacity:.55;margin-top:2px;">Paper ID: DF-'+pid+'</div></div><div class="qz-meta"><span>নাম: ______________</span><span>তারিখ: __________</span><span>নম্বর: ____ / '+num+'</span></div>'+sec+'</div>';
     closeModal(); if(notes.length) showToast('ℹ️ '+notes.join(' · '));
     setTimeout(function(){ openPDF(h); },60); };
   window.glAnsPdf=function(){
     var last=loadLS('df_qlast',null); if(!last||!last.secs){ showToast('❗ আগে প্রশ্নপত্র বানান'); return; }
-    var key='';
-    last.secs.forEach(function(S){ key+='<div class="qz-sec" style="column-span:all;">'+esc2(S.t)+'</div>'; S.qs.forEach(function(q){ key+='<div><b>'+q.n+'.</b> '+esc2(q.p)+' → <b style="color:#111;">'+esc2(q.a)+'</b></div>'; }); });
-    var h='<div class="sp-pdf qz-pdf"><div class="qz-top"><div class="qz-t">উত্তরপত্র · Antworten</div><div class="qz-s">'+esc2(last.label)+' · '+esc2(last.type)+' · '+last.n+' প্রশ্ন · '+esc2(last.date||'')+'</div></div><div class="qz-ks">'+key+'</div></div>';
+    ansPdfOf(last); };
+  // ═══ পরীক্ষার ফলাফল / উত্তরপত্র: ম্যানুয়াল + PDF আপলোড ═══
+  var st3=document.createElement('style'); st3.textContent=
+   '.rs-in{width:100%;box-sizing:border-box;padding:9px 11px;border-radius:11px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:13.5px;font-weight:600;margin-bottom:8px;font-family:inherit;}'
+  +'.rs-row{border:1.5px solid var(--border);background:var(--card);border-radius:13px;padding:9px 10px;margin-bottom:8px;}'
+  +'.rs-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}'
+  +'.rs-n{flex:none;min-width:28px;text-align:center;font-size:12px;font-weight:800;color:#fff;background:#1e88e5;border-radius:10px;padding:2px 7px;}'
+  +'.rs-q{flex:1;min-width:0;font-size:13px;font-weight:700;color:var(--text);line-height:1.35;word-break:break-word;}'
+  +'.rs-b{flex:none;width:38px;height:34px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--sub);font-size:17px;font-weight:900;cursor:pointer;}'
+  +'.rs-b.ok{background:#16a34a;border-color:#16a34a;color:#fff;}.rs-b.no{background:#dc2626;border-color:#dc2626;color:#fff;}'
+  +'.rs-sum{position:sticky;bottom:0;background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:9px 12px;margin:8px 0;font-size:13px;font-weight:800;color:var(--text);text-align:center;}'
+  +'.rs-t{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px;}.rs-t th{background:#0f1730;color:#fff;padding:6px 7px;text-align:left;font-size:12.5px;}.rs-t td{border-bottom:1px solid #cfd6e6;padding:6px 7px;vertical-align:top;}'
+  +'.rs-box{display:flex;gap:8px;margin:10px 0;}.rs-box div{flex:1;border:2px solid #cfd6e6;border-radius:10px;padding:8px;text-align:center;font-size:12px;font-weight:700;}.rs-box b{display:block;font-size:20px;margin-top:2px;}';
+  document.head.appendChild(st3);
+  function histAll(){ var h=loadLS('df_qhist',[]); if(!Array.isArray(h)) h=[]; if(!h.length){ var l=loadLS('df_qlast',null); if(l&&l.secs) h=[l]; } return h; }
+  function paperQs(P){ var out=[]; (P.secs||[]).forEach(function(S){ (S.qs||[]).forEach(function(q){ out.push({p:q.p,a:q.a,s:'',ok:null}); }); }); return out; }
+  function resultsAll(){ var r=loadLS('df_results',[]); return Array.isArray(r)?r:[]; }
+  function todayISO(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+  // ---- উত্তরপত্র PDF (যেকোনো প্রশ্নপত্রের) ----
+  function ansPdfOf(P){
+    var key=''; P.secs.forEach(function(S){ if(S.t) key+='<div class="qz-sec" style="column-span:all;">'+esc2(S.t)+'</div>'; S.qs.forEach(function(q){ key+='<div><b>'+q.n+'.</b> '+esc2(q.p)+' → <b style="color:#111;">'+esc2(q.a||'—')+'</b></div>'; }); });
+    var h='<div class="sp-pdf qz-pdf"><div class="qz-top"><div class="qz-t">উত্তরপত্র · Antworten</div><div class="qz-s">'+esc2(P.label)+' · '+esc2(P.type||'')+' · '+P.n+' প্রশ্ন · '+esc2(P.date||'')+'</div></div><div class="qz-ks">'+key+'</div></div>';
+    closeModal(); setTimeout(function(){ openPDF(h); },60); }
+  // ---- ফলাফল ----
+  var R={pid:0,label:'',name:'',date:'',marks:'',total:'',rows:[],id:0};
+  function rCounts(){ var c=0,w=0; R.rows.forEach(function(r){ if(r.ok===true) c++; else if(r.ok===false) w++; }); return {c:c,w:w,u:R.rows.length-c-w}; }
+  function rRecord(){ var k=rCounts(); return {id:R.id||Date.now(),name:R.name,date:R.date,label:R.label,pid:R.pid,marks:(R.marks!==''?R.marks:String(k.c)),total:(R.total!==''?R.total:String(R.rows.length)),c:k.c,w:k.w,u:k.u,rows:R.rows.map(function(x){ return {p:x.p,a:x.a,s:x.s,ok:x.ok}; })}; }
+  window.glResMenu=function(){
+    var L=resultsAll(), h='<div style="text-align:center;font-size:18px;font-weight:900;color:var(--text);margin-bottom:4px;">🧾 পরীক্ষার ফলাফল / Answer sheet</div><div style="text-align:center;font-size:12px;color:var(--sub);margin-bottom:12px;">পরীক্ষা নেওয়ার পর ফলাফল রাখুন — দুইটা আলাদা উপায়</div>';
+    h+='<button class="btn btn-blue btn-full" style="margin-bottom:8px;" onclick="glResNew()">✍️ ম্যানুয়ালি লিখব<br><small style="font-weight:600;opacity:.85;">নাম · তারিখ · নম্বর · ১, ২, ৩ ক্রমে সঠিক/ভুল</small></button>';
+    h+='<button class="btn btn-gold btn-full" style="margin-bottom:8px;" onclick="glResUpload()">📤 PDF আপলোড করে উত্তরপত্র বানাব<br><small style="font-weight:600;opacity:.85;">প্রশ্নপত্র PDF দিন → উত্তরপত্র তৈরি</small></button>';
+    h+='<button class="btn btn-ghost btn-full" style="margin-bottom:8px;border-color:var(--cyan);" onclick="glResPhoto()">📷 খাতার ছবি আপলোড<br><small style="font-weight:600;opacity:.85;">ছবি দেখে ✓/✗ দিন → ফলাফল PDF-এ ছবিসহ</small></button>';
+    if(L.length){ h+='<div class="gl-lbl">সেভ করা ফলাফল ('+L.length+')</div>'; L.forEach(function(r,i){ h+='<div class="rs-row"><div style="font-size:13.5px;font-weight:800;color:var(--text);">'+esc2(r.name||'(নাম নেই)')+' <span style="font-weight:600;color:var(--sub);font-size:12px;">· '+esc2(r.date||'')+'</span></div><div style="font-size:12px;color:var(--sub);margin:2px 0 7px;">নম্বর '+esc2(r.marks)+' / '+esc2(r.total)+' · ✓ '+r.c+' · ✗ '+r.w+(r.label?' · '+esc2(r.label):'')+'</div><div style="display:flex;gap:6px;"><button class="btn btn-ghost" style="flex:1;" onclick="glResOpen('+i+',0)">📄 PDF</button><button class="btn btn-ghost" style="flex:1;" onclick="glResOpen('+i+',1)">✏️ এডিট</button><button class="btn btn-ghost" style="flex:none;" onclick="glResDel('+i+')">🗑</button></div></div>'; }); }
+    h+='<button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="glQpdfMenu()">← পেছনে</button>'; openM(h); };
+  window.glResPhoto=function(){ glResNew(); glRPhAdd(); };
+  window.glResDel=function(i){ var L=resultsAll(); if(!L[i]) return; if(!confirm('এই ফলাফল মুছে ফেলবেন?')) return; L.splice(i,1); saveLS('df_results',L); glResMenu(); };
+  window.glResOpen=function(i,edit){ var r=resultsAll()[i]; if(!r) return; R={pid:r.pid||0,label:r.label||'',name:r.name||'',date:r.date||'',marks:String(r.marks),total:String(r.total),rows:JSON.parse(JSON.stringify(r.rows||[])),id:r.id}; if(edit) glResForm(); else resPdf(); };
+  window.glResNew=function(){ R={pid:0,label:'',name:'',date:todayISO(),marks:'',total:'',rows:[],id:0}; var H=histAll(); if(H.length){ glResPaper(0); } else { for(var i=0;i<5;i++) R.rows.push({p:'',a:'',s:'',ok:null}); glResForm(); } };
+  window.glResPaper=function(v){ v=+v; if(v<0){ R.pid=0; R.label=''; R.rows=[]; for(var i=0;i<5;i++) R.rows.push({p:'',a:'',s:'',ok:null}); R.total=''; } else { var P=histAll()[v]; if(!P) return; R.pid=P.id||1; R.label=P.label+' · '+(P.type||''); R.rows=paperQs(P); R.total=''; } glResForm(); };
+  window.glRFlip=function(i){ var r=R.rows[i]; if(r){ r.ed=!r.ed; glResForm(true); } };
+  window.ansFromRows=function(){ if(!R.rows.length){ showToast('❗ কোনো সারি নেই'); return; } var qs=R.rows.map(function(r,i){ return {n:i+1,p:r.p,a:r.a}; }); ansPdfOf({label:R.label||'উত্তরপত্র',type:'',n:qs.length,secs:[{t:'',qs:qs}],date:R.date||todayISO()}); };
+  function photoBox(){ var P=R.photos||[], i=R.pi||0; if(i>=P.length) i=R.pi=0; var z=R.pz||100;
+    var h='<div class="gl-lbl">📷 শিক্ষার্থীর খাতার ছবি <span style="font-weight:600;color:var(--sub);">(ছবি দেখে নিচে ✓/✗ দিন · PDF-এও যুক্ত হবে)</span></div>';
+    if(P.length){ h+='<div style="position:sticky;top:-1px;z-index:6;background:var(--card);padding:6px 0 8px;"><div style="height:34vh;overflow:auto;border:1.5px solid var(--border);border-radius:12px;background:#000;-webkit-overflow-scrolling:touch;"><img src="'+P[i]+'" style="width:'+z+'%;max-width:none;display:block;"></div><div style="display:flex;gap:6px;margin-top:6px;align-items:center;"><button class="rs-b" style="width:40px;" onclick="glRPh(\'prev\')">◀</button><span style="flex:1;text-align:center;font-size:12px;font-weight:800;color:var(--sub);">ছবি '+(i+1)+' / '+P.length+' · '+z+'%</span><button class="rs-b" style="width:40px;" onclick="glRPh(\'next\')">▶</button><button class="rs-b" style="width:40px;" onclick="glRPh(\'zo\')">−</button><button class="rs-b" style="width:40px;" onclick="glRPh(\'zi\')">＋</button><button class="rs-b" style="width:40px;" onclick="glRPh(\'rot\')">⟳</button><button class="rs-b" style="width:40px;" onclick="glRPh(\'del\')">🗑</button></div></div>'; }
+    h+='<button class="btn btn-ghost btn-full" style="margin-bottom:8px;" onclick="glRPhAdd()">📷 খাতার ছবি তোলো / বেছে নাও</button>'; return h; }
+  window.glRPh=function(a){ var P=R.photos||[], i=R.pi||0; if(!P.length) return;
+    if(a==='prev') R.pi=(i+P.length-1)%P.length; else if(a==='next') R.pi=(i+1)%P.length; else if(a==='zi') R.pz=Math.min(400,(R.pz||100)+50); else if(a==='zo') R.pz=Math.max(100,(R.pz||100)-50);
+    else if(a==='del'){ P.splice(i,1); R.pi=0; }
+    else if(a==='rot'){ var im=new Image(); im.onload=function(){ var c=document.createElement('canvas'); c.width=im.height; c.height=im.width; var x=c.getContext('2d'); x.translate(c.width/2,c.height/2); x.rotate(Math.PI/2); x.drawImage(im,-im.width/2,-im.height/2); P[i]=c.toDataURL('image/jpeg',.75); glResForm(true); }; im.src=P[i]; return; }
+    glResForm(true); };
+  window.glRPhAdd=function(){ var inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.multiple=true; inp.style.display='none'; document.body.appendChild(inp);
+    inp.onchange=function(){ var fs=[].slice.call(inp.files||[]); setTimeout(function(){ try{ document.body.removeChild(inp); }catch(e){} },800); if(!fs.length) return; R.photos=R.photos||[]; var left=fs.length;
+      fs.forEach(function(f){ var fr=new FileReader(); fr.onload=function(){ var im=new Image(); im.onload=function(){ var M=1600, sc=Math.min(1,M/Math.max(im.width,im.height)), c=document.createElement('canvas'); c.width=Math.round(im.width*sc); c.height=Math.round(im.height*sc); c.getContext('2d').drawImage(im,0,0,c.width,c.height); R.photos.push(c.toDataURL('image/jpeg',.75)); R.pi=R.photos.length-1; if(--left===0) glResForm(true); }; im.onerror=function(){ if(--left===0) glResForm(true); showToast('❗ ছবিটা খোলা গেল না'); }; im.src=fr.result; }; fr.readAsDataURL(f); }); };
+    inp.click(); };
+  window.glRF=function(f,v){ R[f]=v; if(f==='marks'||f==='total') rSum(); };
+  window.glRSet=function(i,f,v){ if(R.rows[i]) R.rows[i][f]=v; };
+  window.glRAdd=function(){ R.rows.push({p:'',a:'',s:'',ok:null}); glResForm(true); };
+  window.glRDel=function(i){ R.rows.splice(i,1); glResForm(true); };
+  window.glRMark=function(i,v){ var r=R.rows[i]; if(!r) return; r.ok=(r.ok===v)?null:v; var a=document.getElementById('rk'+i), b=document.getElementById('rw'+i); if(a) a.className='rs-b'+(r.ok===true?' ok':''); if(b) b.className='rs-b'+(r.ok===false?' no':''); rSum(); };
+  window.glRAll=function(v){ R.rows.forEach(function(r){ r.ok=v; }); glResForm(true); };
+  function rSum(){ var k=rCounts(), e=document.getElementById('rsSum'); if(e) e.innerHTML='✓ সঠিক <span style="color:#16a34a">'+k.c+'</span> · ✗ ভুল <span style="color:#dc2626">'+k.w+'</span> · বাকি '+k.u+' · নম্বর <span style="color:var(--gold)">'+(R.marks!==''?esc2(R.marks):k.c)+' / '+(R.total!==''?esc2(R.total):R.rows.length)+'</span>'; }
+  window.glResForm=function(keep){
+    var sh=document.querySelector('#modalOverlay .modal-sheet'), sy=(keep&&sh)?sh.scrollTop:0, H=histAll(), free=!R.pid;
+    var h='<div style="text-align:center;font-size:17px;font-weight:900;color:var(--text);margin-bottom:8px;">✍️ ফলাফল লিখুন</div>';
+    h+='<div class="gl-lbl">কোন প্রশ্নপত্র?</div><select class="gl-sel" onchange="glResPaper(this.value)"><option value="-1"'+(free?' selected':'')+'>প্রশ্নপত্র ছাড়া (নিজে লিখব)</option>'+H.map(function(P,i){ var on=R.pid&&P.id===R.pid; return '<option value="'+i+'"'+(on?' selected':'')+'>'+esc2((P.date||'')+' · '+P.label+' · '+(P.type||'')+' · '+P.n+' প্রশ্ন')+'</option>'; }).join('')+'</select>';
+    h+='<div class="gl-lbl">শিক্ষার্থীর নাম</div><input class="rs-in" value="'+esc2(R.name)+'" placeholder="নাম" oninput="glRF(\'name\',this.value)">';
+    h+='<div class="gl-lbl">তারিখ</div><input class="rs-in" type="date" value="'+esc2(R.date)+'" oninput="glRF(\'date\',this.value)">';
+    h+='<div style="display:flex;gap:8px;"><div style="flex:1;"><div class="gl-lbl">পেয়েছে (নম্বর)</div><input class="rs-in" inputmode="decimal" value="'+esc2(R.marks)+'" placeholder="অটো: সঠিক সংখ্যা" oninput="glRF(\'marks\',this.value)"></div><div style="flex:1;"><div class="gl-lbl">মোট নম্বর</div><input class="rs-in" inputmode="decimal" value="'+esc2(R.total)+'" placeholder="অটো: '+R.rows.length+'" oninput="glRF(\'total\',this.value)"></div></div>';
+    h+=photoBox();
+    h+='<div class="gl-lbl">প্রশ্নভিত্তিক ফলাফল (১, ২, ৩ ক্রমে) <span style="font-weight:600;color:var(--sub);">· ✓ সঠিক · ✗ ভুল</span></div><div style="display:flex;gap:6px;margin-bottom:8px;"><button class="btn btn-ghost" style="flex:1;" onclick="glRAll(true)">সব ✓</button><button class="btn btn-ghost" style="flex:1;" onclick="glRAll(false)">সব ✗</button><button class="btn btn-ghost" style="flex:1;" onclick="glRAll(null)">রিসেট</button></div>';
+    R.rows.forEach(function(r,i){
+      var ed=free||r.ed;
+      h+='<div class="rs-row"><div class="rs-top"><span class="rs-n">'+(i+1)+'</span>';
+      if(ed) h+='<input class="rs-in" style="margin:0;flex:1;" placeholder="প্রশ্ন / শব্দ" value="'+esc2(r.p)+'" oninput="glRSet('+i+',\'p\',this.value)">';
+      else h+='<span class="rs-q">'+esc2(r.p)+(r.a?' → <b style="color:var(--cyan);">'+esc2(r.a)+'</b>':'')+'</span>';
+      h+='<button class="rs-b'+(r.ok===true?' ok':'')+'" id="rk'+i+'" onclick="glRMark('+i+',true)">✓</button><button class="rs-b'+(r.ok===false?' no':'')+'" id="rw'+i+'" onclick="glRMark('+i+',false)">✗</button>';
+      if(free) h+='<button class="rs-b" onclick="glRDel('+i+')" style="width:30px;font-size:13px;">🗑</button>';
+      else h+='<button class="rs-b'+(r.ed?' ok':'')+'" onclick="glRFlip('+i+')" style="width:30px;font-size:13px;" title="এডিট">✏️</button>';
+      h+='</div>';
+      if(ed||!r.a) h+='<input class="rs-in" style="margin-bottom:6px;" placeholder="সঠিক উত্তর (বাংলা/জার্মান এডিট করা যায়)" value="'+esc2(r.a)+'" oninput="glRSet('+i+',\'a\',this.value)">';
+      h+='<input class="rs-in" style="margin:0;font-size:12.5px;" placeholder="শিক্ষার্থী কী লিখেছে (ঐচ্ছিক)" value="'+esc2(r.s)+'" oninput="glRSet('+i+',\'s\',this.value)"></div>'; });
+    if(free) h+='<button class="btn btn-ghost btn-full" style="margin-bottom:6px;" onclick="glRAdd()">＋ আরেকটা সারি</button>';
+    h+='<div class="rs-sum" id="rsSum"></div>';
+    h+='<div style="display:flex;gap:6px;"><button class="btn btn-blue" style="flex:1;" onclick="glResSave()">💾 সেভ</button><button class="btn btn-gold" style="flex:1;" onclick="resPdf()">📄 ফলাফল PDF</button></div><button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="ansFromRows()">📋 উত্তরপত্র PDF (এডিট করা উত্তরসহ)</button><button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="glResMenu()">← পেছনে</button>';
+    openM(h); rSum(); sh=document.querySelector('#modalOverlay .modal-sheet'); if(sh) sh.scrollTop=sy; };
+  window.glResSave=function(){ if(!R.rows.length){ showToast('❗ কোনো সারি নেই'); return; } var rec=rRecord(); R.id=rec.id; var L=resultsAll(), ix=-1; L.forEach(function(x,i){ if(x.id===rec.id) ix=i; }); if(ix>=0) L[ix]=rec; else L.unshift(rec); saveLS('df_results',L.slice(0,60)); showToast('💾 ফলাফল সেভ হয়েছে'); };
+  window.resPdf=function(){
+    var r=rRecord(), rows='';
+    r.rows.forEach(function(x,i){ var m=x.ok===true?'<b style="color:#16a34a;font-size:16px;">✓</b>':x.ok===false?'<b style="color:#dc2626;font-size:16px;">✗</b>':'<span style="color:#999">–</span>'; rows+='<tr><td style="width:30px;font-weight:800;">'+(i+1)+'</td><td>'+esc2(x.p||'')+'</td><td><b>'+esc2(x.a||'')+'</b></td><td>'+esc2(x.s||'')+'</td><td style="width:34px;text-align:center;">'+m+'</td></tr>'; });
+    var h='<div class="sp-pdf qz-pdf"><div class="qz-top"><div class="qz-t">ফলাফল পত্র · Ergebnis</div><div class="qz-s">'+esc2(r.label||'DeutschFlash · Wortschatz-Test')+'</div></div>'
+     +'<div class="qz-meta"><span>নাম: <b>'+esc2(r.name||'______________')+'</b></span><span>তারিখ: <b>'+esc2(r.date||'__________')+'</b></span></div>'
+     +'<div class="rs-box"><div>নম্বর<b>'+esc2(r.marks)+' / '+esc2(r.total)+'</b></div><div>সঠিক<b style="color:#16a34a;">'+r.c+'</b></div><div>ভুল<b style="color:#dc2626;">'+r.w+'</b></div><div>বাকি<b>'+r.u+'</b></div></div>'
+     +'<table class="rs-t"><tr><th>নং</th><th>প্রশ্ন</th><th>সঠিক উত্তর</th><th>শিক্ষার্থীর উত্তর</th><th></th></tr>'+rows+'</table>'+(R.photos||[]).map(function(u,i){ return '<div style="break-before:page;page-break-before:always;"><div class="qz-sec">শিক্ষার্থীর খাতা · ছবি '+(i+1)+'</div><img src="'+u+'" style="width:100%;max-height:245mm;object-fit:contain;"></div>'; }).join('')+'</div>';
     closeModal(); setTimeout(function(){ openPDF(h); },60); };
+  // ---- PDF আপলোড → উত্তরপত্র ----
+  function u8s(b){ var s='',i,C=8192; for(i=0;i<b.length;i+=C) s+=String.fromCharCode.apply(null,b.subarray(i,i+C)); return s; }
+  function inflate(bytes){ try{ var ds=new DecompressionStream('deflate'), w=ds.writable.getWriter(); w.write(bytes).catch(function(){}); w.close().catch(function(){}); return new Response(ds.readable).arrayBuffer().then(function(a){ return new Uint8Array(a); },function(){ return null; }); }catch(e){ return Promise.resolve(null); } }
+  function hex16(h){ h=h.replace(/\s/g,''); if(h.length<=2) return String.fromCharCode(parseInt(h,16)); var s=''; for(var i=0;i+3<=h.length;i+=4) s+=String.fromCharCode(parseInt(h.substr(i,4),16)); return s; }
+  function parseCMap(t){ var m={};
+    t.replace(/beginbfchar([\s\S]*?)endbfchar/g,function(_,b){ b.replace(/<([0-9a-fA-F]+)>\s*<([0-9a-fA-F]*)>/g,function(_,a,c){ m[parseInt(a,16)]=hex16(c); }); return ''; });
+    t.replace(/beginbfrange([\s\S]*?)endbfrange/g,function(_,b){ var re=/<([0-9a-fA-F]+)>\s*<([0-9a-fA-F]+)>\s*(?:<([0-9a-fA-F]+)>|\[([^\]]*)\])/g, r; while((r=re.exec(b))){ var lo=parseInt(r[1],16), hi=parseInt(r[2],16); if(r[3]){ var bs=r[3], base=parseInt(bs,16), L=bs.length; for(var c=lo;c<=hi&&c-lo<70000;c++){ var hx=(base+c-lo).toString(16); while(hx.length<L) hx='0'+hx; m[c]=hex16(hx); } } else { var arr=(r[4]||'').match(/<[0-9a-fA-F]+>/g)||[]; for(var j=0;j<arr.length;j++) m[lo+j]=hex16(arr[j].slice(1,-1)); } } return ''; });
+    return m; }
+  function litBytes(s){ return s.replace(/\\([nrtbf()\\]|[0-7]{1,3})/g,function(_,c){ if(c.length>1||/[0-7]/.test(c)) return String.fromCharCode(parseInt(c,8)); return {n:'\n',r:'\r',t:'\t',b:'\b',f:'\f','(':'(',')':')','\\':'\\'}[c]; }); }
+  function pdfLines(buf){
+    var bytes=new Uint8Array(buf), s=u8s(bytes), objs={}, re=/(\d+)\s+\d+\s+obj\b/g, m, list=[];
+    while((m=re.exec(s))){ var st=re.lastIndex, en=s.indexOf('endobj',st); if(en<0) en=s.length; list.push({id:+m[1],body:s.slice(st,en),from:st}); }
+    var tasks=[];
+    list.forEach(function(o){ var b=o.body, si=b.indexOf('stream'); var dict=si>=0?b.slice(0,si):b; objs[o.id]={dict:dict,text:null};
+      if(si>=0){ var ds=o.from+si+6; if(s.charAt(ds)==='\r') ds++; if(s.charAt(ds)==='\n') ds++; var de=s.indexOf('endstream',ds); if(de<0) return; var lm=/\/Length\s+(\d+)(?!\s+\d+\s+R)/.exec(dict), len=lm?+lm[1]:-1, data;
+        if(len>=0&&ds+len<=de+2) data=bytes.subarray(ds,ds+len); else { var e2=de; if(s.charAt(e2-1)==='\n') e2--; if(s.charAt(e2-1)==='\r') e2--; data=bytes.subarray(ds,e2); }
+        if(/FlateDecode/.test(dict)) tasks.push(inflate(data).then(function(u){ objs[o.id].text=u?u8s(u):null; })); else objs[o.id].text=u8s(data); } });
+    return Promise.all(tasks).then(function(){
+      Object.keys(objs).forEach(function(id){ var o=objs[id]; if(/\/ObjStm/.test(o.dict)&&o.text){ var N=+((/\/N\s+(\d+)/.exec(o.dict)||[])[1]||0), F=+((/\/First\s+(\d+)/.exec(o.dict)||[])[1]||0), nums=o.text.slice(0,F).trim().split(/\s+/).map(Number); for(var i=0;i<N;i++){ var oid=nums[i*2], off=nums[i*2+1], nxt=(i+1<N)?nums[i*2+3]:o.text.length-F; objs[oid]={dict:o.text.slice(F+off,F+nxt),text:null}; } } });
+      var fontOf={}, allDict=''; Object.keys(objs).forEach(function(id){ allDict+=' '+objs[id].dict; });
+      var fre=/\/([A-Za-z][A-Za-z0-9_+.-]*)\s+(\d+)\s+0\s+R/g, fm; while((fm=fre.exec(allDict))){ var fo=objs[fm[2]]; if(fo&&/\/Type\s*\/Font\b/.test(fo.dict)&&!/\/FontDescriptor\s*<</.test('')) fontOf[fm[1]]=+fm[2]; }
+      var cmaps={}; function cmapOf(fid){ if(cmaps[fid]) return cmaps[fid]; var fo=objs[fid], r={map:null,w:1}; if(fo){ if(/Identity-H|Identity-V/.test(fo.dict)||/\/Subtype\s*\/Type0/.test(fo.dict)) r.w=2; var tu=/\/ToUnicode\s+(\d+)\s+0\s+R/.exec(fo.dict); if(tu&&objs[tu[1]]&&objs[tu[1]].text) r.map=parseCMap(objs[tu[1]].text); } return (cmaps[fid]=r); }
+      var lines=[], cur=null, ly=null;
+      function show(txt,y){ if(!txt) return; if(cur&&ly!==null&&Math.abs(y-ly)<1.5){ cur.push(txt); } else { cur=[txt]; lines.push(cur); } ly=y; }
+      function dec(str,f){ var cm=f?cmapOf(f):{map:null,w:1}, out=''; if(cm.w===2){ for(var i=0;i+1<str.length;i+=2){ var c=str.charCodeAt(i)*256+str.charCodeAt(i+1); out+=(cm.map&&cm.map[c]!==undefined)?cm.map[c]:''; } } else { for(var j=0;j<str.length;j++){ var c1=str.charCodeAt(j); out+=(cm.map&&cm.map[c1]!==undefined)?cm.map[c1]:String.fromCharCode(c1); } } return out; }
+      Object.keys(objs).sort(function(a,b){return a-b;}).forEach(function(id){ var t=objs[id].text; if(!t||!/\bBT\b/.test(t)||!/\bTf\b/.test(t)) return;
+        var font=null, y=0, tre=/\/([^\s\/\[\]<>()]+)\s+[-\d.]+\s+Tf|(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+Tm|(-?[\d.]+)\s+(-?[\d.]+)\s+T[dD]|\[((?:[^\]\\]|\\.)*)\]\s*TJ|<([0-9a-fA-F\s]*)>\s*Tj|\(((?:[^()\\]|\\.)*)\)\s*Tj|\bBT\b/g, x;
+        while((x=tre.exec(t))){
+          if(x[1]!==undefined){ font=fontOf[x[1]]||null; }
+          else if(x[7]!==undefined){ y=parseFloat(x[7]); }
+          else if(x[9]!==undefined){ y+=parseFloat(x[9]); }
+          else if(x[10]!==undefined){ var ir=/<([0-9a-fA-F\s]*)>|\(((?:[^()\\]|\\.)*)\)|(-?[\d.]+)/g, q, acc=''; while((q=ir.exec(x[10]))){ if(q[1]!==undefined){ var bb=q[1].replace(/\s/g,''), bs=''; for(var k=0;k+1<bb.length;k+=2) bs+=String.fromCharCode(parseInt(bb.substr(k,2),16)); acc+=dec(bs,font); } else if(q[2]!==undefined){ acc+=dec(litBytes(q[2]),font); } else if(q[3]!==undefined&&parseFloat(q[3])<-250){ acc+=' '; } } show(acc,y); }
+          else if(x[11]!==undefined){ var hb=x[11].replace(/\s/g,''), hs=''; for(var k2=0;k2+1<hb.length;k2+=2) hs+=String.fromCharCode(parseInt(hb.substr(k2,2),16)); show(dec(hs,font),y); }
+          else if(x[12]!==undefined){ show(dec(litBytes(x[12]),font),y); }
+          else { y=0; } } });
+      return lines; }); }
+  var DICT=null;
+  function dictAll(){ if(DICT) return DICT; var de={}, art={}, bn={}, seen={};
+    function add(it){ var w=qw(it), b=qb(it); if(!w||!b) return; var k=w.toLowerCase(); if(seen[k+'|'+b]) return; seen[k+'|'+b]=1; if(de[k]===undefined) de[k]=b; var a=AR2.exec(w); if(a){ var kk=a[2].toLowerCase(); if(art[kk]===undefined) art[kk]=a[1].toLowerCase()+' '+a[2]; } var sk=bnKey(b); if(bn[sk]===undefined) bn[sk]=w; }
+    ents().forEach(function(e){ add(e.it); }); var SD=storyData(); Object.keys(SD).forEach(function(k){ SD[k].forEach(function(st){ st.items.forEach(function(it){ if(it&&it.d&&it.b) add(it); }); }); });
+    return (DICT={de:de,art:art,bn:bn}); }
+  function bnKey(s){ return String(s).normalize('NFD').replace(/[\s\u0000‌‍.,;:!?()\-_\/]/g,'').split('').sort().join(''); }
+  function bnFuzzy(p){ var D=dictAll(), k=bnKey(p); if(k.length<2) return ''; var cnt={}, i; for(i=0;i<k.length;i++) cnt[k[i]]=(cnt[k[i]]||0)+1; var best=1e9, win=[], keys=Object.keys(D.bn);
+    keys.forEach(function(ck){ var ex=ck.length-k.length; if(ex<0||ex>4) return; var c2={}, j, miss=0; for(j=0;j<ck.length;j++) c2[ck[j]]=(c2[ck[j]]||0)+1; for(var ch in cnt){ if((c2[ch]||0)<cnt[ch]) miss+=cnt[ch]-(c2[ch]||0); } if(miss) return; if(ex<best){ best=ex; win=[ck]; } else if(ex===best) win.push(ck); });
+    if(win.length===1) return D.bn[win[0]]; return ''; }
+  function answerFor(p){ var D=dictAll(); p=String(p).trim(); if(/^_{2,}/.test(p)){ var r=p.replace(/^_+\s*/,'').toLowerCase(); return D.art[r]||''; } var k=p.toLowerCase(); if(D.de[k]!==undefined) return D.de[k]; var bk=bnKey(p); if(D.bn[bk]!==undefined) return D.bn[bk]; return bnFuzzy(p); }
+  window.glResUpload=function(){
+    var inp=document.createElement('input'); inp.type='file'; inp.accept='application/pdf,.pdf'; inp.style.display='none'; document.body.appendChild(inp);
+    inp.onchange=function(){ var f=inp.files&&inp.files[0]; setTimeout(function(){ try{ document.body.removeChild(inp); }catch(e){} },500); if(!f) return;
+      showToast('⏳ PDF পড়া হচ্ছে…');
+      var fr=new FileReader(); fr.onerror=function(){ showToast('❗ ফাইলটা পড়া গেল না'); };
+      fr.onload=function(){ pdfLines(fr.result).then(function(lines){ resFromLines(lines,f.name); }).catch(function(e){ showToast('❗ এই PDF পড়া যায়নি — ম্যানুয়াল অপশন ব্যবহার করুন'); }); };
+      fr.readAsArrayBuffer(f); };
+    inp.click(); };
+  function resFromLines(lines,fname){
+    var flat=lines.map(function(l){ return l.join(''); }), all=flat.join('').replace(/\s/g,''), idm=/DF-(\d{12,14})/.exec(all), P=null, H=histAll();
+    if(idm){ var id=+idm[1]; H.forEach(function(x){ if(x.id===id) P=x; }); }
+    var found=0, qs=[];
+    if(!P){
+      lines.forEach(function(l){ var tx=l.join('').replace(/\u0000/g,'').trim(), ex=String(qs.length+1), nm=null; if(tx.indexOf(ex)===0&&tx.length>ex.length) nm=ex; else { nm=(/^\d{1,3}/.exec(tx)||[])[0]; if(!nm||+nm!==qs.length+1) return; } var p=tx.slice(nm.length).replace(/\s+/g,' ').trim(); if(!p||/^[A-C] · /.test(p)) return; var a=answerFor(p); if(a) found++; qs.push({n:qs.length+1,p:p,a:a}); });
+      if(!qs.length){ openM('<div style="text-align:center;font-size:17px;font-weight:900;color:var(--text);margin-bottom:8px;">😕 প্রশ্ন খুঁজে পাওয়া গেল না</div><div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:10px;">এই PDF থেকে "১, ২, ৩…" নম্বর দেওয়া প্রশ্ন পড়া যায়নি (স্ক্যান করা ছবির PDF হলে লেখা পড়া সম্ভব না)। অ্যাপ থেকে বানানো প্রশ্নপত্র PDF দিলে সবচেয়ে ভালো কাজ করে। অথবা ম্যানুয়াল অপশন ব্যবহার করুন।</div><button class="btn btn-blue btn-full" onclick="glResNew()">✍️ ম্যানুয়ালি লিখব</button><button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="glResMenu()">← পেছনে</button>'); return; }
+      P={id:Date.now(),label:'PDF: '+String(fname).replace(/\.pdf$/i,''),type:'আপলোড করা PDF',n:qs.length,secs:[{t:'',qs:qs}],date:todayISO(),upl:1};
+      var HH=histAll(); HH.unshift(P); saveLS('df_qhist',HH.slice(0,30));
+    } else { found=P.n; }
+    window._resP=P;
+    var miss=P.n-found;
+    openM('<div style="text-align:center;font-size:18px;font-weight:900;color:var(--text);margin-bottom:6px;">✅ PDF পড়া হয়েছে</div><div style="font-size:13px;color:var(--sub);line-height:1.7;text-align:center;margin-bottom:12px;"><b style="color:var(--text);">'+P.n+'</b> টা প্রশ্ন পাওয়া গেল'+(idm&&found===P.n&&!P.upl?' (অ্যাপের নিজের প্রশ্নপত্র — সব উত্তর নিখুঁত)':' · <b style="color:var(--text);">'+found+'</b> টার উত্তর শব্দভান্ডার থেকে মিলেছে')+(miss>0&&!(idm&&!P.upl)?'<br><span style="color:var(--gold);">'+miss+' টার উত্তর পাওয়া যায়নি — ফলাফলের ফর্মে নিজে লিখে দিতে পারবেন</span>':'')+'</div>'
+     +'<button class="btn btn-gold btn-full" onclick="ansPdfOf(window._resP)">📋 উত্তরপত্র PDF বানাও</button><button class="btn btn-blue btn-full" style="margin-top:6px;" onclick="glResFromPaper()">✍️ এই প্রশ্নপত্র দিয়ে ফলাফল লিখব</button><button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="glResMenu()">← পেছনে</button>'); }
+  window.ansPdfOf=ansPdfOf;
+  window.glResFromPaper=function(){ var P=window._resP; if(!P) return; R={pid:P.id,label:P.label+' · '+(P.type||''),name:'',date:todayISO(),marks:'',total:'',rows:paperQs(P),id:0}; glResForm(); };
   // ---- ইমোজি বদলাও ----
   var EL=[], EK=0, EQ='';
   function emoShow(e){ return (e&&e.charAt(0)==='#')?e.slice(1):e; }
@@ -8846,7 +9016,7 @@ try{ xhRender(); }catch(e){ console.error(e); }
   function paint(el,dx,dy){ var S=st(el); el.style.transform='translate3d('+(dx||0)+'px,'+(dy||0)+'px,0) scale('+S.s+')'; }
   function fix(el){ // switch from CSS-anchored to explicit left/top once
     var S=st(el); if(el.__fixed) return; var r=el.getBoundingClientRect(); measure(el);
-    el.style.width=S.bw+'px'; el.style.transformOrigin='0 0'; el.style.left=r.left+'px'; el.style.top=r.top+'px'; el.style.right='auto'; el.style.bottom='auto'; el.style.margin='0'; S.x=r.left; S.y=r.top; S.s=S.s||1; el.__fixed=1; el.style.willChange='transform'; }
+    if(el.id!=='stChip') el.style.width=S.bw+'px'; el.style.transformOrigin='0 0'; el.style.left=r.left+'px'; el.style.top=r.top+'px'; el.style.right='auto'; el.style.bottom='auto'; el.style.margin='0'; S.x=r.left; S.y=r.top; S.s=S.s||1; el.__fixed=1; el.style.willChange='transform'; }
   function bounds(el){ var S=st(el); return {mx:Math.max(4,W0()-S.bw*S.s-4), my:Math.max(4,H0()-S.bh*S.s-4)}; }
   function commit(el,k){ var S=st(el), b=bounds(el); S.x=cl(S.x,4,b.mx); S.y=cl(S.y,4,b.my); el.style.left=S.x+'px'; el.style.top=S.y+'px'; paint(el,0,0); setPos(k,{x:Math.round(S.x),y:Math.round(S.y),s:+S.s.toFixed(3),w:Math.round(S.bw)}); }
   function restore(el,k){ var p=getPos(k); if(!p) return; var S=st(el); if(k==='srPop'&&p.w) el.style.width=Math.min(p.w,W0()-8)+'px'; el.__fixed=0; if(k==='srPop'){ el.style.transformOrigin='0 0'; } measure(el); S.s=p.s||1; S.x=p.x; S.y=p.y; el.style.transformOrigin='0 0'; el.style.right='auto'; el.style.bottom='auto'; el.style.margin='0'; el.__fixed=1; el.style.willChange='transform';
@@ -8854,18 +9024,19 @@ try{ xhRender(); }catch(e){ console.error(e); }
   function drag(el,k,skip){
     if(el.__drag) return; el.__drag=1; el.style.touchAction='none'; el.style.userSelect='none'; el.style.webkitUserSelect='none';
     var sx,sy,on=false,moved=false,pid,raf=0,ddx=0,ddy=0;
-    el.addEventListener('pointerdown',function(e){
-      if(e.button>0) return; if(skip&&e.target.closest(skip)) return;
-      fix(el); measure(el); sx=e.clientX; sy=e.clientY; ddx=0; ddy=0; moved=false; on=true; pid=e.pointerId; });
-    el.addEventListener('pointermove',function(e){
-      if(!on) return; var dx=e.clientX-sx, dy=e.clientY-sy;
-      if(!moved&&Math.abs(dx)+Math.abs(dy)<6) return; if(!moved){ try{ el.setPointerCapture(pid); }catch(_){} } moved=true; e.preventDefault();
+    function mv(e){
+      if(!on||(pid!=null&&e.pointerId!==pid)) return; var dx=e.clientX-sx, dy=e.clientY-sy;
+      if(!moved&&Math.abs(dx)+Math.abs(dy)<6) return; moved=true; if(e.cancelable) e.preventDefault();
       var S=st(el), b=bounds(el); ddx=cl(S.x+dx,4,b.mx)-S.x; ddy=cl(S.y+dy,4,b.my)-S.y;
-      if(!raf) raf=requestAnimationFrame(function(){ raf=0; paint(el,ddx,ddy); }); });
-    function end(){ if(!on) return; on=false; try{ el.releasePointerCapture(pid); }catch(_){}
+      if(!raf) raf=requestAnimationFrame(function(){ raf=0; paint(el,ddx,ddy); }); }
+    function end(e){ if(!on) return; if(e&&pid!=null&&e.pointerId!==pid) return; on=false;
+      window.removeEventListener('pointermove',mv,true); window.removeEventListener('pointerup',end,true); window.removeEventListener('pointercancel',end,true);
       if(raf){ cancelAnimationFrame(raf); raf=0; }
       if(moved){ var S=st(el); S.x+=ddx; S.y+=ddy; commit(el,k); el.__jd=Date.now(); } }
-    el.addEventListener('pointerup',end); el.addEventListener('pointercancel',end);
+    el.addEventListener('pointerdown',function(e){
+      if(e.button>0) return; if(skip&&e.target.closest(skip)) return;
+      fix(el); measure(el); sx=e.clientX; sy=e.clientY; ddx=0; ddy=0; moved=false; on=true; pid=e.pointerId;
+      window.addEventListener('pointermove',mv,{capture:true,passive:false}); window.addEventListener('pointerup',end,true); window.addEventListener('pointercancel',end,true); });
     el.addEventListener('click',function(e){ if(el.__jd&&Date.now()-el.__jd<350){ e.stopImmediatePropagation(); e.preventDefault(); } },true);
   }
   function initPop(){
@@ -8901,7 +9072,8 @@ try{ xhRender(); }catch(e){ console.error(e); }
 #srPop .df-grip{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:38px;height:4px;border-radius:4px;background:var(--border);opacity:.9;pointer-events:none;}
 #srPopX{position:absolute;top:-12px;right:-6px;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--blue);background:var(--card);color:var(--text);font-size:14px;font-weight:900;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px #0008;padding:0;}
 #srPopR{position:absolute;right:-9px;bottom:-9px;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--blue);background:var(--card);color:var(--text);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px #0008;cursor:nwse-resize;touch-action:none;}
-.st-chip{cursor:grab;}
+.st-chip{cursor:grab;width:max-content!important;max-width:none!important;white-space:nowrap!important;flex-wrap:nowrap!important;flex-direction:row!important;}
+.st-chip>*{white-space:nowrap;flex:0 0 auto;}
 </style>
 <script>
 // ── Monthly report + share image + timed Mock test + streak warning + backup/share + widget sync ──
