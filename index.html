@@ -8083,7 +8083,8 @@ try{ xhRender(); }catch(e){ console.error(e); }
     h+='<button class="btn btn-blue btn-full" style="margin-top:8px;" onclick="glQpdfGo()">📄 প্রশ্নপত্র PDF বানাও</button>';
     var last=loadLS('df_qlast',null);
     if(last&&last.secs) h+='<button class="btn btn-gold btn-full" style="margin-top:6px;" onclick="glAnsPdf()">📋 উত্তরপত্র PDF (শেষ প্রশ্নপত্রের · '+last.n+' প্রশ্ন)</button><div style="font-size:11px;color:var(--sub);text-align:center;margin-top:3px;">'+esc2(last.label)+' · '+esc2(last.type)+'</div>';
-    h+='<button class="btn btn-ghost btn-full" style="margin-top:8px;border-color:var(--gold);" onclick="glResMenu()">🧾 পরীক্ষার ফলাফল / Answer sheet (ম্যানুয়াল বা PDF আপলোড)</button>';
+    h+='<button class="btn btn-ghost btn-full" style="margin-top:8px;border-color:var(--cyan);" onclick="glHistMenu()">📚 আগের প্রশ্নপত্র / উত্তরপত্র ইতিহাস ('+histAll().length+')</button>';
+    h+='<button class="btn btn-ghost btn-full" style="margin-top:6px;border-color:var(--gold);" onclick="glResMenu()">🧾 পরীক্ষার ফলাফল / Answer sheet (ম্যানুয়াল বা PDF আপলোড)</button>';
     h+='<button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="closeModal()">✕ বন্ধ</button>';
     openM(h); };
   window.glQpdfGo=function(){
@@ -8105,7 +8106,7 @@ try{ xhRender(); }catch(e){ console.error(e); }
     ['de2bn','bn2de','artikel'].forEach(function(m){ var L=B2[m]; if(!L.length) return; var S={t:(PM==='mix'?{de2bn:'A · ',bn2de:'B · ',artikel:'C · '}[m]:'')+TT[m],qs:[]};
       sec+='<div class="qz-sec">'+esc2(S.t)+'</div>';
       L.forEach(function(q){ num++; S.qs.push({n:num,p:q.p,a:q.a}); sec+='<div class="qz-q"><span class="qz-n">'+num+'</span><span class="qz-p">'+esc2(q.p)+'</span><span class="qz-l"></span></div>'; }); secs.push(S); });
-    var pid=Date.now(), paper={id:pid,label:src.label,type:QMN(PM),n:num,secs:secs,date:new Date().toISOString().slice(0,10)}; saveLS('df_qlast',paper); var hs=histAll(); hs=hs.filter(function(x){ return x.id!==pid; }); hs.unshift(paper); saveLS('df_qhist',hs.slice(0,30));
+    var pid=Date.now(), paper={id:pid,label:src.label,type:QMN(PM),n:num,secs:secs,date:new Date().toISOString().slice(0,10)}; saveLS('df_qlast',paper); var hs=histAll(); hs=hs.filter(function(x){ return x.id!==pid; }); hs.unshift(paper); saveLS('df_qhist',hs.slice(0,150));
     var h='<div class="sp-pdf qz-pdf"><div class="qz-top"><div class="qz-t">DeutschFlash · Wortschatz-Test</div><div class="qz-s">'+esc2(src.label)+' · '+esc2(QMN(PM))+' · '+num+' প্রশ্ন</div><div class="qz-s" style="font-size:10px;opacity:.55;margin-top:2px;">Paper ID: DF-'+pid+'</div></div><div class="qz-meta"><span>নাম: ______________</span><span>তারিখ: __________</span><span>নম্বর: ____ / '+num+'</span></div>'+sec+'</div>';
     closeModal(); if(notes.length) showToast('ℹ️ '+notes.join(' · '));
     setTimeout(function(){ openPDF(h); },60); };
@@ -8134,6 +8135,18 @@ try{ xhRender(); }catch(e){ console.error(e); }
     var key=''; P.secs.forEach(function(S){ if(S.t) key+='<div class="qz-sec" style="column-span:all;">'+esc2(S.t)+'</div>'; S.qs.forEach(function(q){ key+='<div><b>'+q.n+'.</b> '+esc2(q.p)+' → <b style="color:#111;">'+esc2(q.a||'—')+'</b></div>'; }); });
     var h='<div class="sp-pdf qz-pdf"><div class="qz-top"><div class="qz-t">উত্তরপত্র · Antworten</div><div class="qz-s">'+esc2(P.label)+' · '+esc2(P.type||'')+' · '+P.n+' প্রশ্ন · '+esc2(P.date||'')+'</div></div><div class="qz-ks">'+key+'</div></div>';
     closeModal(); setTimeout(function(){ openPDF(h); },60); }
+  // ---- প্রশ্নপত্র / উত্তরপত্র ইতিহাস ----
+  function qpPdfOf(P){ var sec='', num=0; P.secs.forEach(function(S){ if(S.t) sec+='<div class="qz-sec">'+esc2(S.t)+'</div>'; S.qs.forEach(function(q){ num++; sec+='<div class="qz-q"><span class="qz-n">'+q.n+'</span><span class="qz-p">'+esc2(q.p)+'</span><span class="qz-l"></span></div>'; }); });
+    var h='<div class="sp-pdf qz-pdf"><div class="qz-top"><div class="qz-t">DeutschFlash · Wortschatz-Test</div><div class="qz-s">'+esc2(P.label)+(P.type?' · '+esc2(P.type):'')+' · '+P.n+' প্রশ্ন</div>'+(P.id?'<div class="qz-s" style="font-size:10px;opacity:.55;margin-top:2px;">Paper ID: DF-'+P.id+'</div>':'')+'</div><div class="qz-meta"><span>নাম: ______________</span><span>তারিখ: __________</span><span>নম্বর: ____ / '+P.n+'</span></div>'+sec+'</div>';
+    closeModal(); setTimeout(function(){ openPDF(h); },60); }
+  window.glHistMenu=function(){ var H=histAll(), h='<div style="text-align:center;font-size:18px;font-weight:900;color:var(--text);margin-bottom:4px;">📚 প্রশ্নপত্র ও উত্তরপত্র ইতিহাস</div><div style="text-align:center;font-size:12px;color:var(--sub);margin-bottom:12px;">যত প্রশ্নপত্র বানিয়েছেন সব এখানে জমা থাকে — যেকোনো সময় উত্তরপত্র ডাউনলোড করুন</div>';
+    if(!H.length) h+='<div style="text-align:center;color:var(--sub);padding:20px 0;font-size:13px;">এখনো কোনো প্রশ্নপত্র বানানো হয়নি।</div>';
+    H.forEach(function(P,i){ h+='<div class="rs-row"><div style="font-size:13.5px;font-weight:800;color:var(--text);line-height:1.4;">'+esc2(P.label)+'</div><div style="font-size:12px;color:var(--sub);margin:2px 0 8px;">'+esc2(P.date||'')+' · '+esc2(P.type||'')+' · '+P.n+' প্রশ্ন</div><div style="display:flex;gap:6px;"><button class="btn btn-gold" style="flex:1;" onclick="glHistAns('+i+')">📋 উত্তরপত্র</button><button class="btn btn-ghost" style="flex:1;" onclick="glHistQ('+i+')">📄 প্রশ্নপত্র</button><button class="btn btn-ghost" style="flex:none;" onclick="glHistRes('+i+')" title="ফলাফল লিখুন">🧾</button><button class="btn btn-ghost" style="flex:none;" onclick="glHistDel('+i+')">🗑</button></div></div>'; });
+    h+='<button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="glQpdfMenu()">← পেছনে</button>'; openM(h); };
+  window.glHistAns=function(i){ var P=histAll()[i]; if(P) ansPdfOf(P); };
+  window.glHistQ=function(i){ var P=histAll()[i]; if(P) qpPdfOf(P); };
+  window.glHistRes=function(i){ var P=histAll()[i]; if(!P) return; window._resP=P; glResFromPaper(); };
+  window.glHistDel=function(i){ var H=histAll(); if(!H[i]||!confirm('এই প্রশ্নপত্র ইতিহাস থেকে মুছে ফেলবেন?')) return; var id=H[i].id; H.splice(i,1); saveLS('df_qhist',H); var l=loadLS('df_qlast',null); if(l&&l.id===id) localStorage.removeItem('df_qlast'); glHistMenu(); };
   // ---- ফলাফল ----
   var R={pid:0,label:'',name:'',date:'',marks:'',total:'',rows:[],id:0};
   function rCounts(){ var c=0,w=0; R.rows.forEach(function(r){ if(r.ok===true) c++; else if(r.ok===false) w++; }); return {c:c,w:w,u:R.rows.length-c-w}; }
@@ -8267,7 +8280,7 @@ try{ xhRender(); }catch(e){ console.error(e); }
       lines.forEach(function(l){ var tx=l.join('').replace(/\u0000/g,'').trim(), ex=String(qs.length+1), nm=null; if(tx.indexOf(ex)===0&&tx.length>ex.length) nm=ex; else { nm=(/^\d{1,3}/.exec(tx)||[])[0]; if(!nm||+nm!==qs.length+1) return; } var p=tx.slice(nm.length).replace(/\s+/g,' ').trim(); if(!p||/^[A-C] · /.test(p)) return; var a=answerFor(p); if(a) found++; qs.push({n:qs.length+1,p:p,a:a}); });
       if(!qs.length){ openM('<div style="text-align:center;font-size:17px;font-weight:900;color:var(--text);margin-bottom:8px;">😕 প্রশ্ন খুঁজে পাওয়া গেল না</div><div style="font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:10px;">এই PDF থেকে "১, ২, ৩…" নম্বর দেওয়া প্রশ্ন পড়া যায়নি (স্ক্যান করা ছবির PDF হলে লেখা পড়া সম্ভব না)। অ্যাপ থেকে বানানো প্রশ্নপত্র PDF দিলে সবচেয়ে ভালো কাজ করে। অথবা ম্যানুয়াল অপশন ব্যবহার করুন।</div><button class="btn btn-blue btn-full" onclick="glResNew()">✍️ ম্যানুয়ালি লিখব</button><button class="btn btn-ghost btn-full" style="margin-top:6px;" onclick="glResMenu()">← পেছনে</button>'); return; }
       P={id:Date.now(),label:'PDF: '+String(fname).replace(/\.pdf$/i,''),type:'আপলোড করা PDF',n:qs.length,secs:[{t:'',qs:qs}],date:todayISO(),upl:1};
-      var HH=histAll(); HH.unshift(P); saveLS('df_qhist',HH.slice(0,30));
+      var HH=histAll(); HH.unshift(P); saveLS('df_qhist',HH.slice(0,150));
     } else { found=P.n; }
     window._resP=P;
     var miss=P.n-found;
